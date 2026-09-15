@@ -1,0 +1,10 @@
+{
+  "scope": "Headless Edge, simulated accounts/data/API; no production writes",
+  "checks": 1,
+  "results": [
+    {
+      "name": "Edited biodata and schedule text cannot inject markup",
+      "status": "PASS"
+    }
+  ]
+}

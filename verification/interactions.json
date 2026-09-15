@@ -1,0 +1,23 @@
+{
+  "passed": 18,
+  "results": [
+    "Mobile menu hidden without leaking sidebar text",
+    "Mobile menu opens, traps focus and locks background",
+    "Escape closes menu and restores focus",
+    "Backdrop and close button close navigation",
+    "Resize from open mobile menu clears overlay and scroll lock",
+    "Collapsed sidebar aligns avatar and exposes account menu to keyboard",
+    "Short landscape sidebar keeps all navigation reachable",
+    "Member dialog fits narrow screen with long names and supports Escape",
+    "Member dialog closes via backdrop and close button",
+    "Calculator works and converter Enter preserves input",
+    "Long error toast remains inside mobile screen",
+    "Schedule tabs and horizontal table scrolling work",
+    "Admin panels fit narrow screen with long content",
+    "Labels focus the associated static and dynamic inputs",
+    "Login error restores submit button without navigation",
+    "Reduced motion preference disables animated transitions",
+    "Guest protected pages redirect to login",
+    "Student layout hides management controls"
+  ]
+}

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script src="/assets/js/theme.js?v=avatar-source-5"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Ruang digital XI TKJ 2 untuk jadwal, tugas, penyimpanan, dan kebutuhan kelas."
+    />
+    <title>Ruang Kelas · XI TKJ 2</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <script>
+      try {
+        if (localStorage.getItem("clouven-sidebar-collapsed") === "1") {
+          document.documentElement.classList.add("sidebar-precollapsed");
+        }
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/app.css?v=names-16" />
+    <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
+    <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script type="module" src="/assets/js/pages/home.js?v=names-15"></script>
+  <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script><link rel="stylesheet" href="/assets/css/loading.css?v=loading-2" />
+</head>
+  <body>
+    <div class="page-noise"></div>
+    <aside id="sidebar"></aside>
+    <main class="app-main">
+      <div class="mobile-topbar">
+        <a class="brand-copy" href="/">Ruang <strong>Kelas</strong></a
+        ><button class="mobile-menu" type="button" aria-label="Buka menu navigasi" aria-controls="sidebar" aria-expanded="false">☰</button>
+      </div>
+      <section class="hero section-pad">
+        <div>
+          <p class="eyebrow">
+            <span class="pulse-dot"></span> ruang digital kelas kita
+          </p>
+          <h1 id="heroTitle">Selamat, berjuang, <em>sukses.</em></h1>
+          <p class="hero-description" id="heroDescription">
+            Satu tempat untuk tetap searah.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-coral" href="/jadwal/"
+              >Lihat jadwal hari ini ↓</a
+            ><a class="text-button hero-login" id="heroLogin" href="/login/" hidden>Login ↗</a>
+          </div>
+          <div class="hero-facts" id="classFacts"></div>
+        </div>
+        <div class="class-photo-wrap">
+          <div class="photo-sticker sticker-one">✦ kompak</div>
+          <div class="photo-sticker sticker-two">2026 / 2027</div>
+          <div class="class-photo-frame">
+            <img
+              id="classPhoto"
+              src="/assets/images/class-placeholder.svg"
+              alt="Foto kelas"
+            />
+            <div class="photo-caption">
+              <span id="photoCaption">XI TKJ 2</span><span id="liveDate"></span>
+            </div>
+          </div>
+          <p class="photo-note">
+            <span>↙</span> Foto, cerita, dan target kami tahun ini.
+          </p>
+        </div>
+      </section>
+      <section class="dashboard-strip">
+        <div class="section-pad">
+          <div class="section-intro">
+            <div>
+              <p class="eyebrow">hari ini</p>
+              <h2>Apa yang sedang berlangsung?</h2>
+            </div>
+            <p id="todayText"></p>
+          </div>
+          <div class="dashboard-grid" id="summaryGrid">
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+          </div>
+        </div>
+      </section>
+      <footer class="footer section-pad">
+        Ruang Kelas · XI TKJ 2 · 2026/2027
+      </footer>
+    </main>
+  </body>
+</html>

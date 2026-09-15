@@ -1,0 +1,146 @@
+{
+  "scope": "Headless Edge, simulated accounts/data/API; no production writes",
+  "checks": 35,
+  "results": [
+    {
+      "name": "guest: home tasks and navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: admin and Kelola Kelas route boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: home tasks and navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "student: admin and Kelola Kelas route boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: own profile editing visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "student: file management visibility and edit",
+      "status": "PASS"
+    },
+    {
+      "name": "student: other task progress permissions",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: home tasks and navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: admin and Kelola Kelas route boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: own profile editing visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: file management visibility and edit",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: other task progress permissions",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: home tasks and navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: admin and Kelola Kelas route boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: own profile editing visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: file management visibility and edit",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: other task progress permissions",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: home tasks and navigation",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: admin and Kelola Kelas route boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: own profile editing visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: file management visibility and edit",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: other task progress permissions",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: operational forms save class data",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: operational forms save class data",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer biodata, reset password and delete confirmation",
+      "status": "PASS"
+    },
+    {
+      "name": "Failed save preserves biodata and allows retry, dialog traps focus",
+      "status": "PASS"
+    },
+    {
+      "name": "Class progress error recovers and empty roster is explicit",
+      "status": "PASS"
+    },
+    {
+      "name": "Trash confirmation waits for success and handles failure",
+      "status": "PASS"
+    },
+    {
+      "name": "Edited biodata and schedule text cannot inject markup",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive new UI 320 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive new UI 390 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive new UI 1440 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive new UI 320 dark",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive new UI 390 dark",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive new UI 1440 dark",
+      "status": "PASS"
+    }
+  ]
+}

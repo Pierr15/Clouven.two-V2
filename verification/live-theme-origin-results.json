@@ -1,0 +1,354 @@
+[
+  {
+    "scenario": "zoom-100-expanded",
+    "to": "dark",
+    "zoom": 1,
+    "avatarCenter": {
+      "x": 21,
+      "y": 698.5
+    },
+    "renderedCenter": {
+      "x": 20.580484369115496,
+      "y": 698.3544452444537
+    },
+    "errorCssPixels": 0.89,
+    "frames": 6,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-100-expanded",
+    "to": "light",
+    "zoom": 1,
+    "avatarCenter": {
+      "x": 21,
+      "y": 698.5
+    },
+    "renderedCenter": {
+      "x": 20.63177184717688,
+      "y": 698.1340806013337
+    },
+    "errorCssPixels": 1.04,
+    "frames": 14,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-100-collapsed",
+    "to": "dark",
+    "zoom": 1,
+    "avatarCenter": {
+      "x": 22.75,
+      "y": 698.5
+    },
+    "renderedCenter": {
+      "x": 22.51242236024877,
+      "y": 696.5559006211215
+    },
+    "errorCssPixels": 3.92,
+    "frames": 14,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-100-collapsed",
+    "to": "light",
+    "zoom": 1,
+    "avatarCenter": {
+      "x": 22.75,
+      "y": 698.5
+    },
+    "renderedCenter": {
+      "x": 22.51242236024877,
+      "y": 697.5559006211215
+    },
+    "errorCssPixels": 1.95,
+    "frames": 19,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-125-expanded",
+    "to": "dark",
+    "zoom": 1.25,
+    "avatarCenter": {
+      "x": 26.25,
+      "y": 693.125
+    },
+    "renderedCenter": {
+      "x": 25.949026513150102,
+      "y": 692.7005951301521
+    },
+    "errorCssPixels": 0.83,
+    "frames": 12,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-125-expanded",
+    "to": "light",
+    "zoom": 1.25,
+    "avatarCenter": {
+      "x": 26.25,
+      "y": 693.125
+    },
+    "renderedCenter": {
+      "x": 25.928074258188907,
+      "y": 692.4195591988542
+    },
+    "errorCssPixels": 1.24,
+    "frames": 17,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-125-collapsed",
+    "to": "dark",
+    "zoom": 1.25,
+    "avatarCenter": {
+      "x": 28.500000834465027,
+      "y": 693.125
+    },
+    "renderedCenter": {
+      "x": 27.94031260791101,
+      "y": 690.7966864951388
+    },
+    "errorCssPixels": 3.83,
+    "frames": 15,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-125-collapsed",
+    "to": "light",
+    "zoom": 1.25,
+    "avatarCenter": {
+      "x": 28.500000834465027,
+      "y": 693.125
+    },
+    "renderedCenter": {
+      "x": 28.02951822253306,
+      "y": 691.6854761178989
+    },
+    "errorCssPixels": 2.42,
+    "frames": 21,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-150-expanded",
+    "to": "dark",
+    "zoom": 1.5,
+    "avatarCenter": {
+      "x": 31.49384885764499,
+      "y": 687.6157000585823
+    },
+    "renderedCenter": {
+      "x": 31.049664241305287,
+      "y": 687.6138384945358
+    },
+    "errorCssPixels": 0.59,
+    "frames": 13,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-150-expanded",
+    "to": "light",
+    "zoom": 1.5,
+    "avatarCenter": {
+      "x": 31.49384885764499,
+      "y": 687.6157000585823
+    },
+    "renderedCenter": {
+      "x": 31.13254217079958,
+      "y": 687.089346622043
+    },
+    "errorCssPixels": 0.85,
+    "frames": 15,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-150-collapsed",
+    "to": "dark",
+    "zoom": 1.5,
+    "avatarCenter": {
+      "x": 34.24331280664177,
+      "y": 687.6157000585823
+    },
+    "renderedCenter": {
+      "x": 33.60930073818793,
+      "y": 685.9839631379144
+    },
+    "errorCssPixels": 2.33,
+    "frames": 20,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-150-collapsed",
+    "to": "light",
+    "zoom": 1.5,
+    "avatarCenter": {
+      "x": 34.24331280664177,
+      "y": 687.6157000585823
+    },
+    "renderedCenter": {
+      "x": 33.65704568982557,
+      "y": 685.569049446906
+    },
+    "errorCssPixels": 2.84,
+    "frames": 20,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-200-expanded",
+    "to": "dark",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 42,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 41.54498959221712,
+      "y": 676.6724131982097
+    },
+    "errorCssPixels": 0.56,
+    "frames": 13,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-200-expanded",
+    "to": "light",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 42,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 41.53436139975599,
+      "y": 676.752556101406
+    },
+    "errorCssPixels": 0.53,
+    "frames": 18,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-200-collapsed",
+    "to": "dark",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 45.5,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 44.78902555364367,
+      "y": 676.457450442507
+    },
+    "errorCssPixels": 0.89,
+    "frames": 17,
+    "status": "PASS"
+  },
+  {
+    "scenario": "zoom-200-collapsed",
+    "to": "light",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 45.5,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 45.00739644202531,
+      "y": 677.8936745040537
+    },
+    "errorCssPixels": 1.02,
+    "frames": 20,
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-200-expanded",
+    "to": "dark",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 42,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 41.48838942799593,
+      "y": 676.8542035168082
+    },
+    "errorCssPixels": 0.53,
+    "frames": 16,
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-200-expanded",
+    "to": "light",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 42,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 41.499676928070286,
+      "y": 676.852331709802
+    },
+    "errorCssPixels": 0.52,
+    "frames": 19,
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-200-collapsed",
+    "to": "dark",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 45.5,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 45.11413914511801,
+      "y": 677.6446625710248
+    },
+    "errorCssPixels": 0.75,
+    "frames": 19,
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-200-collapsed",
+    "to": "light",
+    "zoom": 2,
+    "avatarCenter": {
+      "x": 45.5,
+      "y": 677
+    },
+    "renderedCenter": {
+      "x": 45.06625025934369,
+      "y": 677.5087758783778
+    },
+    "errorCssPixels": 0.67,
+    "frames": 13,
+    "status": "PASS"
+  },
+  {
+    "scenario": "mobile",
+    "to": "dark",
+    "zoom": 1,
+    "avatarCenter": {
+      "x": 42,
+      "y": 801
+    },
+    "renderedCenter": {
+      "x": 41.48154637405316,
+      "y": 800.9557390130044
+    },
+    "errorCssPixels": 0.52,
+    "frames": 29,
+    "status": "PASS"
+  },
+  {
+    "scenario": "mobile",
+    "to": "light",
+    "zoom": 1,
+    "avatarCenter": {
+      "x": 42,
+      "y": 801
+    },
+    "renderedCenter": {
+      "x": 41.42790607435402,
+      "y": 800.6688059923373
+    },
+    "errorCssPixels": 0.66,
+    "frames": 37,
+    "status": "PASS"
+  }
+]

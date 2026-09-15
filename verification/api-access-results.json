@@ -1,0 +1,234 @@
+{
+  "scope": "Isolated handler mocks; no production writes",
+  "checks": 57,
+  "results": [
+    {
+      "name": "130 permission decisions match edited workbook",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: self ",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: edit ",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: delete ",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: reset ",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: file edit",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: file trash",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: download ",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: create ",
+      "status": "PASS"
+    },
+    {
+      "name": "student: self ",
+      "status": "PASS"
+    },
+    {
+      "name": "student: edit ",
+      "status": "PASS"
+    },
+    {
+      "name": "student: delete ",
+      "status": "PASS"
+    },
+    {
+      "name": "student: reset ",
+      "status": "PASS"
+    },
+    {
+      "name": "student: file edit",
+      "status": "PASS"
+    },
+    {
+      "name": "student: file trash",
+      "status": "PASS"
+    },
+    {
+      "name": "student: download ",
+      "status": "PASS"
+    },
+    {
+      "name": "student: create ",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: self ",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: edit ",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: delete ",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: reset ",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: file edit",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: file trash",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: download ",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: create ",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: self ",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: edit ",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: delete ",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: reset ",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: file edit",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: file trash",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: download ",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: create ",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: self ",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: edit ",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: delete ",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: reset ",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: file edit",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: file trash",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: download ",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: create ",
+      "status": "PASS"
+    },
+    {
+      "name": "User without member profile rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Self profile rejects uid",
+      "status": "PASS"
+    },
+    {
+      "name": "Self profile rejects role",
+      "status": "PASS"
+    },
+    {
+      "name": "Self profile rejects created_by",
+      "status": "PASS"
+    },
+    {
+      "name": "Own profile always bound to authenticated user",
+      "status": "PASS"
+    },
+    {
+      "name": "Unsafe photo URL rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Current developer cannot delete or demote itself",
+      "status": "PASS"
+    },
+    {
+      "name": "Delete requires matching username",
+      "status": "PASS"
+    },
+    {
+      "name": "Reset rejects short password and current account",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing account returns 404",
+      "status": "PASS"
+    },
+    {
+      "name": "Unregistered Drive file rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Outside-class Drive rejected even with metadata",
+      "status": "PASS"
+    },
+    {
+      "name": "Rename and category metadata updated",
+      "status": "PASS"
+    },
+    {
+      "name": "Removal uses Trash only",
+      "status": "PASS"
+    },
+    {
+      "name": "Partial trash retries without another Drive mutation",
+      "status": "PASS"
+    },
+    {
+      "name": "Unsupported methods rejected",
+      "status": "PASS"
+    }
+  ]
+}

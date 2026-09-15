@@ -1,0 +1,162 @@
+{
+  "scope": "Headless Edge, mocked Supabase data/RPC; external fonts/icons blocked; not a production login test",
+  "checks": 39,
+  "results": [
+    {
+      "name": "Developer default: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer solid: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer gradient: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer flow: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer neon: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer prism: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer shimmer: preview, explicit Save, profile and sidebar match",
+      "status": "PASS"
+    },
+    {
+      "name": "Animated effects visibly change without clipping in light mode",
+      "status": "PASS"
+    },
+    {
+      "name": "Animated effects visibly change without clipping in dark mode",
+      "status": "PASS"
+    },
+    {
+      "name": "student stored customization renders Default and no settings",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer stored customization renders Default and no settings",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher stored customization renders Default and no settings",
+      "status": "PASS"
+    },
+    {
+      "name": "Guest auth redirect and default identity",
+      "status": "PASS"
+    },
+    {
+      "name": "Role demotion updates open settings, profile, sidebar and open modal immediately",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing/invalid stored customization keeps name visible",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing/invalid stored customization keeps name visible",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing/invalid stored customization keeps name visible",
+      "status": "PASS"
+    },
+    {
+      "name": "Unsafe name remains text, never creates HTML nodes",
+      "status": "PASS"
+    },
+    {
+      "name": "Member attendance numbers sort numerically without mutating fetched data",
+      "status": "PASS"
+    },
+    {
+      "name": "100 members at 1440px, light: layout and card alignment",
+      "status": "PASS"
+    },
+    {
+      "name": "100 members at 1440px, dark: layout and card alignment",
+      "status": "PASS"
+    },
+    {
+      "name": "100 members at 820px, light: layout and card alignment",
+      "status": "PASS"
+    },
+    {
+      "name": "100 members at 820px, dark: layout and card alignment",
+      "status": "PASS"
+    },
+    {
+      "name": "100 members at 390px, light: layout and card alignment",
+      "status": "PASS"
+    },
+    {
+      "name": "100 members at 390px, dark: layout and card alignment",
+      "status": "PASS"
+    },
+    {
+      "name": "Reduced motion flow stays readable and static",
+      "status": "PASS"
+    },
+    {
+      "name": "Reduced motion prism stays readable and static",
+      "status": "PASS"
+    },
+    {
+      "name": "Reduced motion neon stays readable and static",
+      "status": "PASS"
+    },
+    {
+      "name": "Reduced motion shimmer stays readable and static",
+      "status": "PASS"
+    },
+    {
+      "name": "Live preview mobile, optional third color and failed Save preserves draft",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared identity on /",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared identity on /jadwal/?tab=apel",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared identity on /tugas/",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared identity on /admin/",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared identity on /penyimpanan/",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared identity on /tools/",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy name identity and role updates on /jadwal/?tab=piket",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy name identity and role updates on /jadwal/?tab=apel",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy lookup never guesses between duplicate or unknown names",
+      "status": "PASS"
+    }
+  ]
+}

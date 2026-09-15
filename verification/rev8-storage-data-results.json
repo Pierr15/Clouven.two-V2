@@ -1,0 +1,14 @@
+[
+  {
+    "name": "/penyimpanan/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "/penyimpanan/ empty only after successful response",
+    "status": "PASS"
+  },
+  {
+    "name": "Background refresh failure offers retry and prevents double request",
+    "status": "PASS"
+  }
+]

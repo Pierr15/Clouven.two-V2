@@ -1,0 +1,94 @@
+{
+  "scope": "Local Edge; simulated Supabase/accounts; no production writes",
+  "results": [
+    {
+      "name": "developer: linked task subject and teacher",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: linked task subject and teacher",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: linked task subject and teacher",
+      "status": "PASS"
+    },
+    {
+      "name": "Catalog JSON preview, validation and save",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: structured schedule, copy, conflicts and save",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: structured schedule, copy, conflicts and save",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: structured schedule, copy, conflicts and save",
+      "status": "PASS"
+    },
+    {
+      "name": "student: own Instagram editing",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: own Instagram editing",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: own Instagram editing",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: own Instagram editing",
+      "status": "PASS"
+    },
+    {
+      "name": "Member card Instagram link and owner edit",
+      "status": "PASS"
+    },
+    {
+      "name": "Custom dropdown keyboard and date picker",
+      "status": "PASS"
+    },
+    {
+      "name": "Instagram brand hover expanded",
+      "status": "PASS"
+    },
+    {
+      "name": "Instagram brand hover collapsed",
+      "status": "PASS"
+    },
+    {
+      "name": "Mobile brand tap preview and close",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive forms 320 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive forms 390 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive forms 1440 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive forms 320 dark",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive forms 390 dark",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive forms 1440 dark",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": "D:\\Codex\\2026-09-05\\p\\outputs\\ClouvenTwo-V2-Forms-Rev12\\ui-test-results\\forms-1788772921385"
+}

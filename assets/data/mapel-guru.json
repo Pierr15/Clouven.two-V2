@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "subjects": [
+    {
+      "subject": "Matematika",
+      "teachers": [
+        "Sugimin, S.Pd., M.Pd."
+      ]
+    },
+    {
+      "subject": "PAIBP",
+      "teachers": [
+        "Abu Bakar, S.Pd."
+      ]
+    },
+    {
+      "subject": "Bahasa Inggris",
+      "teachers": [
+        "Dobby Kurniawan, S.Pd."
+      ]
+    },
+    {
+      "subject": "Bahasa Indonesia",
+      "teachers": [
+        "Liza Amalia, S.Pd."
+      ]
+    },
+    {
+      "subject": "Bahasa Jawa",
+      "teachers": [
+        "Lulu Himmatul Ulya, S.Pd."
+      ]
+    },
+    {
+      "subject": "Sejarah",
+      "teachers": [
+        "Suherni, S.Pd."
+      ]
+    },
+    {
+      "subject": "PP",
+      "teachers": [
+        "Eri Murdiati, S.Pd."
+      ]
+    },
+    {
+      "subject": "KIK",
+      "teachers": [
+        "Salman Alfarizi, S.Kom."
+      ]
+    },
+    {
+      "subject": "Cloud",
+      "teachers": [
+        "Harits Rusli, S.Kom."
+      ]
+    },
+    {
+      "subject": "Mapil",
+      "teachers": [
+        "Muh. Nana Aviciena, S.Pd."
+      ]
+    },
+    {
+      "subject": "PJOK",
+      "teachers": [
+        "Shofi Aftah Buddin, S.Pd."
+      ]
+    },
+    {
+      "subject": "Infrastruktur",
+      "teachers": [
+        "Euis Murniasih, S.Kom."
+      ]
+    },
+    {
+      "subject": "Bahasa Jepang",
+      "teachers": [
+        "Iin Sri Mutiara, S.Pd."
+      ]
+    }
+  ]
+}

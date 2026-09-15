@@ -1,0 +1,14 @@
+{
+  "scope": "Local Edge; simulated Supabase/accounts; no production writes",
+  "results": [
+    {
+      "name": "Themed suggestions and modal dropdown remain interactive",
+      "status": "PASS"
+    },
+    {
+      "name": "Instagram error preserves input for retry",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": "D:\\Codex\\2026-09-05\\p\\outputs\\ClouvenTwo-V2-Forms-Rev12\\ui-test-results\\forms-1788773092168"
+}

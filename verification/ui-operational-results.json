@@ -1,0 +1,10 @@
+[
+  {
+    "name": "class_officer: operational forms save class data",
+    "status": "PASS"
+  },
+  {
+    "name": "teacher: operational forms save class data",
+    "status": "PASS"
+  }
+]

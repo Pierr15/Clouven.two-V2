@@ -1,0 +1,105 @@
+{
+  "scope": "Local PostgreSQL/PGlite; migration applied twice",
+  "results": [
+    {
+      "name": "guest: catalog replacement boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: catalog read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: member direct writes prohibited",
+      "status": "PASS"
+    },
+    {
+      "name": "student: catalog replacement boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: catalog read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: member direct writes prohibited",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: catalog replacement boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: catalog read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: member direct writes prohibited",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: catalog replacement boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: catalog read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: member direct writes prohibited",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: catalog replacement boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: catalog read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: member direct writes prohibited",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: catalog replacement boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: catalog read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: member direct writes prohibited",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid catalog rejected atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid catalog rejected atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid catalog rejected atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid catalog rejected atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid catalog rejected atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid catalog rejected atomically",
+      "status": "PASS"
+    },
+    {
+      "name": "Instagram database constraint",
+      "status": "PASS"
+    }
+  ]
+}

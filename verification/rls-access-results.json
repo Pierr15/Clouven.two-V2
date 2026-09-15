@@ -1,0 +1,374 @@
+{
+  "scope": "PGlite PostgreSQL in memory, real SQL/RLS; isolated auth.uid fixture; no live Supabase or concurrent sessions",
+  "checks": 92,
+  "results": [
+    {
+      "name": "guest: public class information readable",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: task and member/file read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: own and other progress visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: insert self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: update self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: delete self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: insert other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: update other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: delete other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: class_profile CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: schedules CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: apel_queue CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: tasks CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: profile and resource management require server",
+      "status": "PASS"
+    },
+    {
+      "name": "guest: upload metadata insert boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: public class information readable",
+      "status": "PASS"
+    },
+    {
+      "name": "student: task and member/file read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: own and other progress visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "student: insert self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "student: update self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "student: delete self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "student: insert other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "student: update other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "student: delete other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "student: class_profile CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: schedules CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: apel_queue CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: tasks CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "student: profile and resource management require server",
+      "status": "PASS"
+    },
+    {
+      "name": "student: upload metadata insert boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: public class information readable",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: task and member/file read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: own and other progress visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: insert self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: update self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: delete self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: insert other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: update other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: delete other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: class_profile CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: schedules CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: apel_queue CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: tasks CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: profile and resource management require server",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: upload metadata insert boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: public class information readable",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: task and member/file read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: own and other progress visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: insert self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: update self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: delete self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: insert other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: update other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: delete other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: class_profile CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: schedules CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: apel_queue CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: tasks CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: profile and resource management require server",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: upload metadata insert boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: public class information readable",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: task and member/file read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: own and other progress visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: insert self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: update self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: delete self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: insert other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: update other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: delete other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: class_profile CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: schedules CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: apel_queue CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: tasks CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: profile and resource management require server",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: upload metadata insert boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: public class information readable",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: task and member/file read boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: own and other progress visibility",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: insert self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: update self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: delete self progress",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: insert other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: update other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: delete other progress",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: class_profile CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: schedules CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: apel_queue CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: tasks CRUD boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: profile and resource management require server",
+      "status": "PASS"
+    },
+    {
+      "name": "orphan: upload metadata insert boundary",
+      "status": "PASS"
+    },
+    {
+      "name": "Last developer cannot be demoted or deleted via service operations",
+      "status": "PASS"
+    },
+    {
+      "name": "Deleting another account cascades progress and preserves task",
+      "status": "PASS"
+    }
+  ]
+}

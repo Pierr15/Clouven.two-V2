@@ -1,0 +1,78 @@
+{
+  "scope": "Headless Edge; isolated Supabase fixture; no production writes",
+  "results": [
+    {
+      "name": "developer: title settings save and reload within panel",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: title settings save and reload within panel",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: title settings save and reload within panel",
+      "status": "PASS"
+    },
+    {
+      "name": "Title save failure retains draft, retries once, limits variations",
+      "status": "PASS"
+    },
+    {
+      "name": "Task delete cancel, Escape and return focus",
+      "status": "PASS"
+    },
+    {
+      "name": "Task delete busy guard, success and focus after row removed",
+      "status": "PASS"
+    },
+    {
+      "name": "Task delete failure and zero-row denial never show success",
+      "status": "PASS"
+    },
+    {
+      "name": "Title phrases cycle, stable layout and reduced motion 320",
+      "status": "PASS"
+    },
+    {
+      "name": "Title phrases cycle, stable layout and reduced motion 390",
+      "status": "PASS"
+    },
+    {
+      "name": "Title phrases cycle, stable layout and reduced motion 1440",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing configuration retries before creating client",
+      "status": "PASS"
+    },
+    {
+      "name": "Frontend rejects secret-key configuration",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive editor and deletion dialog 320 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive editor and deletion dialog 390 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive editor and deletion dialog 1440 light",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive editor and deletion dialog 320 dark",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive editor and deletion dialog 390 dark",
+      "status": "PASS"
+    },
+    {
+      "name": "Responsive editor and deletion dialog 1440 dark",
+      "status": "PASS"
+    }
+  ],
+  "screenshots": "D:\\Codex\\2026-09-05\\p\\outputs\\ClouvenTwo-V2-Forms-Rev12\\ui-test-results\\settings-1788772751049"
+}

@@ -1,0 +1,53 @@
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const fixed = true;
+const root = path.resolve(__dirname, '..');
+const out = path.join(root, 'ui-test-results', Date.now().toString()); fs.mkdirSync(out, { recursive:true });
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml'};
+const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComponent(req.url.split('?')[0]));if(fs.existsSync(file)&&fs.statSync(file).isDirectory())file=path.join(file,'index.html');if(!file.startsWith(root)||!fs.existsSync(file)){res.writeHead(404);return res.end();}res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');res.end(fs.readFileSync(file));});
+function mock(){
+ const long='Muhammad Abdurrahman Pratama';
+ const members=Array.from({length:8},(_,i)=>({id:`member-${i}`,name:i?long+' '+(i+1):'Pengelola Kelas',username:'1234567890123456789012345678901234567890',number:i+1,role:i?'student':(window.__UI_ROLE||'developer'),class_role:'Anggota',quote:'Bersama belajar dan berkembang. '.repeat(12)}));
+ const tasks=[{id:'task-1',title:'Konfigurasi jaringan dan dokumentasi topologi laboratorium',subject:'Administrasi Infrastruktur Jaringan',due:'2026-09-07',description:'Dokumentasi_jaringan_laboratorium_'.repeat(5),teacher:long}];
+ const tables={members,tasks,task_summaries:tasks,task_progress:[],class_profile:[],schedules:[{day:'monday',lessons:[{time:'07.00–08.30',subject:'Administrasi Infrastruktur Jaringan',teacher:long,room:'Laboratorium TKJ'}],piket:members.map(m=>m.name)}],apel_queue:members.map((m,i)=>({id:m.id,name:m.name,position:i})),resources:[{id:'resource-1',name:'Dokumentasi_Konfigurasi_Jaringan_Laboratorium_'.repeat(4)+'.pdf',subject:'Administrasi Infrastruktur Jaringan',kind:'materi',size:100000,drive_file_id:'test-file'}]};
+ const user={id:'member-0',user_metadata:{name:'Pengelola Kelas'}};
+ window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:(window.__UI_ROLE==='guest'||location.pathname.includes('/login'))?null:{user,access_token:'local-test'}}}),signOut:async()=>({}),signInWithPassword:async()=>({error:{message:'Simulasi lokal: kredensial tidak dikirim.'}})},from(table){let single=false;const q={select(){return q},eq(){return q},order(){return q},maybeSingle(){single=true;return q},then(resolve,reject){return Promise.resolve({data:single?(tables[table]?.[0]||null):(tables[table]||[]),error:null}).then(resolve,reject)}};return q},channel(){return{on(){return this},subscribe(){return this}}},removeChannel(){}})};
+}
+async function setup(page){await page.route('**/*',route=>{const url=route.request().url();if(new URL(url).pathname==="/api/config")return route.fulfill({contentType:"application/json",body:JSON.stringify({url:"https://classroom.invalid",publishableKey:"sb_publishable_local_test_configuration"})});if(url.includes('/@supabase/supabase-js'))return route.fulfill({contentType:'text/javascript',body:`(${mock.toString()})();`});if(url.startsWith('http://127.0.0.1:'))return route.continue();if(/fonts\.(googleapis|gstatic)\.com|cdn.jsdelivr.net\/npm\/@tabler/.test(url))return route.abort();return route.abort();});}
+async function overflow(page){return page.evaluate(()=>[...document.querySelectorAll('main *,.login-page *')].filter(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();if(!r.width||s.visibility==='hidden'||el.closest('.schedule-panel,.admin-nav'))return false;return r.right>innerWidth+2||r.left< -2||((el.matches('h1,h2,h3,strong,p,.result-cell,.task-card,.resource-row'))&&el.scrollWidth>el.clientWidth+3)}).map(el=>({tag:el.tagName,cls:el.className,text:el.textContent.slice(0,70),width:el.clientWidth,scroll:el.scrollWidth,right:Math.round(el.getBoundingClientRect().right)})));}
+
+
+
+const assert=require('assert/strict');
+(async()=>{
+ await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+ const browser=await chromium.launch({...(process.env.UI_BROWSER_PATH ? {executablePath:process.env.UI_BROWSER_PATH} : process.platform === 'win32' ? {channel:'msedge'} : {}),headless:true});const context=await browser.newContext({viewport:{width:1440,height:900}});const page=await context.newPage();await setup(page);const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.addInitScript(()=>{const start=document.startViewTransition.bind(document);document.startViewTransition=update=>{const m=window.__motion={start:performance.now()};const t=start(update);t.ready.then(()=>{m.ready=performance.now();m.animations=document.getAnimations().map(a=>({name:a.animationName,duration:a.effect.getTiming().duration,delay:a.effect.getTiming().delay,keyframes:a.effect.getKeyframes()}));}).catch(()=>{});t.finished.then(()=>m.end=performance.now());return t;};});
+ const settled=()=>page.waitForFunction(()=>!document.documentElement.classList.contains('theme-transitioning'));
+ const theme=()=>page.locator('html').getAttribute('data-theme');
+ async function change(selector,next,collapsed=false){
+  const avatar=await page.locator('.profile-avatar').boundingBox();
+  await page.locator(selector).click();await page.waitForFunction(()=>window.__motion?.ready);
+  assert.ok(await page.evaluate(avatar=>Math.abs(parseFloat(document.documentElement.style.getPropertyValue('--theme-origin-x'))*innerWidth/100-(avatar.x+avatar.width/2))<1,avatar));
+  assert.ok(await page.evaluate(avatar=>Math.abs(parseFloat(document.documentElement.style.getPropertyValue('--theme-origin-y'))*innerHeight/100-(avatar.y+avatar.height/2))<1,avatar));
+  const animations=await page.evaluate(()=>window.__motion.animations);const reveal=animations.filter(a=>a.name==='theme-reveal');assert.equal(reveal.length,1);assert.equal(reveal[0].duration,450);assert.equal(reveal[0].delay,0);
+  if(collapsed){assert.ok(animations.some(a=>a.name==='theme-drawer-dismiss'&&a.duration===180&&a.delay===0));assert.equal(await page.locator('.account-drawer').evaluate(el=>el.inert),true);}
+  await settled();assert.equal(await theme(),next);const metrics=await page.evaluate(()=>window.__motion);assert.ok(metrics.end-metrics.start<1200);console.log('PASS '+(collapsed?'collapsed':'expanded')+' to '+next+'; single reveal, avatar origin; elapsed '+Math.round(metrics.end-metrics.start)+'ms');
+ }
+ await page.goto(base,{waitUntil:'networkidle'});assert.equal(await page.locator('[role="switch"],.theme-switch-track').count(),0);assert.equal(await page.locator('.profile-theme').getAttribute('aria-label'),'Dark mode');console.log('PASS plain buttons replace both switches');
+ await change('.profile-theme','dark');assert.equal(await page.locator('.profile-theme').getAttribute('aria-label'),'Light mode');await change('.profile-theme','light');
+ await page.locator('.sidebar-collapse').click();await page.waitForTimeout(250);await page.locator('.profile-main').hover();await page.locator('.drawer-theme').waitFor({state:'visible'});await change('.drawer-theme','dark',true);
+ await page.waitForTimeout(250);assert.equal(await page.locator('.account-drawer').isVisible(),false);assert.equal(await page.evaluate(()=>document.activeElement.className),'profile-main');console.log('PASS drawer remains closed with mouse stationary and focus returned');
+ await page.mouse.move(500,400);await page.locator('.profile-main').hover();await page.locator('.drawer-theme').waitFor({state:'visible'});assert.equal(await page.locator('.account-drawer').evaluate(el=>el.inert),false);await change('.drawer-theme','light',true);console.log('PASS hover reopens dismissed drawer');
+ await page.locator('.profile-main').press('ArrowDown');await page.locator('.drawer-theme').waitFor({state:'visible'});await page.locator('.drawer-theme').focus();await page.keyboard.press('Space');await settled();assert.equal(await theme(),'dark');assert.equal(await page.locator('.account-drawer').isVisible(),false);console.log('PASS keyboard reopens and closes theme drawer');
+ await page.reload({waitUntil:'networkidle'});assert.equal(await theme(),'dark');console.log('PASS saved theme persists');
+ for(const width of [320,1440]){await page.setViewportSize({width,height:900});for(const route of ['/','/jadwal/','/tugas/','/tools/','/penyimpanan/','/anggota/','/profile/','/admin/','/login/','/admin/login/']){await page.goto(base+route,{waitUntil:'networkidle'});assert.equal(await theme(),'dark');assert.deepEqual(await overflow(page),[]);}}
+ await page.goto(base,{waitUntil:'networkidle'});console.log('PASS 20 dark layouts across all pages');
+ await page.emulateMedia({reducedMotion:'reduce'});await page.locator('.profile-main').hover();await page.locator('.drawer-theme').click();assert.equal(await theme(),'light');assert.equal(await page.locator('.account-drawer').isVisible(),false);console.log('PASS reduced motion closes drawer and changes theme immediately');
+ await page.setViewportSize({width:320,height:700});await page.locator('.mobile-menu').click();await page.waitForTimeout(250);await page.locator('.profile-theme').click();assert.equal(await theme(),'dark');await page.locator('.sidebar-close').click();assert.equal(await page.locator('.app-main').evaluate(el=>el.inert),false);console.log('PASS mobile theme button');
+ await page.emulateMedia({reducedMotion:'no-preference'});await page.setViewportSize({width:1440,height:900});await page.locator('.profile-main').hover();await page.mouse.move(500,400);await page.locator('.profile-main').blur();await page.waitForTimeout(70);const opacity=await page.locator('.account-drawer').evaluate(el=>Number(getComputedStyle(el).opacity));assert.ok(opacity<1);await page.waitForTimeout(200);assert.equal(await page.locator('.account-drawer').isVisible(),false);console.log('PASS normal hover exit fades drawer');
+ const fallback=await browser.newPage();await setup(fallback);await fallback.addInitScript(()=>{document.startViewTransition=undefined;window.__UI_ROLE='guest';});await fallback.goto(base,{waitUntil:'networkidle'});await fallback.locator('.sidebar-collapse').click();await fallback.locator('.profile-main').hover();await fallback.locator('.drawer-theme').click();await fallback.waitForTimeout(250);assert.equal(await fallback.locator('html').getAttribute('data-theme'),'dark');assert.equal(await fallback.locator('.account-drawer').isVisible(),false);console.log('PASS guest and unsupported-browser fallback');await fallback.close();
+ assert.deepEqual(errors,[]);console.log('PASS no runtime errors');await browser.close();server.close();
+})().catch(e=>{console.error(e);process.exit(1)});

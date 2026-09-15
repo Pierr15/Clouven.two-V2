@@ -1,0 +1,15 @@
+import { bootShell } from "../bootstrap.js";
+import { showToast } from "../utils.js";
+await bootShell("tools");
+
+function ipToInt(ip){const p=ip.trim().split(".").map(Number);if(p.length!==4||p.some(n=>!Number.isInteger(n)||n<0||n>255))throw new Error("IP tidak valid");return (((p[0]<<24)>>>0)+(p[1]<<16)+(p[2]<<8)+p[3])>>>0;}
+function intToIp(n){return [n>>>24,(n>>>16)&255,(n>>>8)&255,n&255].join(".");}
+function maskFromCidr(cidr){return cidr===0?0:(0xffffffff << (32-cidr))>>>0;}
+function calculate(){try{const ip=ipToInt(document.querySelector("#ipAddress").value),cidr=Number(document.querySelector("#cidr").value);if(!Number.isInteger(cidr)||cidr<0||cidr>32)throw new Error("CIDR harus 0–32");const mask=maskFromCidr(cidr),network=(ip&mask)>>>0,broadcast=(network|(~mask>>>0))>>>0,hosts=cidr>=31?0:Math.max(0,2**(32-cidr)-2);document.querySelector("#ipResult").innerHTML=`<div class="result-cell"><span>Subnet mask</span><strong>${intToIp(mask)}</strong></div><div class="result-cell"><span>Network</span><strong>${intToIp(network)}</strong></div><div class="result-cell"><span>Broadcast</span><strong>${intToIp(broadcast)}</strong></div><div class="result-cell"><span>Usable host</span><strong>${hosts?`${intToIp(network+1)} – ${intToIp(broadcast-1)}`:"—"}</strong></div><div class="result-cell"><span>Jumlah host</span><strong>${hosts.toLocaleString("id-ID")}</strong></div><div class="result-cell"><span>Wildcard</span><strong>${intToIp((~mask)>>>0)}</strong></div>`;}catch(e){showToast(e.message);}}
+document.querySelector("#ipCalc").addEventListener("submit",e=>{e.preventDefault();calculate();});calculate();
+
+function convert(){const raw=document.querySelector("#numberValue").value.trim(),base=Number(document.querySelector("#numberBase").value);const n=parseInt(raw,base);if(Number.isNaN(n)){document.querySelector("#numberResult").innerHTML="";return;}document.querySelector("#numberResult").innerHTML=`<div class="result-cell"><span>Decimal</span><strong>${n}</strong></div><div class="result-cell"><span>Binary</span><strong>${n.toString(2)}</strong></div><div class="result-cell"><span>Hex</span><strong>${n.toString(16).toUpperCase()}</strong></div><div class="result-cell"><span>Octal</span><strong>${n.toString(8)}</strong></div>`;}
+document.querySelector("#numberForm").addEventListener("submit",e=>{e.preventDefault();convert();});
+document.querySelector("#numberForm").addEventListener("input",convert);convert();
+
+document.querySelector("#bandwidthForm").addEventListener("submit",e=>{e.preventDefault();const size=Number(e.target.size.value),speed=Number(e.target.speed.value);if(!(size>0&&speed>0))return;const seconds=size*8/speed;const human=seconds<60?`${seconds.toFixed(1)} detik`:seconds<3600?`${(seconds/60).toFixed(1)} menit`:`${(seconds/3600).toFixed(2)} jam`;document.querySelector("#bandwidthResult").innerHTML=`<div class="result-cell"><span>Estimasi waktu</span><strong>${human}</strong></div><div class="result-cell"><span>Catatan</span><strong>Teoretis, belum termasuk overhead</strong></div>`;});

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Measured progress, unknown totals, Drive wait, metadata wait and success",
+    "status": "PASS"
+  },
+  {
+    "name": "List save error retries without another Drive upload",
+    "status": "PASS"
+  },
+  {
+    "name": "List save committed-error retries without another Drive upload",
+    "status": "PASS"
+  },
+  {
+    "name": "Native XHR transfers exact file bytes to a local endpoint",
+    "status": "PASS"
+  },
+  {
+    "name": "Student cannot see or submit upload controls",
+    "status": "PASS"
+  }
+]

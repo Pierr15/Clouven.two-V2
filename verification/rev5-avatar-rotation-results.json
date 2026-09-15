@@ -1,0 +1,102 @@
+[
+  {
+    "scenario": "expanded",
+    "to": "dark",
+    "origin": [
+      42.000048,
+      856.9997999999999
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "expanded",
+    "to": "light",
+    "origin": [
+      42.000048,
+      856.9997999999999
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "collapsed",
+    "to": "dark",
+    "origin": [
+      45.499967999999996,
+      856.9997999999999
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "collapsed",
+    "to": "light",
+    "origin": [
+      45.499967999999996,
+      856.9997999999999
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-expanded",
+    "to": "dark",
+    "origin": [
+      42.000048,
+      656.9997
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-expanded",
+    "to": "light",
+    "origin": [
+      42.000048,
+      656.9997
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-collapsed-hidpi",
+    "to": "dark",
+    "origin": [
+      45.499967999999996,
+      656.9997
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "scrolled-collapsed-hidpi",
+    "to": "light",
+    "origin": [
+      45.499967999999996,
+      656.9997
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "mobile",
+    "to": "dark",
+    "origin": [
+      41.999880000000005,
+      800.9998879999999
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  },
+  {
+    "scenario": "mobile",
+    "to": "light",
+    "origin": [
+      41.999880000000005,
+      800.9998879999999
+    ],
+    "rotation": "180 degrees",
+    "status": "PASS"
+  }
+]

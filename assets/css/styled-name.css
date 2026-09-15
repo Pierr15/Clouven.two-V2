@@ -1,0 +1,148 @@
+.styled-name {
+  --name-c1: var(--name-c1-light);
+  --name-c2: var(--name-c2-light);
+  --name-c3: var(--name-c3-light);
+  --name-highlight: #122c21;
+  display: inline;
+  position: relative;
+  isolation: isolate;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  overflow-wrap: inherit;
+  -webkit-box-decoration-break: slice;
+  box-decoration-break: slice;
+}
+[data-theme="dark"] .styled-name {
+  --name-c1: var(--name-c1-dark);
+  --name-c2: var(--name-c2-dark);
+  --name-c3: var(--name-c3-dark);
+  --name-highlight: #ffffff;
+}
+.styled-name:not([data-name-style="default"]) {
+  color: var(--name-c1, inherit);
+  text-decoration: none;
+}
+.styled-name[data-name-style="neon"] {
+  -webkit-text-stroke: .012em color-mix(in srgb, var(--name-c1) 72%, currentColor);
+  text-shadow:
+    0 0 .06em var(--name-c1),
+    0 0 .18em color-mix(in srgb, var(--name-c1) 84%, transparent),
+    0 0 .42em color-mix(in srgb, var(--name-c1) 52%, transparent);
+  animation: name-neon 2.6s ease-in-out infinite;
+}
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  .styled-name:is([data-name-style="gradient"], [data-name-style="flow"], [data-name-style="prism"], [data-name-style="shimmer"]) {
+    background-repeat: no-repeat;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: .008em color-mix(in srgb, var(--name-c1) 25%, transparent);
+    text-shadow: none;
+  }
+  .styled-name[data-name-style="gradient"] {
+    background-image: linear-gradient(105deg,
+      var(--name-c1) 0%, var(--name-c1) 8%,
+      var(--name-c2) 48%, var(--name-c3) 92%, var(--name-c3) 100%);
+  }
+  .styled-name[data-name-style="flow"] {
+    background-image: linear-gradient(100deg,
+      var(--name-c1) 0%, var(--name-c2) 18%, var(--name-c3) 36%,
+      var(--name-c1) 54%, var(--name-c2) 72%, var(--name-c3) 90%, var(--name-c1) 100%);
+    background-size: 200% 100%;
+    animation: name-flow 4.8s ease-in-out infinite alternate;
+  }
+  .styled-name:is([data-name-style="gradient"], [data-name-style="flow"]) {
+    text-shadow: none;
+    filter: none;
+    -webkit-text-stroke: 0;
+  }
+  .styled-name[data-name-style="prism"] {
+    background-image: linear-gradient(105deg,
+      var(--name-c1) 0%,
+      color-mix(in srgb, var(--name-c1) 42%, var(--name-c2)) 10%,
+      var(--name-c2) 21%,
+      color-mix(in srgb, var(--name-c2) 44%, var(--name-c3)) 32%,
+      var(--name-c3) 43%,
+      color-mix(in srgb, var(--name-c3) 45%, var(--name-c1)) 54%,
+      var(--name-c1) 65%, var(--name-c2) 78%, var(--name-c3) 90%, var(--name-c1) 100%);
+    background-size: 200% 100%;
+    animation: name-prism 5.8s ease-in-out infinite alternate;
+    text-shadow: 0 0 .22em color-mix(in srgb, var(--name-c2) 18%, transparent);
+  }
+  .styled-name[data-name-style="shimmer"] {
+    background-image: linear-gradient(105deg,
+      var(--name-c1) 0%, var(--name-c1) 38%,
+      var(--name-c2) 45%, var(--name-c3) 48%, var(--name-highlight) 50%,
+      var(--name-c3) 52%, var(--name-c2) 55%, var(--name-c1) 62%, var(--name-c1) 100%);
+    background-size: 300% 100%;
+    animation: name-shimmer 4.6s cubic-bezier(.45, 0, .2, 1) infinite;
+    text-shadow: 0 0 .12em color-mix(in srgb, var(--name-c2) 38%, transparent);
+  }
+}
+@keyframes name-flow {
+  from { background-position: 100% 50%; }
+  to { background-position: 0% 50%; }
+}
+@keyframes name-prism {
+  0% { background-position: 100% 50%; }
+  50% { background-position: 50% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes name-shimmer {
+  0%, 24% { background-position: 100% 50%; }
+  68%, 100% { background-position: 0% 50%; }
+}
+@keyframes name-neon {
+  0%, 100% {
+    text-shadow:
+      0 0 .05em var(--name-c1),
+      0 0 .14em color-mix(in srgb, var(--name-c1) 75%, transparent),
+      0 0 .32em color-mix(in srgb, var(--name-c1) 42%, transparent);
+  }
+  50% {
+    text-shadow:
+      0 0 .08em var(--name-c1),
+      0 0 .28em color-mix(in srgb, var(--name-c1) 92%, transparent),
+      0 0 .62em color-mix(in srgb, var(--name-c1) 62%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .styled-name { animation: none !important; background-position: 50% 50%; }
+  .styled-name[data-name-style="neon"] {
+    text-shadow: 0 0 .07em var(--name-c1), 0 0 .25em color-mix(in srgb, var(--name-c1) 70%, transparent);
+  }
+}
+@media (forced-colors: active) {
+  .styled-name {
+    color: CanvasText !important;
+    -webkit-text-fill-color: CanvasText !important;
+    -webkit-text-stroke: 0 !important;
+    background: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+  }
+}
+@media print {
+  .styled-name {
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    -webkit-text-stroke: 0 !important;
+    background: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+  }
+}
+.name-settings { margin-top: 18px; }
+.name-settings[hidden], .name-settings [hidden] { display: none; }
+.name-settings .form-grid { margin-top: 16px; }
+.name-settings input[type="color"] { width: 100%; height: 44px; padding: 4px; cursor: pointer; }
+.name-settings fieldset { min-width: 0; border: 0; padding: 0; margin: 0; }
+.name-settings legend { font-weight: 600; margin-bottom: 8px; }
+.name-settings .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.name-settings .name-preview { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+.name-settings .name-preview p { margin: 0 0 8px; }
+.name-settings .name-preview output { display: block; overflow-wrap: anywhere; }
+.name-settings .name-preview output { font-size: clamp(24px, 4vw, 38px); font-weight: 600; }
+.name-settings :is(input,select,button):focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }

@@ -1,0 +1,102 @@
+[
+  {
+    "name": "/jadwal/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "/jadwal/ empty only after successful response",
+    "status": "PASS"
+  },
+  {
+    "name": "/tugas/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "/tugas/ empty only after successful response",
+    "status": "PASS"
+  },
+  {
+    "name": "/anggota/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "/anggota/ empty only after successful response",
+    "status": "PASS"
+  },
+  {
+    "name": "/penyimpanan/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "/penyimpanan/ empty only after successful response",
+    "status": "PASS"
+  },
+  {
+    "name": "/profile/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "/admin/ loading -> failure -> retry -> content",
+    "status": "PASS"
+  },
+  {
+    "name": "Home independently recovers failed summary without false empty data",
+    "status": "PASS"
+  },
+  {
+    "name": "Task progress failure never marks completed tasks as open",
+    "status": "PASS"
+  },
+  {
+    "name": "Switching days ignores delayed response from unsubscribed day",
+    "status": "PASS"
+  },
+  {
+    "name": "Slow response times out and a later retry recovers",
+    "status": "PASS"
+  },
+  {
+    "name": "Account read failure has recoverable startup message",
+    "status": "PASS"
+  },
+  {
+    "name": "SDK download failure can be retried without page reload",
+    "status": "PASS"
+  },
+  {
+    "name": "Background refresh failure offers retry and prevents double request",
+    "status": "PASS"
+  },
+  {
+    "name": "Admin changing days shows no editable stale schedule after failure",
+    "status": "PASS"
+  },
+  {
+    "name": "Mobile light failure states fit viewport with real fonts",
+    "status": "PASS"
+  },
+  {
+    "name": "Mobile dark failure states fit viewport with real fonts",
+    "status": "PASS"
+  },
+  {
+    "name": "Admin tab apel recovers to an editable empty state",
+    "status": "PASS"
+  },
+  {
+    "name": "Admin tab tasks recovers to an editable empty state",
+    "status": "PASS"
+  },
+  {
+    "name": "Admin tab users recovers to an editable empty state",
+    "status": "PASS"
+  },
+  {
+    "name": "A missing profile has its own empty state",
+    "status": "PASS"
+  },
+  {
+    "name": "Login startup error stays inside the form card and can recover",
+    "status": "PASS"
+  }
+]

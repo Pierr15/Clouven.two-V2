@@ -1,0 +1,82 @@
+[
+  {
+    "name": "Visible limit and disabled submit before selection",
+    "status": "PASS"
+  },
+  {
+    "name": "File size boundary 0",
+    "status": "PASS"
+  },
+  {
+    "name": "File size boundary 3145728",
+    "status": "PASS"
+  },
+  {
+    "name": "File size boundary 3145729",
+    "status": "PASS"
+  },
+  {
+    "name": "Selected name is escaped and oversized selection can be replaced",
+    "status": "PASS"
+  },
+  {
+    "name": "Measured progress, unknown totals, Drive wait, metadata wait and success",
+    "status": "PASS"
+  },
+  {
+    "name": "Transfer error retains file and permits manual retry",
+    "status": "PASS"
+  },
+  {
+    "name": "Transfer timeout retains file and permits manual retry",
+    "status": "PASS"
+  },
+  {
+    "name": "Transfer abort retains file and permits manual retry",
+    "status": "PASS"
+  },
+  {
+    "name": "HTTP 401 never reports success",
+    "status": "PASS"
+  },
+  {
+    "name": "HTTP 403 never reports success",
+    "status": "PASS"
+  },
+  {
+    "name": "HTTP 413 never reports success",
+    "status": "PASS"
+  },
+  {
+    "name": "HTTP 500 never reports success",
+    "status": "PASS"
+  },
+  {
+    "name": "Invalid success response cannot create a list entry",
+    "status": "PASS"
+  },
+  {
+    "name": "List save error retries without another Drive upload",
+    "status": "PASS"
+  },
+  {
+    "name": "List save committed-error retries without another Drive upload",
+    "status": "PASS"
+  },
+  {
+    "name": "Native XHR transfers exact file bytes to a local endpoint",
+    "status": "PASS"
+  },
+  {
+    "name": "Student cannot see or submit upload controls",
+    "status": "PASS"
+  },
+  {
+    "name": "Mobile light selected and uploading layouts",
+    "status": "PASS"
+  },
+  {
+    "name": "Mobile dark selected and uploading layouts",
+    "status": "PASS"
+  }
+]

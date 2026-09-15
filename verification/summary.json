@@ -1,0 +1,9 @@
+{
+  "originalFilesVerified": 46,
+  "originalFilesChanged": 0,
+  "layoutScenarios": 70,
+  "layoutIssues": 0,
+  "interactionScenariosPassed": 18,
+  "backend": "simulated locally",
+  "browser": "Microsoft Edge headless"
+}

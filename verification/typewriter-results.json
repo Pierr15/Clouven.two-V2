@@ -1,0 +1,62 @@
+{
+  "scope": "Edge headless, local data, controlled browser clock",
+  "results": [
+    {
+      "width": 320,
+      "status": "PASS",
+      "checks": [
+        "typing",
+        "5000ms hold",
+        "deletion",
+        "repeat",
+        "stable layout",
+        "no horizontal overflow",
+        "realtime deduplication",
+        "updated heading",
+        "safe markup",
+        "grapheme",
+        "reduced motion",
+        "accessible heading",
+        "pause hidden tab"
+      ]
+    },
+    {
+      "width": 390,
+      "status": "PASS",
+      "checks": [
+        "typing",
+        "5000ms hold",
+        "deletion",
+        "repeat",
+        "stable layout",
+        "no horizontal overflow",
+        "realtime deduplication",
+        "updated heading",
+        "safe markup",
+        "grapheme",
+        "reduced motion",
+        "accessible heading",
+        "pause hidden tab"
+      ]
+    },
+    {
+      "width": 1440,
+      "status": "PASS",
+      "checks": [
+        "typing",
+        "5000ms hold",
+        "deletion",
+        "repeat",
+        "stable layout",
+        "no horizontal overflow",
+        "realtime deduplication",
+        "updated heading",
+        "safe markup",
+        "grapheme",
+        "reduced motion",
+        "accessible heading",
+        "pause hidden tab"
+      ]
+    }
+  ]
+}

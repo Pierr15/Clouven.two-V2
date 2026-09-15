@@ -1,0 +1,23 @@
+{
+  "name": "clouven-two-supabase",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "bootstrap:developer": "node scripts/bootstrap-developer.mjs",
+    "setup:drive": "node scripts/setup-google-drive.mjs",
+    "migrate:firebase": "node scripts/migrate-firebase-to-supabase.mjs",
+    "start": "node scripts/serve.mjs",
+    "start:4173": "set PORT=4173&& node scripts/serve.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.116.0",
+    "dotenv": "^17.4.2"
+  },
+  "devDependencies": {
+    "firebase-admin": "^13.4.0"
+  },
+  "allowScripts": {
+    "dotenv@17.4.2": true
+  }
+}

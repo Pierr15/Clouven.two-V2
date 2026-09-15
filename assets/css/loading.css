@@ -1,0 +1,65 @@
+/* Match the existing card grid, photo ratio, padding and theme tokens. */
+.loading-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.loading-card { pointer-events: none; user-select: none; }
+.loading-card:hover { transform: none; box-shadow: none; }
+.loading-shape { display: block; flex-shrink: 1; min-width: 0; border-radius: 5px; background: var(--paper-deep); position: relative; overflow: hidden; }
+.loading-shape::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 15%, rgba(255,255,255,.48) 50%, transparent 85%); transform: translateX(-100%); animation: card-loading-shimmer 1.65s ease-in-out infinite; }
+[data-theme="dark"] .loading-shape::after { background: linear-gradient(100deg, transparent 15%, rgba(231,238,232,.09) 50%, transparent 85%); }
+.loading-card .member-photo { width: 100%; border-radius: 0; }
+.loading-name { width: 82%; height: 19px; }
+.loading-role { width: 55%; height: 15px; }
+.loading-social { width: 72%; height: 14px; }
+.loading-subject { width: 35%; height: 12px; margin-top: 4px; }
+.loading-badge { width: 73px; height: 21px; border-radius: 20px; }
+.loading-title { width: 92%; height: 18px; }
+.loading-title-short { width: 62%; height: 18px; margin-top: 7px; }
+.loading-description { width: 100%; height: 13px; }
+.loading-description-short { width: 74%; height: 13px; margin-top: 7px; }
+.loading-date { width: 45%; height: 13px; }
+.loading-action { width: 108px; height: 30px; border-radius: 9px; }
+.task-card.loading-card::before { background: var(--line); }
+@keyframes card-loading-shimmer { to { transform: translateX(100%); } }
+
+/* The invisible original contents reserve precisely the original button size. */
+.is-button-loading { position: relative !important; cursor: progress !important; }
+.button-loading-idle { display: inline-flex; align-items: center; justify-content: center; gap: inherit; visibility: hidden; }
+.button-loading-feedback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 8px; pointer-events: none; }
+.button-loading-copy { white-space: nowrap; }
+.button-loading-spinner { flex: 0 0 14px; width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: button-loading-spin .85s linear infinite; }
+.is-button-loading-compact .button-loading-copy { display: none; }
+@keyframes button-loading-spin { to { transform: rotate(360deg); } }
+
+/* A compact waiting signal for content states. Skeletons retain their own layout-shaped loader. */
+.three-dot-wave { display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: 25px; height: 18px; }
+.three-dot-wave i, .data-state.is-loading .data-state-symbol .three-dot-wave i { display: block; width: 5px; height: 5px; border-radius: 50%; background: currentColor; animation: three-dot-wave 1.05s ease-in-out infinite; }
+.three-dot-wave i:nth-child(2) { animation-delay: .13s; }
+.three-dot-wave i:nth-child(3) { animation-delay: .26s; }
+@keyframes three-dot-wave { 0%, 60%, 100% { transform: translateY(2px); opacity: .38; } 30% { transform: translateY(-3px); opacity: 1; } }
+
+/* C squared is the only brand mark. The trace is played once after a real login. */
+.brand-symbol { position: relative; }
+.brand-mark { display: inline-flex; align-items: flex-start; line-height: 1; }
+.brand-mark sup { position: relative; top: -.34em; margin-left: .03em; font-size: .55em; line-height: 1; }
+.brand-login-trace { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; opacity: 0; }
+.brand-login-trace path { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+.brand-symbol.is-login-reveal { color: var(--paper); }
+.brand-symbol.is-login-reveal .brand-mark { opacity: 0; transform: scale(.85); }
+.brand-symbol.is-login-reveal .brand-login-trace { opacity: 1; }
+.brand-symbol.is-login-reveal .brand-login-trace-c { animation: brand-trace 700ms cubic-bezier(.35,0,.2,1) forwards; }
+.brand-symbol.is-login-reveal .brand-login-trace-two { animation: brand-trace 520ms cubic-bezier(.35,0,.2,1) 540ms forwards; }
+.brand-symbol.is-login-reveal .brand-mark { animation: brand-mark-in 350ms ease-out 930ms forwards, brand-mark-shine 620ms ease-out 1180ms both; }
+.brand-symbol.is-login-reveal::after { content: ""; position: absolute; inset: -7px; border-radius: 15px; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255,255,255,.72) 0 8%, rgba(255,241,205,.38) 20%, transparent 62%); animation: brand-finish-glow 620ms ease-out 1160ms both; }
+@keyframes brand-trace { to { stroke-dashoffset: 0; } }
+@keyframes brand-mark-in { to { opacity: 1; transform: scale(1); } }
+@keyframes brand-mark-shine { 0%,100% { filter: none; text-shadow: none; } 42% { filter: brightness(1.65) drop-shadow(0 0 5px rgba(255,245,210,.95)); text-shadow: 0 0 9px rgba(255,255,255,.9); } }
+@keyframes brand-finish-glow { 0%,100% { opacity: 0; transform: scale(.72); } 42% { opacity: 1; transform: scale(1.08); } }
+.brand-preview-avatar { line-height: 1; }
+.brand-preview-avatar sup { position: relative; top: -.36em; margin-left: .04em; font-size: .55em; }
+@media (prefers-reduced-motion: reduce) {
+  .loading-shape::after, .button-loading-spinner, .three-dot-wave i, .brand-symbol.is-login-reveal :is(.brand-login-trace-c, .brand-login-trace-two, .brand-mark), .brand-symbol.is-login-reveal::after { animation: none; }
+  .loading-shape::after { transform: none; opacity: .35; }
+  .three-dot-wave i { transform: none; opacity: 1; }
+  .brand-symbol.is-login-reveal .brand-login-trace { display: none; }
+  .brand-symbol.is-login-reveal .brand-mark { opacity: 1; transform: none; }
+  .brand-symbol.is-login-reveal::after { display: none; }
+}

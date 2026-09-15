@@ -1,0 +1,61 @@
+{
+  "scope": "Local endpoint unit checks, no external calls",
+  "results": [
+    {
+      "name": "Public environment config",
+      "status": "PASS"
+    },
+    {
+      "name": "Legacy anon fallback",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing URL",
+      "status": "PASS"
+    },
+    {
+      "name": "Missing public key",
+      "status": "PASS"
+    },
+    {
+      "name": "Secret in publishable variable rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Service role in legacy variable rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid primary cannot fall back",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid URL rejected: http",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid URL rejected: javascript",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid URL rejected: https",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid URL rejected: https",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid URL rejected: https",
+      "status": "PASS"
+    },
+    {
+      "name": "POST rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Local Supabase support and output allowlist",
+      "status": "PASS"
+    }
+  ]
+}

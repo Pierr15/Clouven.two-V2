@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script src="/assets/js/theme.js?v=avatar-source-5"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Penyimpanan · Ruang Kelas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/app.css?v=names-16" />
+    <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
+    <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script type="module" src="/assets/js/pages/storage.js?v=drive-local-2"></script>
+  <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script><link rel="stylesheet" href="/assets/css/loading.css?v=loading-2" />
+</head>
+  <body>
+    <script>
+      try {
+        if (localStorage.getItem("clouven-sidebar-collapsed") === "1") {
+          document.documentElement.classList.add("sidebar-precollapsed");
+        }
+      } catch {}
+    </script>
+    <div class="page-noise"></div>
+    <aside id="sidebar"></aside>
+    <main class="app-main">
+      <div class="mobile-topbar">
+        <strong>Penyimpanan</strong><button class="mobile-menu" type="button" aria-label="Buka menu navigasi" aria-controls="sidebar" aria-expanded="false">☰</button>
+      </div>
+      <section class="section-pad page-section">
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">drive kelas</p>
+            <h1>Materi dan tugas, <em>satu lemari.</em></h1>
+          </div>
+          <p>Simpan materi dan lampiran tugas agar mudah ditemukan dan diunduh oleh anggota kelas.</p>
+        </header>
+        <article class="card form-card" id="uploadCard" hidden>
+          <h3>Unggah file kelas</h3>
+          <p class="form-help" id="uploadHelp">Maksimal <strong>3 MB per file</strong>. Pilih satu file, lalu tentukan mata pelajaran dan kategorinya.</p>
+          <form id="uploadForm" class="form-grid" style="margin-top: 16px">
+            <div class="form-field">
+              <label for="field-1">File</label><input name="file" type="file" required id="field-1" aria-describedby="uploadHelp uploadFileError">
+              <p class="upload-file-error" id="uploadFileError" role="alert" hidden></p>
+            </div>
+            <div class="form-field">
+              <label for="field-2">Mata pelajaran</label><input name="subject" placeholder="ASJ / TJKN / Matematika" id="field-2">
+            </div>
+            <div class="form-field">
+              <label for="field-3">Kategori</label><select name="kind" id="field-3">
+                <option value="materi">Materi</option>
+                <option value="tugas">Tugas</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button class="button button-dark" type="submit" id="uploadSubmit" disabled>
+                <i class="ti ti-upload" aria-hidden="true"></i> Unggah file
+              </button>
+            </div>
+          </form>
+          <div id="uploadSelection" class="upload-selection" hidden>
+            <i class="ti ti-file-description" aria-hidden="true"></i>
+            <div><strong id="uploadFileName"></strong><span id="uploadFileSize"></span></div>
+          </div>
+          <div id="uploadStatus" class="upload-status" hidden>
+            <div class="upload-status-copy" role="status" aria-live="polite" aria-atomic="true">
+              <strong id="uploadStatusTitle"></strong>
+              <p id="uploadStatusDetail"></p>
+            </div>
+            <div id="uploadProgress" class="progress upload-progress" role="progressbar" aria-label="Progres pengiriman file" aria-valuemin="0" aria-valuemax="100" hidden>
+              <span></span>
+            </div>
+            <span id="uploadPercent" class="upload-percent" aria-hidden="true"></span>
+          </div>
+        </article>
+        <div style="height: 22px"></div>
+        <div class="storage-list" id="resourceList">
+          <div class="skeleton"></div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

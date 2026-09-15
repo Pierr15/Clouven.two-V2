@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script src="/assets/js/theme.js?v=avatar-source-5"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Tugas · Ruang Kelas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/app.css?v=names-16" />
+    <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
+    <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script type="module" src="/assets/js/pages/tasks.js?v=names-15"></script>
+  <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script><link rel="stylesheet" href="/assets/css/loading.css?v=loading-2" />
+</head>
+  <body>
+    <script>
+      try {
+        if (localStorage.getItem("clouven-sidebar-collapsed") === "1") {
+          document.documentElement.classList.add("sidebar-precollapsed");
+        }
+      } catch {}
+    </script>
+    <div class="page-noise"></div>
+    <aside id="sidebar"></aside>
+    <main class="app-main">
+      <div class="mobile-topbar">
+        <strong>Tugas</strong><button class="mobile-menu" type="button" aria-label="Buka menu navigasi" aria-controls="sidebar" aria-expanded="false">☰</button>
+      </div>
+      <section class="section-pad page-section">
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">pusat tugas</p>
+            <h1>Kerjakan pelan-pelan, <em>selesaikan.</em></h1>
+          </div>
+          <p>
+            Progres disimpan per pengguna. Tombol pada kartu tugas mengubah
+            progresmu sendiri.
+          </p>
+        </header>
+        <div class="tabs" id="taskFilters" style="margin-bottom: 24px">
+          <button class="tab is-active" data-filter="all">Semua</button
+          ><button class="tab" data-filter="open">Belum selesai</button
+          ><button class="tab" data-filter="done">Selesai</button>
+        </div>
+        <div class="tasks-grid" id="tasksGrid" data-skeleton="tasks" aria-busy="true">
+          <span class="loading-status is-loading" role="status" aria-live="polite">Daftar tugas sedang dimuat…</span><article class="task-card loading-card" aria-hidden="true"><div class="task-card-head"><span class="loading-shape loading-subject"></span><span class="loading-shape loading-badge"></span></div><h3><span class="loading-shape loading-title"></span><span class="loading-shape loading-title-short"></span></h3><p class="task-description"><span class="loading-shape loading-description"></span><span class="loading-shape loading-description-short"></span></p><div class="task-footer"><span class="loading-shape loading-date"></span><span class="loading-shape loading-action"></span></div></article><article class="task-card loading-card" aria-hidden="true"><div class="task-card-head"><span class="loading-shape loading-subject"></span><span class="loading-shape loading-badge"></span></div><h3><span class="loading-shape loading-title"></span><span class="loading-shape loading-title-short"></span></h3><p class="task-description"><span class="loading-shape loading-description"></span><span class="loading-shape loading-description-short"></span></p><div class="task-footer"><span class="loading-shape loading-date"></span><span class="loading-shape loading-action"></span></div></article><article class="task-card loading-card" aria-hidden="true"><div class="task-card-head"><span class="loading-shape loading-subject"></span><span class="loading-shape loading-badge"></span></div><h3><span class="loading-shape loading-title"></span><span class="loading-shape loading-title-short"></span></h3><p class="task-description"><span class="loading-shape loading-description"></span><span class="loading-shape loading-description-short"></span></p><div class="task-footer"><span class="loading-shape loading-date"></span><span class="loading-shape loading-action"></span></div></article><article class="task-card loading-card" aria-hidden="true"><div class="task-card-head"><span class="loading-shape loading-subject"></span><span class="loading-shape loading-badge"></span></div><h3><span class="loading-shape loading-title"></span><span class="loading-shape loading-title-short"></span></h3><p class="task-description"><span class="loading-shape loading-description"></span><span class="loading-shape loading-description-short"></span></p><div class="task-footer"><span class="loading-shape loading-date"></span><span class="loading-shape loading-action"></span></div></article><article class="task-card loading-card" aria-hidden="true"><div class="task-card-head"><span class="loading-shape loading-subject"></span><span class="loading-shape loading-badge"></span></div><h3><span class="loading-shape loading-title"></span><span class="loading-shape loading-title-short"></span></h3><p class="task-description"><span class="loading-shape loading-description"></span><span class="loading-shape loading-description-short"></span></p><div class="task-footer"><span class="loading-shape loading-date"></span><span class="loading-shape loading-action"></span></div></article><article class="task-card loading-card" aria-hidden="true"><div class="task-card-head"><span class="loading-shape loading-subject"></span><span class="loading-shape loading-badge"></span></div><h3><span class="loading-shape loading-title"></span><span class="loading-shape loading-title-short"></span></h3><p class="task-description"><span class="loading-shape loading-description"></span><span class="loading-shape loading-description-short"></span></p><div class="task-footer"><span class="loading-shape loading-date"></span><span class="loading-shape loading-action"></span></div></article>
+        </div>
+      </section>
+      <section id="classProgress" class="section-pad class-progress-section" hidden></section>
+    </main>
+  </body>
+</html>

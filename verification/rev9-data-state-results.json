@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Home independently recovers failed summary without false empty data",
+    "status": "PASS"
+  },
+  {
+    "name": "Task progress failure never marks completed tasks as open",
+    "status": "PASS"
+  },
+  {
+    "name": "Admin changing days shows no editable stale schedule after failure",
+    "status": "PASS"
+  },
+  {
+    "name": "A missing member profile cannot enter the account page",
+    "status": "PASS"
+  }
+]

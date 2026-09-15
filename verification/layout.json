@@ -1,0 +1,442 @@
+[
+  {
+    "width": 320,
+    "route": "/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/jadwal/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/tugas/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/tools/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/penyimpanan/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/anggota/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/profile/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/admin/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/admin/#schedule",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/admin/#apel",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/admin/#tasks",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/admin/#users",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 320,
+    "route": "/admin/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/jadwal/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/tugas/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/tools/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/penyimpanan/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/anggota/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/profile/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/admin/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/admin/#schedule",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/admin/#apel",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/admin/#tasks",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/admin/#users",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 390,
+    "route": "/admin/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/jadwal/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/tugas/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/tools/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/penyimpanan/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/anggota/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/profile/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/admin/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/admin/#schedule",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/admin/#apel",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/admin/#tasks",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/admin/#users",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 768,
+    "route": "/admin/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/jadwal/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/tugas/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/tools/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/penyimpanan/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/anggota/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/profile/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/admin/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/admin/#schedule",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/admin/#apel",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/admin/#tasks",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/admin/#users",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "/admin/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1024,
+    "route": "collapsed",
+    "avatar": {
+      "x": 28.5,
+      "y": 840,
+      "width": 34,
+      "height": 34
+    }
+  },
+  {
+    "width": 1440,
+    "route": "/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/jadwal/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/tugas/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/tools/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/penyimpanan/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/anggota/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/profile/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/admin/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/admin/#schedule",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/admin/#apel",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/admin/#tasks",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/admin/#users",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "/admin/login/",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "width": 1440,
+    "route": "collapsed",
+    "avatar": {
+      "x": 28.5,
+      "y": 840,
+      "width": 34,
+      "height": 34
+    }
+  }
+]

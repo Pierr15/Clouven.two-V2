@@ -1,0 +1,61 @@
+{
+  "scope": "Local handlers with isolated database/auth fixtures",
+  "results": [
+    {
+      "name": "student: own Instagram only",
+      "status": "PASS"
+    },
+    {
+      "name": "class_officer: own Instagram only",
+      "status": "PASS"
+    },
+    {
+      "name": "teacher: own Instagram only",
+      "status": "PASS"
+    },
+    {
+      "name": "developer: own Instagram only",
+      "status": "PASS"
+    },
+    {
+      "name": "Guest rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Orphan rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Extra uid rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Extra role rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Extra name rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Developer edits another member",
+      "status": "PASS"
+    },
+    {
+      "name": "Student cannot edit another member",
+      "status": "PASS"
+    },
+    {
+      "name": "Clear Instagram allowed",
+      "status": "PASS"
+    },
+    {
+      "name": "Unsafe handles rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Failed DB write stays an error",
+      "status": "PASS"
+    }
+  ]
+}

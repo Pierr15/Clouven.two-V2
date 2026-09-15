@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script src="/assets/js/theme.js?v=avatar-source-5"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kelola Kelas · Ruang Kelas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <script>
+      try {
+        if (localStorage.getItem("clouven-sidebar-collapsed") === "1") {
+          document.documentElement.classList.add("sidebar-precollapsed");
+        }
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/app.css?v=names-16" />
+    <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
+    <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script type="module" src="/assets/js/pages/admin.js?v=names-15"></script>
+  <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script><link rel="stylesheet" href="/assets/css/loading.css?v=loading-2" />
+</head>
+  <body data-panel-mode="class">
+    <div class="page-noise"></div>
+    <aside id="sidebar"></aside>
+    <main class="app-main">
+      <div class="mobile-topbar">
+        <strong>Kelola Kelas</strong><button class="mobile-menu" type="button" aria-label="Buka menu navigasi" aria-controls="sidebar" aria-expanded="false">☰</button>
+      </div>
+      <section class="section-pad page-section">
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">
+              <span class="pulse-dot"></span> area pengelola
+            </p>
+            <h1>Kelola Kelas, <em>tetap searah.</em></h1>
+          </div>
+          <p>
+            Rapikan informasi kelas, jadwal, piket, urutan apel, dan tugas.
+            Perubahan langsung tersinkron untuk semua anggota.
+          </p>
+        </header>
+        <div class="admin-layout">
+          <nav class="admin-nav card" id="adminNav">
+            <button class="is-active" data-admin-tab="profile">
+              Info Kelas</button
+            ><button data-admin-tab="schedule">Jadwal & Piket</button
+            ><button data-admin-tab="apel">Urutan Apel</button
+            ><button data-admin-tab="tasks">Tugas</button>
+          </nav>
+          <div class="admin-panel" id="adminPanel">
+            <div class="skeleton"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
