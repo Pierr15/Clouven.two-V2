@@ -73,18 +73,30 @@ export async function saveProfile(payload) {
   }, { onConflict: "id" }));
 }
 
+export function normalizeScheduleBlocks(row = {}) {
+  return {
+    ...row,
+    lessons: (Array.isArray(row.lessons) ? row.lessons : []).map(lesson => ({
+      ...lesson,
+      block: lesson?.block === "B" ? "B" : "A",
+    })),
+    piket: Array.isArray(row.piket) ? row.piket : [],
+  };
+}
+
 export function subscribeSchedule(day, callback, onState) {
   return subscribeTable("schedules", async () => {
     const row = unwrap(await supabase.from("schedules").select("lessons,piket").eq("day", day).maybeSingle());
-    return row || { lessons: [], piket: [] };
+    return normalizeScheduleBlocks(row || { lessons: [], piket: [] });
   }, callback, `day=eq.${day}`, onState);
 }
 
 export async function saveSchedule(day, data) {
+  const normalized = normalizeScheduleBlocks(data);
   unwrap(await supabase.from("schedules").upsert({
     day,
-    lessons: data.lessons || [],
-    piket: data.piket || [],
+    lessons: normalized.lessons,
+    piket: normalized.piket,
     updated_at: new Date().toISOString(),
   }, { onConflict: "day" }));
 }

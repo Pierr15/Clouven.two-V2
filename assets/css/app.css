@@ -26,6 +26,21 @@
   --font-mono: "DM Mono", Consolas, monospace;
 }
 
+/* Hide the destination before its first paint while a successful login starts up. */
+html.login-startup-pending,
+html.login-startup-pending body {
+  background: #163428 !important;
+}
+html.login-startup-pending body {
+  overflow: hidden;
+}
+html.login-startup-pending body > * {
+  visibility: hidden !important;
+}
+html.login-startup-pending body > .login-brand-reveal {
+  visibility: visible !important;
+}
+
 .data-state {
   grid-column: 1 / -1;
   display: flex;
@@ -976,6 +991,10 @@ h2 em {
 .schedule-panel {
   overflow: auto;
 }
+.schedule-block-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; align-items: start; }
+.schedule-block { min-width: 0; }
+.schedule-block .schedule-heading { min-width: 620px; }
+.schedule-block-badge { display: inline-flex; align-items: center; min-height: 28px; padding: 5px 10px; border-radius: 999px; background: var(--paper-deep); color: var(--green-dark); font-size: 11px; font-weight: 700; white-space: nowrap; }
 .schedule-heading {
   display: flex;
   align-items: center;
@@ -1876,6 +1895,7 @@ button:disabled { cursor: wait; opacity: .65; transform: none; }
   .admin-layout { grid-template-columns: minmax(0, 1fr); }
   .admin-nav { position: static; display: flex; overflow-x: auto; }
   .admin-nav button { flex-shrink: 0; white-space: nowrap; }
+  .schedule-block-grid, .lesson-block-editor-grid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 1050px) {
   .hero { grid-template-columns: minmax(0, 1fr); }
@@ -2013,6 +2033,12 @@ input[type="number"]{appearance:textfield}
 .lesson-row,.piket-editor{min-width:0;margin:0;padding:18px;border:1px solid var(--line);border-radius:16px}
 .lesson-row legend,.piket-editor legend{padding:0 8px;font-size:12px;font-weight:700}
 .lesson-row [data-remove-lesson]{margin-top:16px}
+.lesson-block-editor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:20px;align-items:start}
+.lesson-block-editor{min-width:0;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--paper-deep)}
+.lesson-block-editor-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.lesson-block-editor-heading :is(p,h3){margin:0}
+.lesson-block-editor .lesson-row{background:var(--paper)}
+.lesson-block-editor>[data-add-lesson]{width:100%;margin-top:12px}
 .piket-editor{margin-top:26px}
 #piketChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .choice-label{display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;overflow-wrap:anywhere}
@@ -2033,7 +2059,8 @@ input[type="number"]{appearance:textfield}
 .brand-preview>.muted{font-size:13px;line-height:1.6;margin:18px 0}
 .brand-preview>.button{width:100%;font-size:13px;min-height:44px}
 @keyframes field-appear{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:480px){#piketChoices{grid-template-columns:1fr}.lesson-row,.piket-editor{padding:14px}.schedule-copy>.button{width:100%}}
+@media(max-width:1100px){.lesson-block-editor-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:480px){#piketChoices{grid-template-columns:1fr}.lesson-row,.piket-editor{padding:14px}.lesson-block-editor{padding:14px}.schedule-copy>.button{width:100%}}
 @media(prefers-reduced-motion:reduce){.field-popover{animation:none}.brand-preview{transition:none}}
 
 /* Keep photos aligned at the top when member names wrap to different heights. */

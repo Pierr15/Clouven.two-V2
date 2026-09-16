@@ -9,6 +9,10 @@ let selectedDay = todayKey() || "monday";
 let activeTab = new URLSearchParams(location.search).get("tab") || "lesson";
 if (!["lesson","piket","apel"].includes(activeTab)) activeTab = "lesson";
 let schedule = { lessons: [], piket: [] }, queue = [];
+const lessonBlocks = [
+  { key: "A", title: "Blok A", subtitle: "Teori" },
+  { key: "B", title: "Blok B", subtitle: "Bengkel" },
+];
 let unsubscribeSchedule = null;
 const scheduleState = createLoadState("schedule", "Jadwal", renderContent);
 const queueState = createLoadState("queue", "Urutan apel", renderContent);
@@ -31,7 +35,10 @@ function renderContent() {
   const info = dayInfo(selectedDay);
   if (activeTab === "lesson") {
     const lessons = schedule.lessons || [];
-    host.innerHTML = `<div class="card schedule-panel" tabindex="0" role="region" aria-label="Tabel jadwal pelajaran; geser untuk melihat semua kolom"><div class="schedule-heading"><div><p class="eyebrow">jadwal pelajaran</p><h3>${info.label}</h3></div><span class="muted">${lessons.length} sesi</span></div>${lessons.length ? `<table class="schedule-table"><thead><tr><th>Waktu</th><th>Mata pelajaran</th><th>Pengajar</th><th>Ruang</th></tr></thead><tbody>${lessons.map((x,i)=>`<tr><td>${escapeHTML(x.time)}</td><td><span class="subject-mark" style="--mark-color:${x.color || SUBJECT_COLORS[i%SUBJECT_COLORS.length]}"></span>${escapeHTML(x.subject)}</td><td class="muted">${escapeHTML(x.teacher || "—")}</td><td class="muted">${escapeHTML(x.room || "—")}</td></tr>`).join("")}</tbody></table>` : `<div class="empty-state"><strong>Belum ada pelajaran.</strong>Pengurus dapat mengisinya dari panel admin.</div>`}</div>`;
+    host.innerHTML = `<div class="schedule-block-grid">${lessonBlocks.map(block=>{
+      const rows=lessons.filter(lesson=>(lesson.block === "B" ? "B" : "A")===block.key);
+      return `<section class="card schedule-panel schedule-block" tabindex="0" role="region" aria-label="${block.title} ${block.subtitle}; geser untuk melihat semua kolom"><div class="schedule-heading"><div><p class="eyebrow">${block.title}</p><h3>${block.subtitle}</h3><p class="muted">${info.label}</p></div><span class="schedule-block-badge">${rows.length} sesi</span></div>${rows.length ? `<table class="schedule-table"><thead><tr><th>Waktu</th><th>Mata pelajaran</th><th>Pengajar</th><th>Ruang</th></tr></thead><tbody>${rows.map((x,i)=>`<tr><td>${escapeHTML(x.time)}</td><td><span class="subject-mark" style="--mark-color:${x.color || SUBJECT_COLORS[i%SUBJECT_COLORS.length]}"></span>${escapeHTML(x.subject)}</td><td class="muted">${escapeHTML(x.teacher || "—")}</td><td class="muted">${escapeHTML(x.room || "—")}</td></tr>`).join("")}</tbody></table>` : `<div class="empty-state"><strong>Belum ada pelajaran.</strong>Tambahkan jadwal ${block.title} dari panel pengelola.</div>`}</section>`;
+    }).join("")}</div>`;
   } else if (activeTab === "piket") {
     const names = schedule.piket || [];
     const me = session?.profile?.name || "";

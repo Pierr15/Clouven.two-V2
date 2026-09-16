@@ -6,6 +6,10 @@ Mulai dari [MULAI-DI-SINI.md](MULAI-DI-SINI.md) untuk penerapan revisi pada data
 
 Clouven.two tetap memakai vanilla HTML/CSS/JavaScript dan visual yang sama, tetapi backend aplikasi sekarang memakai **Supabase Auth + PostgreSQL + Row Level Security + Realtime**. Google Drive tetap menjadi penyimpanan file fisik untuk materi/tugas.
 
+Jadwal pelajaran sekarang ditampilkan dan dikelola dalam dua bagian: **Blok A (Teori)** dan **Blok B (Bengkel)**. Data lama yang belum memiliki penanda blok otomatis masuk ke Blok A, sedangkan data baru menyimpan `block: "A"` atau `block: "B"` di dalam JSON `lessons`. Struktur tabel database tetap sama sehingga perubahan ini tidak memerlukan migrasi SQL.
+
+Setelah login berhasil, anggota langsung melihat layar startup penuh berupa garis yang membentuk logo **C²**. Halaman tujuan disembunyikan sebelum paint pertama, lalu layar startup bergeser ke atas dan konten website masuk secara halus setelah logo selesai dibentuk. Efek kilau telah dihapus dan ikon C² pada sidebar tetap statis. Penanda animasi hanya dibuat oleh proses login yang berhasil, langsung dihapus setelah digunakan, dan tidak dijalankan untuk Guest atau sesi lama yang sekadar dipulihkan.
+
 ## Yang berubah dari versi Firebase
 
 - Firebase Authentication → **Supabase Auth**.
@@ -20,7 +24,7 @@ Username/NIS tetap dipetakan internal menjadi `<username>@clouven.local`, jadi u
 ## Struktur halaman
 
 - `/` — Beranda publik.
-- `/jadwal/` — Pelajaran, piket, dan urutan pemimpin apel. Publik.
+- `/jadwal/` — Pelajaran Blok A (Teori), Blok B (Bengkel), piket, dan urutan pemimpin apel. Publik.
 - `/tools/` — Tools TKJ. Publik.
 - `/tugas/` — Tugas + progres sendiri; pemantauan/pengelolaan progres anggota sesuai role.
 - `/penyimpanan/` — Metadata Supabase + file Google Drive. Wajib login.

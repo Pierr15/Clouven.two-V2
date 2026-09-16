@@ -4,7 +4,7 @@ import { getSession, ROLE_LABEL, hasRole, logout } from "./auth.js";
 import { can } from "./permissions.js";
 import { initials, escapeHTML } from "./utils.js";
 import { mountBrandPreview } from "./brand-preview.js";
-import { playLoginBrandReveal } from "./brand-login-reveal.js";
+import { playLoginBrandReveal } from "./brand-login-reveal.js?v=startup-transition-3";
 
 const links = [
   ["home", "/", "home", "Home"],
@@ -30,7 +30,7 @@ export async function mountShell(active = "") {
   host.innerHTML = `
     <button class="sidebar-close icon-button" type="button" aria-label="Tutup menu navigasi">×</button>
     <div class="sidebar-brand">
-      <button type="button" class="brand-symbol"><span class="brand-mark" aria-hidden="true">C<sup>2</sup></span><svg class="brand-login-trace" viewBox="0 0 40 40" aria-hidden="true"><path class="brand-login-trace-c" pathLength="100" d="M24.8 10.5a12 12 0 1 0 0 19"/><path class="brand-login-trace-two" pathLength="100" d="M27 13.2c2.8-2.3 6.7-.4 5.8 2.8-.7 2.5-5.8 5.1-6.7 7.8h7"/></svg></button>
+      <button type="button" class="brand-symbol"><span class="brand-mark" aria-hidden="true">C<sup>2</sup></span></button>
       <a href="/" class="brand-copy">Ruang <strong>Kelas</strong></a>
       <button
       class="sidebar-collapse"
@@ -172,7 +172,7 @@ export async function mountShell(active = "") {
   startNameSync(session);
   document.dispatchEvent(new Event("clouven:shell-ready"));
   mountBrandPreview(host.querySelector(".brand-symbol"));
-  playLoginBrandReveal(host.querySelector(".brand-symbol"), session.user);
+  playLoginBrandReveal(session.user);
 
   const account = host.querySelector(".sidebar-account");
   const drawer = account.querySelector(".account-drawer");

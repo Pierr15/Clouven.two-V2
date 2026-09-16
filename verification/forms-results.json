@@ -18,15 +18,19 @@
       "status": "PASS"
     },
     {
-      "name": "developer: structured schedule, copy, conflicts and save",
+      "name": "developer: two-block schedule, copy, conflicts and save",
       "status": "PASS"
     },
     {
-      "name": "class_officer: structured schedule, copy, conflicts and save",
+      "name": "class_officer: two-block schedule, copy, conflicts and save",
       "status": "PASS"
     },
     {
-      "name": "teacher: structured schedule, copy, conflicts and save",
+      "name": "teacher: two-block schedule, copy, conflicts and save",
+      "status": "PASS"
+    },
+    {
+      "name": "Public schedule shows theory and workshop as separate blocks",
       "status": "PASS"
     },
     {
@@ -66,6 +70,14 @@
       "status": "PASS"
     },
     {
+      "name": "Themed suggestions and modal dropdown remain interactive",
+      "status": "PASS"
+    },
+    {
+      "name": "Instagram error preserves input for retry",
+      "status": "PASS"
+    },
+    {
       "name": "Responsive forms 320 light",
       "status": "PASS"
     },
@@ -90,5 +102,5 @@
       "status": "PASS"
     }
   ],
-  "screenshots": "D:\\Codex\\2026-09-05\\p\\outputs\\ClouvenTwo-V2-Forms-Rev12\\ui-test-results\\forms-1788772921385"
+  "screenshots": "D:\\Project\\ClouvenTwo-V2-Forms-Rev12-Data\\ui-test-results\\forms-1789445190689"
 }

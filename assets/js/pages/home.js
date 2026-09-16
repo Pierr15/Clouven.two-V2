@@ -40,9 +40,11 @@ function render() {
   }
   document.querySelector("#liveDate").textContent = new Intl.DateTimeFormat("id-ID", { day:"numeric", month:"short", year:"numeric" }).format(new Date());
   document.querySelector("#todayText").textContent = `Hari ini, ${formatLongDate()}.`;
-  const first = schedule.lessons?.[0];
+  const firstA = schedule.lessons?.find(lesson => lesson.block !== "B");
+  const firstB = schedule.lessons?.find(lesson => lesson.block === "B");
+  const firstSummary = [firstA ? `A: ${firstA.subject}` : "A: —", firstB ? `B: ${firstB.subject}` : "B: —"].join(" · ");
   document.querySelector("#summaryGrid").innerHTML = `
-    <article class="summary-card"><p class="mini-label">pelajaran pertama</p>${loadStateMarkup(states.schedule) || `<h3>${escapeHTML(first?.subject || (key ? "Belum ada jadwal" : "Hari libur"))}</h3><p>${escapeHTML(first?.time || "—")} ${first?.teacher ? `· ${escapeHTML(first.teacher)}` : ""}</p><a class="text-button" href="/jadwal/">Jadwal lengkap →</a>`}</article>
+    <article class="summary-card"><p class="mini-label">pelajaran pertama tiap blok</p>${loadStateMarkup(states.schedule) || `<h3>${key ? escapeHTML(firstSummary) : "Hari libur"}</h3><p>${key ? "Blok A Teori · Blok B Bengkel" : "—"}</p><a class="text-button" href="/jadwal/">Jadwal lengkap →</a>`}</article>
     <article class="summary-card"><p class="mini-label">piket hari ini</p>${loadStateMarkup(states.schedule) || `<h3>${schedule.piket?.length ? schedule.piket.slice(0,3).map(legacyMemberName).join(", ") : key ? "Belum ditentukan" : "Hari libur"}</h3><p>${schedule.piket?.length > 3 ? `+${schedule.piket.length - 3} anggota lainnya` : "Jaga kelas tetap nyaman."}</p><a class="text-button" href="/jadwal/?tab=piket">Lihat piket →</a>`}</article>
     <article class="summary-card"><p class="mini-label">pemimpin apel berikutnya</p>${loadStateMarkup(states.queue) || `<h3>${referencedName(queue[0]?.memberId,queue[0]?.name || "Belum ditentukan")}</h3><p>Urutan dapat berubah sewaktu-waktu oleh pengurus.</p><a class="text-button" href="/jadwal/?tab=apel">Lihat urutan →</a>`}</article>
     <article class="summary-card"><p class="mini-label">tugas terdekat</p>${!can(session.role, "task_summary") ? '<h3>Tugas untuk anggota</h3><p>Login untuk melihat tugas kelas.</p><a class="text-button" href="/login/?next=%2Ftugas%2F">Login →</a>' : loadStateMarkup(states.tasks) || `<h3>${escapeHTML(tasks[0]?.title || "Tidak ada tugas")}</h3><p>${tasks[0] ? `${escapeHTML(tasks[0].subject || "Umum")} · ${relativeDue(tasks[0].due)}` : "Nikmati ruang kosong ini ✦"}</p><a class="text-button" href="/tugas/">Lihat tugas →</a>`}</article>`;

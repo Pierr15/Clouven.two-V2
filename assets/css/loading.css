@@ -36,30 +36,30 @@
 .three-dot-wave i:nth-child(3) { animation-delay: .26s; }
 @keyframes three-dot-wave { 0%, 60%, 100% { transform: translateY(2px); opacity: .38; } 30% { transform: translateY(-3px); opacity: 1; } }
 
-/* C squared is the only brand mark. The trace is played once after a real login. */
+/* C squared remains static in navigation. Login motion is reserved for the viewport overlay. */
 .brand-symbol { position: relative; }
 .brand-mark { display: inline-flex; align-items: flex-start; line-height: 1; }
 .brand-mark sup { position: relative; top: -.34em; margin-left: .03em; font-size: .55em; line-height: 1; }
-.brand-login-trace { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; opacity: 0; }
-.brand-login-trace path { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
-.brand-symbol.is-login-reveal { color: var(--paper); }
-.brand-symbol.is-login-reveal .brand-mark { opacity: 0; transform: scale(.85); }
-.brand-symbol.is-login-reveal .brand-login-trace { opacity: 1; }
-.brand-symbol.is-login-reveal .brand-login-trace-c { animation: brand-trace 700ms cubic-bezier(.35,0,.2,1) forwards; }
-.brand-symbol.is-login-reveal .brand-login-trace-two { animation: brand-trace 520ms cubic-bezier(.35,0,.2,1) 540ms forwards; }
-.brand-symbol.is-login-reveal .brand-mark { animation: brand-mark-in 350ms ease-out 930ms forwards, brand-mark-shine 620ms ease-out 1180ms both; }
-.brand-symbol.is-login-reveal::after { content: ""; position: absolute; inset: -7px; border-radius: 15px; pointer-events: none; opacity: 0; background: radial-gradient(circle, rgba(255,255,255,.72) 0 8%, rgba(255,241,205,.38) 20%, transparent 62%); animation: brand-finish-glow 620ms ease-out 1160ms both; }
-@keyframes brand-trace { to { stroke-dashoffset: 0; } }
-@keyframes brand-mark-in { to { opacity: 1; transform: scale(1); } }
-@keyframes brand-mark-shine { 0%,100% { filter: none; text-shadow: none; } 42% { filter: brightness(1.65) drop-shadow(0 0 5px rgba(255,245,210,.95)); text-shadow: 0 0 9px rgba(255,255,255,.9); } }
-@keyframes brand-finish-glow { 0%,100% { opacity: 0; transform: scale(.72); } 42% { opacity: 1; transform: scale(1.08); } }
+.login-brand-reveal { position: fixed; inset: 0; z-index: 2500; display: grid; place-items: center; pointer-events: none; overflow: hidden; background: var(--green-dark); opacity: 1; }
+.login-brand-reveal.is-active { animation: login-brand-overlay 2600ms cubic-bezier(.76,0,.24,1) both; }
+.login-brand-reveal-card { position: relative; display: grid; justify-items: center; width: min(240px, 62vw); color: #fffdf8; }
+.login-brand-reveal-card svg { width: min(180px, 48vw); overflow: visible; filter: drop-shadow(0 14px 26px rgba(8,25,15,.28)); }
+.login-brand-reveal-card path { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+.login-brand-reveal.is-active .login-logo-c { animation: login-logo-trace 760ms cubic-bezier(.35,0,.2,1) 160ms forwards; }
+.login-brand-reveal.is-active .login-logo-two { animation: login-logo-trace 540ms cubic-bezier(.35,0,.2,1) 760ms forwards; }
+.login-brand-reveal-card p { margin: -2px 0 0; font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; opacity: 0; }
+.login-brand-reveal.is-active .login-brand-reveal-card p { animation: login-welcome-in 380ms ease-out 1180ms forwards; }
+@keyframes login-logo-trace { to { stroke-dashoffset: 0; } }
+@keyframes login-welcome-in { to { opacity: .86; transform: translateY(-4px); } }
+@keyframes login-brand-overlay { 0%,62% { transform: translateY(0); } 100% { transform: translateY(-102%); visibility: hidden; } }
+html.login-startup-running body { overflow: hidden; }
+html.login-startup-running body > :not(.login-brand-reveal) { animation: login-site-enter 720ms cubic-bezier(.2,.75,.2,1) 1580ms both; }
+@keyframes login-site-enter { from { opacity: 0; transform: translateY(14px) scale(.992); } to { opacity: 1; transform: none; } }
 .brand-preview-avatar { line-height: 1; }
 .brand-preview-avatar sup { position: relative; top: -.36em; margin-left: .04em; font-size: .55em; }
 @media (prefers-reduced-motion: reduce) {
-  .loading-shape::after, .button-loading-spinner, .three-dot-wave i, .brand-symbol.is-login-reveal :is(.brand-login-trace-c, .brand-login-trace-two, .brand-mark), .brand-symbol.is-login-reveal::after { animation: none; }
+  .loading-shape::after, .button-loading-spinner, .three-dot-wave i, .login-brand-reveal * { animation: none; }
   .loading-shape::after { transform: none; opacity: .35; }
   .three-dot-wave i { transform: none; opacity: 1; }
-  .brand-symbol.is-login-reveal .brand-login-trace { display: none; }
-  .brand-symbol.is-login-reveal .brand-mark { opacity: 1; transform: none; }
-  .brand-symbol.is-login-reveal::after { display: none; }
+  .login-brand-reveal { display: none; }
 }

@@ -11,6 +11,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   await p.route("**/*",async r=>{
    const url=r.request().url();if(new URL(url).pathname==="/api/config")return r.fulfill({contentType:"application/json",body:JSON.stringify({url:"https://test.invalid",publishableKey:"sb_publishable_local_test_configuration"})});
    if(url.includes("/@supabase/supabase-js"))return r.fulfill({contentType:"text/javascript",body:mock+"mock();window.__data.members.forEach(m=>m.instagram=m.id+'.class');"});
+   if(new URL(url).pathname==="/api/public/developer-name")return r.fulfill({contentType:"application/json",body:JSON.stringify([{id:"developer",name:"Pierr",role:"developer",name_style:"flow",name_color_1:"#FF0000",name_color_2:"#00AA88",name_color_3:"#3355FF"}])});
    if(url.startsWith(base+"/api/")){const body=r.request().postDataJSON(),fail=await p.evaluate(body=>{if(window.__writeFail)return true;window.__api.push(body);Object.assign(window.__data.members.find(m=>m.id===(body.uid||window.__options.role)),body);return false;},body);return r.fulfill({status:fail?503:200,contentType:"application/json",body:JSON.stringify(fail?{error:"Gagal menyimpan"}:{ok:true})});}
    if(url.startsWith(base))return r.continue();
    if(options.fonts&&/fonts\.(googleapis|gstatic)\.com|cdn.jsdelivr.net\/npm\/@tabler/.test(url))return r.fetch({timeout:6000}).then(response=>r.fulfill({response})).catch(()=>r.abort());
@@ -41,15 +42,20 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
   await p.evaluate(()=>window.__writeFail=false);await p.locator("#saveCatalog").click();await p.getByText("Daftar mapel dan guru berhasil disimpan.",{exact:true}).first().waitFor();
   assert.deepEqual(await p.evaluate(()=>window.__data.subject_teachers),catalog.subjects);await finish(p);
  });
- for(const role of ["developer","class_officer","teacher"])await check(role+": structured schedule, copy, conflicts and save",async()=>{
+ for(const role of ["developer","class_officer","teacher"])await check(role+": two-block schedule, copy, conflicts and save",async()=>{
   const p=await create(role,role==="developer"?"/admin/":"/kelola/");await tab(p,"schedule");
   await p.locator("#addLesson").click();await p.locator("[data-start]").fill("07:00");await p.locator("[data-end]").fill("08:30");
   await choose(p,"[data-subject]","Bahasa Indonesia");assert.equal(await p.locator("[data-teacher]").inputValue(),"Bu Liza");await p.locator("[data-room]").fill("Ruang 2");
+  await p.locator("#addLessonB").click();const blockB=p.locator('.lesson-row[data-block="B"]');await blockB.locator("[data-start]").fill("07:00");await blockB.locator("[data-end]").fill("08:30");
+  await choose(p,'.lesson-row[data-block="B"] [data-subject]',"ASJ");await blockB.locator("[data-room]").fill("Bengkel TKJ");
   await p.locator('[data-piket][value="Alya Putri"]').check();await p.locator('#scheduleForm [type="submit"]').click();await p.getByText("Jadwal berhasil disimpan.",{exact:true}).waitFor();
-  const saved=await p.evaluate(()=>window.__data.schedules.find(s=>s.day==="monday"));assert.equal(saved.lessons[0].time,"07.00–08.30");assert.equal(saved.lessons[0].teacher,"Bu Liza");
+  const saved=await p.evaluate(()=>window.__data.schedules.find(s=>s.day==="monday"));assert.equal(saved.lessons[0].time,"07.00–08.30");assert.equal(saved.lessons[0].teacher,"Bu Liza");assert.deepEqual(saved.lessons.map(item=>item.block),["A","B"]);
   await p.evaluate(()=>window.__data.schedules.push({day:"tuesday",lessons:[{time:"07.30–09.00",subject:"ASJ",teacher:"Bu Rani",room:"Lab"}],piket:[]}));
-  await choose(p,"#copyDay","Selasa");await p.locator("#copySchedule").click();await p.locator(".lesson-row").nth(1).waitFor();await p.locator('#scheduleForm [type="submit"]').click();await p.locator("#scheduleError").filter({hasText:"bertabrakan"}).waitFor();
-  await p.locator("[data-remove-lesson]").last().click();assert.equal(await p.locator(".lesson-row").count(),1);await finish(p);
+  await choose(p,"#copyDay","Selasa");await p.locator("#copySchedule").click();await p.locator('.lesson-row[data-block="A"]').nth(1).waitFor();await p.locator('#scheduleForm [type="submit"]').click();await p.locator("#scheduleError").filter({hasText:"bertabrakan"}).waitFor();
+  await p.locator('.lesson-row[data-block="A"] [data-remove-lesson]').last().click();assert.equal(await p.locator('.lesson-row[data-block="A"]').count(),1);assert.equal(await p.locator('.lesson-row[data-block="B"]').count(),1);await finish(p);
+ });
+ await check("Public schedule shows theory and workshop as separate blocks",async()=>{
+  const p=await create("guest","/jadwal/");await p.locator(".schedule-block").first().waitFor();assert.equal(await p.locator(".schedule-block").count(),2);assert.deepEqual(await p.locator(".schedule-block h3").allTextContents(),["Teori","Bengkel"]);assert.deepEqual(await p.locator(".schedule-block .eyebrow").allTextContents(),["Blok A","Blok B"]);await finish(p);
  });
  for(const role of ["student","class_officer","teacher","developer"])await check(role+": own Instagram editing",async()=>{
   const p=await create(role,"/profile/");await p.locator("#editMyInstagram").click();await p.locator('.modal [name="instagram"]').fill("https://instagram.com/new.account/");
@@ -104,7 +110,7 @@ const server=http.createServer((req,res)=>{let file=path.join(root,decodeURIComp
  for(const dark of [false,true])for(const width of [320,390,1440])await check("Responsive forms "+width+" "+(dark?"dark":"light"),async()=>{
   const p=await create("developer","/admin/",{width,dark,fonts:true});await tab(p,"schedule");await p.locator("#addLesson").click();
   await p.locator("[data-start]").fill("07:00");await p.locator("[data-end]").fill("08:30");await choose(p,"[data-subject]","Bahasa Indonesia");await p.evaluate(()=>document.fonts.ready);
-  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  assert.equal(await p.locator("#addLessonB").isVisible(),true);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
   await p.screenshot({path:path.join(out,"schedule-"+width+"-"+(dark?"dark":"light")+".png"),fullPage:true,animations:"disabled"});
   await p.locator('[data-subject] + .field-trigger').click();const box=await p.locator(".field-popover").boundingBox();assert.ok(box.x>=0&&box.x+box.width<=width);await p.screenshot({path:path.join(out,"dropdown-"+width+"-"+(dark?"dark":"light")+".png"),animations:"disabled"});await p.keyboard.press("Escape");
   if(width===1440){await p.locator(".brand-symbol").hover();await p.locator(".brand-preview.is-open").waitFor();await p.screenshot({path:path.join(out,"brand-"+(dark?"dark":"light")+".png"),animations:"disabled"});}

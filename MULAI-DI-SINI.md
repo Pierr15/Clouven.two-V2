@@ -2,6 +2,8 @@
 
 **Pembaruan daftar mapel:** salinan ini bernama ClouvenTwo-V2-Forms-Rev12-Data dan menyertakan 13 mapel beserta guru yang diisi pengguna. JSON sudah dinormalisasi dan lolos validator aplikasi. Tidak ada perubahan nama. Buka [mapel-guru.json](assets/data/mapel-guru.json), kemudian impor melalui tab **Mapel & Guru → Pilih file → Simpan daftar baru**. Daftar belum dimasukkan ke database oleh pengerjaan ini. Migrasi Revisi 12 tetap diperlukan jika belum diterapkan.
 
+**Pembaruan jadwal dan login:** halaman Jadwal serta formulir pengelola kini membagi pelajaran menjadi **Blok A (Teori)** dan **Blok B (Bengkel)**. Jadwal lama otomatis dibaca sebagai Blok A dan tidak membutuhkan migrasi tambahan. Setelah login berhasil, halaman tujuan ditutup layar startup penuh, logo **C²** digambar dengan garis tanpa efek kilau, lalu lapisan bergeser untuk memperlihatkan website. Ikon C² pada sidebar tetap statis dan Guest tidak mendapat transisi ini.
+
 Hasil terbaru ada di **ClouvenTwo-V2-Forms-Rev12**. Lihat [REV12-FORMS-INSTAGRAM.md](REV12-FORMS-INSTAGRAM.md) untuk form bertema website, pasangan mapel–guru, input jadwal, serta Instagram anggota/kelas. Template yang perlu kamu isi: [mapel-guru.json](assets/data/mapel-guru.json), dengan petunjuk di [PANDUAN-MAPEL-GURU.md](PANDUAN-MAPEL-GURU.md).
 
 Sebelum memakai fitur baru dengan backend sebenarnya, jalankan **supabase/migrations/202609070001_forms_instagram_rev12.sql** setelah migrasi Revisi 9, lalu deploy folder API bersama frontend. Migrasi belum diterapkan ke produksi dalam pengerjaan ini. Revisi 12 memakai konfigurasi environment yang sama dengan Revisi 11. Bagian di bawah menjelaskan fitur dan setup yang diwarisi dari Revisi 11.
