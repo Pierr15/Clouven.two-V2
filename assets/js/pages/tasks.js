@@ -6,6 +6,7 @@ import { bootShell } from "../bootstrap.js";
 import { requireAuth } from "../auth.js";
 import { subscribeTasks, subscribeProgress, setTaskProgress } from "../data.js";
 import { escapeHTML, subjectColor, taskState, formatShortDate, showToast } from "../utils.js";
+import {deadlineLabel,startDeadlineClock} from "../deadline.js";
 
 const authSession = await requireAuth();
 if (!authSession) throw new Error("redirect");
@@ -23,7 +24,7 @@ function render() {
   if (filter === "done") visible = tasks.filter((t) => progress[t.id]?.done);
   document.querySelector("#tasksGrid").innerHTML = visible.length ? visible.map((task) => {
     const done = Boolean(progress[task.id]?.done), state = taskState(task, done);
-    return `<article class="task-card" style="--task-color:${subjectColor(task.subject)}"><div class="task-card-head"><p class="task-subject">${escapeHTML(task.subject || "Umum")}</p><span class="task-status ${state.cls}">${state.label}</span></div><h3>${escapeHTML(task.title)}</h3><p class="task-description">${escapeHTML(task.description || "Tidak ada deskripsi tambahan.")}</p><div class="task-footer"><span><strong>${formatShortDate(task.due)}</strong> · ${escapeHTML(task.teacher || "Kelas")}</span><button class="complete-button" data-toggle="${escapeHTML(task.id)}">${done ? "Buka lagi" : "Tandai selesai"}</button></div></article>`;
+    return `<article class="task-card" id="task-${escapeHTML(task.id)}" style="--task-color:${subjectColor(task.subject)}"><div class="task-card-head"><p class="task-subject">${escapeHTML(task.subject || "Umum")}</p><span class="task-status ${state.cls}">${state.label}</span></div><h3>${escapeHTML(task.title)}</h3><p class="task-description">${escapeHTML(task.description || "Tidak ada deskripsi tambahan.")}</p><span class="deadline-label" data-deadline="${escapeHTML(task.due_at||task.due||"")}" data-task-id="${escapeHTML(task.id)}">${deadlineLabel(task.due_at||task.due,{done})}</span><div class="task-footer"><span><strong>${formatShortDate(task.due)}</strong>${task.due_at?` ${new Intl.DateTimeFormat("id-ID",{hour:"2-digit",minute:"2-digit"}).format(new Date(task.due_at))}`:""} · ${escapeHTML(task.teacher || "Kelas")}</span><button class="complete-button" data-toggle="${escapeHTML(task.id)}">${done ? "Buka lagi" : "Tandai selesai"}</button></div></article>`;
   }).join("") : `<div class="empty-state"><strong>${tasks.length ? "Tidak ada tugas di filter ini." : "Belum ada tugas."}</strong>${tasks.length ? "Coba kategori lain." : "Tugas baru akan muncul setelah ditambahkan oleh pengurus."}</div>`;
 }
 
@@ -71,5 +72,6 @@ if(can(authSession.role,"view_progress")){
   subscribeAllProgress(value=>{classProgress=value;},classProgressState.update);
 }
 
-subscribeTasks((value)=>{tasks=value;}, tasksState.update);
+subscribeTasks((value)=>{tasks=value;const requested=new URLSearchParams(location.search).get("task");if(requested)setTimeout(()=>document.getElementById(`task-${requested}`)?.scrollIntoView({block:"center"}),50);}, tasksState.update);
 subscribeProgress(authSession.user.id,(value)=>{progress=value;}, progressState.update);
+startDeadlineClock(document,()=>Object.fromEntries(Object.entries(progress).map(([id,row])=>[id,row.done])));

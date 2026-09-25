@@ -1,3 +1,5 @@
+import {deadlineInstant} from "./deadline.js";
+
 export const DAYS = [
   { key: "monday", label: "Senin", short: "Sen", jsDay: 1 },
   { key: "tuesday", label: "Selasa", short: "Sel", jsDay: 2 },
@@ -41,7 +43,8 @@ export function relativeDue(value) {
 }
 export function taskState(task, done = false) {
   if (done) return { label: "Selesai", cls: "is-done" };
-  if (dateDiff(task.due) < 0) return { label: "Terlambat", cls: "is-late" };
+  const deadline=deadlineInstant(task.due_at||task.due);
+  if (deadline && deadline < new Date()) return { label: "Terlambat", cls: "is-late" };
   return { label: "Berjalan", cls: "" };
 }
 export function subjectColor(subject = "") {

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <script src="/assets/js/theme.js?v=avatar-source-5"></script>
+    <script src="/assets/js/login-startup-gate.js?v=startup-transition-3"></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Spinning Wheel untuk memilih nama atau opsi secara acak langsung di browser."
+    />
+    <title>Spinning Wheel · Tools Ruang Kelas</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
+    />
+    <script>
+      try {
+        if (localStorage.getItem("clouven-sidebar-collapsed") === "1") {
+          document.documentElement.classList.add("sidebar-precollapsed");
+        }
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/app.css?v=spinning-wheel-1" />
+    <link rel="stylesheet" href="/assets/css/theme.css?v=spinning-wheel-1" />
+    <link rel="stylesheet" href="/assets/css/spinning-wheel.css?v=spinning-wheel-1" />
+    <link rel="stylesheet" href="/assets/css/loading.css?v=startup-transition-3" />
+    <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script type="module" src="/assets/js/pages/spinning-wheel.js?v=spinning-wheel-1"></script>
+  </head>
+  <body>
+    <div class="page-noise"></div>
+    <aside id="sidebar"></aside>
+    <main class="app-main">
+      <div class="mobile-topbar">
+        <strong>Spinning Wheel</strong>
+        <button class="mobile-menu" type="button" aria-label="Buka menu navigasi" aria-controls="sidebar" aria-expanded="false">☰</button>
+      </div>
+
+      <section class="section-pad page-section wheel-page">
+        <a class="wheel-back" href="/tools/">
+          <i class="ti ti-arrow-left" aria-hidden="true"></i> Kembali ke Tools
+        </a>
+
+        <header class="page-header wheel-header">
+          <div>
+            <p class="eyebrow">random picker</p>
+            <h1>Putar roda, <em>temukan pilihan.</em></h1>
+          </div>
+          <p>
+            Semua proses berlangsung di perangkatmu. Daftar pilihan tersimpan
+            lokal di browser dan tidak dikirim ke server.
+          </p>
+        </header>
+
+        <div class="wheel-workspace">
+          <section class="card wheel-stage" aria-labelledby="wheelTitle">
+            <div class="wheel-stage-head">
+              <div>
+                <p class="wheel-kicker">Siap diputar</p>
+                <h2 id="wheelTitle">Siapa yang terpilih?</h2>
+              </div>
+              <span class="wheel-count"><strong id="optionCount">6</strong> pilihan</span>
+            </div>
+
+            <div class="wheel-wrap">
+              <div class="wheel-pointer" aria-hidden="true">
+                <i class="ti ti-triangle-filled"></i>
+              </div>
+              <canvas id="wheelCanvas" width="720" height="720" aria-label="Roda berisi daftar pilihan"></canvas>
+              <button id="spinButton" class="wheel-spin" type="button" aria-label="Putar roda">
+                <span>PUTAR</span>
+              </button>
+            </div>
+
+            <div class="wheel-result" id="wheelResult" aria-live="polite" aria-atomic="true">
+              <span class="wheel-result-icon" aria-hidden="true"><i class="ti ti-sparkles"></i></span>
+              <div>
+                <span>Hasil pilihan akan muncul di sini</span>
+                <strong>Tekan tombol PUTAR untuk mulai</strong>
+              </div>
+            </div>
+
+            <p class="wheel-hint">
+              <i class="ti ti-info-circle" aria-hidden="true"></i>
+              Setiap bagian roda memiliki peluang yang sama.
+            </p>
+          </section>
+
+          <aside class="card wheel-editor" aria-labelledby="editorTitle">
+            <div class="wheel-editor-head">
+              <div>
+                <p class="eyebrow">isi roda</p>
+                <h2 id="editorTitle">Daftar pilihan</h2>
+              </div>
+              <button id="resetOptions" class="wheel-icon-button" type="button" title="Kembalikan daftar awal" aria-label="Kembalikan daftar awal">
+                <i class="ti ti-refresh"></i>
+              </button>
+            </div>
+
+            <div class="form-field wheel-option-field">
+              <label for="wheelOptions">Satu pilihan per baris</label>
+              <textarea id="wheelOptions" rows="10" maxlength="1000" spellcheck="false">Kelompok 1
+Kelompok 2
+Kelompok 3
+Kelompok 4
+Kelompok 5
+Kelompok 6</textarea>
+              <div class="wheel-field-meta">
+                <span>Minimal 2, maksimal 24 pilihan</span>
+                <strong id="editorCount">6/24</strong>
+              </div>
+            </div>
+
+            <button id="applyOptions" class="button button-dark wheel-apply" type="button">
+              <i class="ti ti-check" aria-hidden="true"></i> Terapkan ke roda
+            </button>
+
+            <label class="wheel-toggle" for="removeWinner">
+              <span>
+                <strong>Hapus hasil setelah dipilih</strong>
+                <small>Cocok untuk pembagian giliran tanpa pengulangan.</small>
+              </span>
+              <input id="removeWinner" type="checkbox" />
+              <span class="wheel-toggle-ui" aria-hidden="true"></span>
+            </label>
+
+            <div class="wheel-preview">
+              <span>Isi roda saat ini</span>
+              <ol id="optionPreview"></ol>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

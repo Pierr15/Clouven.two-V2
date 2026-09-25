@@ -21,7 +21,7 @@ async function check(configured){
   if(configured){assert.deepEqual(data,{url:"https://preview-test.invalid",publishableKey:"sb_publishable_local_test_configuration"});}
   else assert.deepEqual(Object.keys(data),["error"]);
   for(const route of ["/.env","/.env.local","/.env.example","/README.md","/scripts/serve.mjs"])assert.equal((await fetch(base+route)).status,404);
-  for(const route of ["/","/admin/","/kelola/"])assert.equal((await fetch(base+route)).status,200);
+  for(const route of ["/","/admin/","/kelola/","/tools/spinning-wheel/"])assert.equal((await fetch(base+route)).status,200);
   assert.equal((await fetch(base+"/api/config",{method:"POST"})).status,405);
   results.push({name:configured?"Process environment overrides local files; public config only":"Empty environment reports missing configuration",status:"PASS",checks:["config endpoint","private files blocked","page routes","POST rejected"]});
  }finally{child.kill();await new Promise(r=>child.exitCode===null?child.once("exit",r):r());}

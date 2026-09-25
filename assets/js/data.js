@@ -173,6 +173,31 @@ export async function deleteTask(id) {
   if (!rows?.some(row => row.id === id)) throw new Error("Tugas tidak dapat dihapus. Tugas mungkin sudah dihapus atau akses Anda telah berubah. Muat ulang daftar untuk memastikan.");
 }
 
+export async function listCalendarEvents(from, until) {
+  const {data,error}=await supabase.from("calendar_events").select("*").lt("start_at",until).gt("end_at",from).order("start_at");
+  if(error)throw error;
+  return data||[];
+}
+export async function getCalendarEvent(id) {
+  const {data,error}=await supabase.from("calendar_events").select("*").eq("id",id).maybeSingle();
+  if(error)throw error;
+  return data;
+}
+
+export async function saveCalendarEvent(payload) {
+  const {id,...values}=payload;
+  const query=id?supabase.from("calendar_events").update(values).eq("id",id).select("id").single():supabase.from("calendar_events").insert(values).select("id").single();
+  const {data,error}=await query;
+  if(error)throw error;
+  return data.id;
+}
+
+export async function deleteCalendarEvent(id) {
+  const {data,error}=await supabase.from("calendar_events").delete().eq("id",id).select("id");
+  if(error)throw error;
+  if(!data?.length)throw new Error("Kegiatan tidak dapat dihapus.");
+}
+
 function normalizeMember(row) {
   return row ? {
     ...row,

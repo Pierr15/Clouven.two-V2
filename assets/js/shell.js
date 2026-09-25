@@ -5,10 +5,12 @@ import { can } from "./permissions.js";
 import { initials, escapeHTML } from "./utils.js";
 import { mountBrandPreview } from "./brand-preview.js";
 import { playLoginBrandReveal } from "./brand-login-reveal.js?v=startup-transition-3";
+import { mountNotificationCenter } from "./notifications.js";
 
 const links = [
   ["home", "/", "home", "Home"],
   ["schedule", "/jadwal/", "calendar-week", "Schedule"],
+  ["calendar", "/kalender/", "calendar-event", "Kalender"],
   ["tasks", "/tugas/", "clipboard-list", "Tasks"],
   ["tools", "/tools/", "tools", "Tools"],
   ["storage", "/penyimpanan/", "brand-google-drive", "Storage"],
@@ -24,7 +26,7 @@ export async function mountShell(active = "") {
     collapsed = localStorage.getItem("clouven-sidebar-collapsed") === "1";
   } catch {}
   document.body.classList.toggle("sidebar-collapsed", collapsed);
-  const protectedKeys = new Set(["tasks", "storage", "members"]);
+  const protectedKeys = new Set(["tasks", "calendar", "storage", "members"]);
   host.className = `sidebar${collapsed ? " is-collapsed" : ""}`;
   document.documentElement.classList.remove("sidebar-precollapsed");
   host.innerHTML = `
@@ -87,6 +89,7 @@ export async function mountShell(active = "") {
             : ""
         }
 
+    ${session.user ? '<div class="notification-host" id="notificationHost"></div>' : ""}
     <p class="sidebar-section-label">Akun</p>
 
     <div class="sidebar-account">
@@ -170,6 +173,7 @@ export async function mountShell(active = "") {
     </div>
   `;
   startNameSync(session);
+  if (session.user) mountNotificationCenter(host.querySelector("#notificationHost"),session.user.id);
   document.dispatchEvent(new Event("clouven:shell-ready"));
   mountBrandPreview(host.querySelector(".brand-symbol"));
   playLoginBrandReveal(session.user);

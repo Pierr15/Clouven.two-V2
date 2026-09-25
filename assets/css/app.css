@@ -1,4 +1,5 @@
 @import url("./styled-name.css?v=names-16");
+@import url("./productivity.css");
 :root {
   --ink: #1b2c25;
   --ink-soft: #52635b;
@@ -1449,6 +1450,33 @@ select:focus {
   color: var(--ink-soft);
   font-size: 12px;
 }
+.tool-launch-card {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  overflow: hidden;
+  border-color: #e3b0a1;
+  background: linear-gradient(115deg, #fff8f4 0%, #fffdf9 56%, #eef3ea 100%);
+}
+.tool-launch-icon {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border: 7px solid #fffaf3;
+  border-radius: 50%;
+  color: #fffdf9;
+  background: conic-gradient(var(--coral) 0 25%, var(--green-dark) 0 50%, #e7b75c 0 75%, #657b9b 0);
+  box-shadow: 0 6px 15px rgba(35, 68, 53, .17);
+}
+.tool-launch-icon i { font-size: 27px; }
+.tool-launch-copy .eyebrow { margin-bottom: 4px; font-size: 9px; }
+.tool-launch-copy h3 { margin: 0 0 4px; }
+.tool-launch-copy > p:last-child { margin: 0; color: var(--ink-soft); font-size: 12px; }
+.tool-launch-card .button { white-space: nowrap; text-decoration: none; }
 .tool-result {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1769,6 +1797,8 @@ select:focus {
   .tools-grid {
     grid-template-columns: 1fr;
   }
+  .tool-launch-card { grid-template-columns: auto minmax(0, 1fr); }
+  .tool-launch-card .button { grid-column: 1 / -1; width: 100%; }
   .login-page {
     grid-template-columns: 1fr;
   }

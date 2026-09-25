@@ -10,6 +10,7 @@ import { requireAuth, logout, ROLE_LABEL } from "../auth.js";
 import { bootShell } from "../bootstrap.js";
 import { subscribeMember, subscribeProgress } from "../data.js";
 import { escapeHTML, showToast } from "../utils.js";
+import {browserPermission,browserEnabled,setBrowserEnabled,readPreferences,savePreferences} from "../notifications.js";
 
 const session = await requireAuth(); if (!session) throw new Error("redirect");
 await bootShell("profile");
@@ -58,3 +59,24 @@ document.querySelector("#profileCard").addEventListener("click", event => {
     render(); memberState.retry?.();
   } });
 });
+
+const notificationHost=document.querySelector("#notificationSettingsContent");
+let notificationPrefs=null;
+function renderNotifications(){
+  const permission=browserPermission();
+  const browserText=permission==="unsupported"?"Browser ini tidak mendukung notifikasi atau koneksi belum aman.":permission==="denied"?"Izin ditolak di browser. Ubah melalui pengaturan situs browser.":permission==="granted"?"Izin browser diberikan. Notifikasi muncul saat halaman terbuka.":"Izin browser belum diminta.";
+  notificationHost.innerHTML=`<div class="notification-settings-list"><label><input type="checkbox" data-pref="assignment_reminders" ${notificationPrefs.assignment_reminders?"checked":""}> Pengingat tenggat tugas di aplikasi</label><label><input type="checkbox" data-pref="calendar_reminders" ${notificationPrefs.calendar_reminders?"checked":""}> Pengingat kegiatan di aplikasi</label><label><input type="checkbox" data-browser-toggle ${browserEnabled(session.user.id)?"checked":""} ${permission==="unsupported"||permission==="denied"?"disabled":""}> Notifikasi browser di perangkat ini</label><p class="form-help">${browserText}</p></div>`;
+}
+async function loadNotifications(){notificationHost.textContent="Memuat pengaturan…";try{notificationPrefs=await readPreferences(session.user.id);renderNotifications();}catch(error){notificationHost.innerHTML='<div class="data-state is-error">Pengaturan gagal dimuat. <button type="button" data-retry-prefs>Coba lagi</button></div>';}}
+notificationHost.addEventListener("click",event=>{if(event.target.closest("[data-retry-prefs]"))loadNotifications();});
+notificationHost.addEventListener("change",async event=>{
+  const target=event.target;
+  if(target.matches("[data-browser-toggle]")){
+    try{const permission=await setBrowserEnabled(session.user.id,target.checked);renderNotifications();showToast(permission==="granted"?"Pengaturan notifikasi browser diperbarui.":permission==="denied"?"Izin browser ditolak.":"Notifikasi browser tidak tersedia.");}catch(error){renderNotifications();showToast("Pengaturan browser gagal: "+error.message);}
+    return;
+  }
+  if(!target.matches("[data-pref]"))return;
+  const next={...notificationPrefs,[target.dataset.pref]:target.checked};target.disabled=true;
+  try{await savePreferences(session.user.id,next);notificationPrefs={...next,exists:true};showToast("Pengaturan pengingat disimpan.");}catch(error){showToast("Gagal menyimpan: "+error.message);}finally{renderNotifications();}
+});
+loadNotifications();

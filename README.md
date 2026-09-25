@@ -26,6 +26,7 @@ Username/NIS tetap dipetakan internal menjadi `<username>@clouven.local`, jadi u
 - `/` — Beranda publik.
 - `/jadwal/` — Pelajaran Blok A (Teori), Blok B (Bengkel), piket, dan urutan pemimpin apel. Publik.
 - `/tools/` — Tools TKJ. Publik.
+- `/tools/spinning-wheel/` — Roda pilihan acak dengan daftar yang dapat diedit dan tersimpan lokal. Publik.
 - `/tugas/` — Tugas + progres sendiri; pemantauan/pengelolaan progres anggota sesuai role.
 - `/penyimpanan/` — Metadata Supabase + file Google Drive. Wajib login.
 - `/anggota/` — Daftar anggota. Wajib login.

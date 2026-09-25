@@ -66,6 +66,10 @@
   background: #1a2820;
   color: var(--ink);
 }
+[data-theme="dark"] .tool-launch-card {
+  border-color: #62483f;
+  background: linear-gradient(115deg, #2c211e 0%, #1a2820 56%, #213028 100%);
+}
 [data-theme="dark"] :is(input, textarea, select) { background: #152219; color: var(--ink); }
 [data-theme="dark"] input::placeholder,
 [data-theme="dark"] textarea::placeholder { color: #899e90; opacity: 1; }

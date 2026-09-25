@@ -5,6 +5,7 @@ const developer = ["developer"];
 const everyone = ["guest", ...signed];
 export const ACCESS = Object.freeze({
   home: everyone, schedule: everyone, apel: everyone, tools: everyone, theme: everyone,
+  calendar: signed, edit_calendar: managers,
   task_summary: signed, tasks: signed, own_progress: signed, members: signed,
   files: signed, own_account: signed, edit_instagram: signed, upload: managers, manage_files: managers,
   view_progress: managers, edit_progress: teachers, edit_self: teachers,

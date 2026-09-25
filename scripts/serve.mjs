@@ -14,9 +14,10 @@ for (const filename of ['.env.local', '.env']) {
   Object.assign(process.env, supplied);
 }
 const port = Number(process.env.PORT || 3000);
-const routes = new Set(['', 'jadwal', 'tugas', 'tools', 'penyimpanan', 'anggota', 'profile', 'login', 'admin', 'admin/login', 'kelola']);
+const routes = new Set(['', 'jadwal', 'kalender', 'tugas', 'tools', 'tools/spinning-wheel', 'penyimpanan', 'anggota', 'profile', 'login', 'admin', 'admin/login', 'kelola']);
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 const apiRoutes = new Map([
+  ['/api/notifications/run', {module: '../api/notifications/run.js'}],
   ['/api/drive/upload', {module: '../api/drive/upload.js', raw: true}],
   ['/api/drive/download', {module: '../api/drive/download.js'}],
   ['/api/drive/manage', {module: '../api/drive/manage.js', json: true}],
@@ -93,4 +94,4 @@ const server = http.createServer(async (req, res) => {
   } catch { res.writeHead(404); res.end('Not found'); }
 });
 server.on('error', error => { console.error(error.code === 'EADDRINUSE' ? `Port ${port} sedang dipakai. Gunakan PORT lain.` : error.message); process.exitCode = 1; });
-server.listen(port, '127.0.0.1', () => console.log(`Preview: http://127.0.0.1:${port}\nCtrl+C untuk berhenti.\nKonfigurasi publik dan API Google Drive lokal sudah aktif. Endpoint admin lainnya tetap memerlukan Vercel Functions.`));
+server.listen(port, '127.0.0.1', () => console.log(`Preview: http://127.0.0.1:${port}\nCtrl+C untuk berhenti.\nKonfigurasi publik, API Google Drive, dan job pengingat lokal tersedia. Endpoint admin lainnya tetap memerlukan Vercel Functions.`));

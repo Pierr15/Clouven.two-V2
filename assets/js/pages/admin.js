@@ -145,6 +145,7 @@ function render() {
     );
   if (active === "tasks") {
     const form = panel.querySelector("#taskForm");
+    form.elements.due.closest(".form-field").insertAdjacentHTML("afterend",'<div class="form-field"><label for="taskDueTime">Jam tenggat (opsional)</label><input id="taskDueTime" name="due_time" type="time"><p class="form-help">Kosongkan jika tugas berakhir pukul 23:59 WIB.</p></div>');
     taskBinding = bindSubjectTeacher(
       form.elements.subject,
       form.elements.teacher,
@@ -293,6 +294,7 @@ panel.addEventListener("submit", async (e) => {
         title: f.title,
         subject: f.subject,
         due: f.due,
+        due_at: f.due_time ? new Date(`${f.due}T${f.due_time}:00`).toISOString() : null,
         teacher: f.teacher,
         description: f.description,
         status: "open",
@@ -400,6 +402,10 @@ panel.addEventListener("click", async (e) => {
       if (form.elements[k] && !["subject", "teacher"].includes(k))
         form.elements[k].value = v ?? "";
     });
+    if (form.elements.due_time) {
+      const date=task.due_at?new Date(task.due_at):null;
+      form.elements.due_time.value=date?`${String(date.getHours()).padStart(2,"0")}:${String(date.getMinutes()).padStart(2,"0")}`:"";
+    }
     taskBinding.set(task);
     form.scrollIntoView({ behavior: "smooth" });
     return;
