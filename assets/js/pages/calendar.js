@@ -494,7 +494,10 @@ function eventDialog(item = null) {
       wrap.dataset.busy = "false";
       close();
       showToast("Kegiatan tersimpan.");
-      await load();
+      await load({
+        force: true,
+        showLoading: false,
+      });
     } catch (err) {
       wrap.dataset.busy = "false";
       button.disabled = false;
@@ -552,7 +555,10 @@ details.addEventListener("click", (e) => {
     success: "Kegiatan dihapus.",
     onSubmit: async () => {
       await deleteCalendarEvent(item.id);
-      await load();
+      await load({
+        force: true,
+        showLoading: false,
+      });
     },
   });
 });
@@ -567,13 +573,25 @@ subscribeTaskSummaries(
       showToast("Tenggat tugas belum dapat dimuat.");
   },
 );
-await load();
+await load({
+  force: true,
+  showLoading: false,
+});
 const live = supabase
   .channel("calendar-events-page")
   .on(
     "postgres_changes",
-    { event: "*", schema: "public", table: "calendar_events" },
-    () => load(),
+    {
+      event: "*",
+      schema: "public",
+      table: "calendar_events",
+    },
+    () => {
+      void load({
+        force: true,
+        showLoading: false,
+      });
+    },
   )
   .subscribe();
 addEventListener("pagehide", () => supabase.removeChannel(live), {
@@ -586,14 +604,22 @@ if (requested && /^[0-9a-f-]{36}$/i.test(requested)) {
       events.find((x) => x.id === requested) ||
       (await getCalendarEvent(requested));
     if (item) {
-      selected = new Date(item.start_at);
-      if (
-        selected.getMonth() !== month.getMonth() ||
-        selected.getFullYear() !== month.getFullYear()
-      ) {
-        month = new Date(selected.getFullYear(), selected.getMonth(), 1);
-        await load();
-      } else render();
+      const requestedDate = new Date(item.start_at);
+
+      const requestedMonth = new Date(
+        requestedDate.getFullYear(),
+        requestedDate.getMonth(),
+        1,
+      );
+
+      if (monthIndex(requestedMonth) !== monthIndex(month)) {
+        await navigateToMonth(requestedMonth, {
+          selectedDate: requestedDate,
+        });
+      } else {
+        selected = requestedDate;
+        render();
+      }
     }
   } catch (error) {
     showToast("Kegiatan yang dituju belum dapat dimuat.");

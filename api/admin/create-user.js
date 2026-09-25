@@ -16,12 +16,18 @@ export default async function handler(req, res) {
     const actor = await verifyRequest(req, "developer");
     const {
       name,
+      nickname = "",
       username: raw,
       password,
       role = "student",
       number = "",
       classRole = "Anggota",
     } = req.body || {};
+    if (typeof nickname !== "string" || nickname.trim().length > 40) {
+      return res.status(400).json({
+        error: "Nama panggilan maksimal 40 karakter.",
+      });
+    }
     const username = normalizeUsername(raw);
     if (
       !name?.trim() ||
@@ -50,6 +56,7 @@ export default async function handler(req, res) {
     const { error: memberError } = await adminSupabase.from("members").insert({
       id: createdUser.id,
       name: String(name).trim(),
+      nickname: String(nickname).trim(),
       username,
       number: String(number).trim(),
       role,
