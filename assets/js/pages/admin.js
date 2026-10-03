@@ -158,7 +158,7 @@ function render() {
       alt="Pratinjau foto kelas"
     >
   </div>
-</div><div class="form-actions"><button class="button button-coral" type="submit">Simpan info</button></div></form></div></div>`;
+</div></div><div class="form-actions"><button class="button button-coral" type="submit">Simpan info</button></div></form></div></div>`;
   if (active === "schedule") panel.innerHTML = scheduleMarkup(day);
   if (active === "apel")
     panel.innerHTML = `<div class="admin-section"><div class="card form-card"><p class="eyebrow">perubahan mendadak siap</p><h2>Urutan Pemimpin Apel</h2><p class="muted">Seret item atau gunakan tombol ↑ ↓. Item pertama selalu dianggap pemimpin berikutnya dan perubahan tersinkron realtime setelah disimpan.</p><form id="apelAdd" class="form-grid" style="margin-top:18px"><div class="form-field"><label for="admin-field-13">Tambah nama</label><input name="name" list="memberNames" placeholder="Nama siswa" id="admin-field-13"><datalist id="memberNames">${members.map((m) => `<option value="${escapeHTML(m.name)}">`).join("")}</datalist></div><div class="form-actions" style="align-items:end"><button class="button button-light" type="submit">+ Tambah ke urutan</button></div></form><div id="queueEditor" class="admin-list" style="margin-top:18px">${queue.map((x, i) => `<div class="admin-list-item queue-edit-item" draggable="true" data-queue-index="${i}"><span class="drag-handle">☰</span><span class="queue-number">${String(i + 1).padStart(2, "0")}</span><div><strong>${referencedName(x.memberId, x.name)}</strong>${i === 0 ? `<div class="queue-date">Pemimpin berikutnya</div>` : ""}</div><div class="row-actions"><button class="mini-action" data-q-up="${i}">↑</button><button class="mini-action" data-q-down="${i}">↓</button><button class="mini-action" data-q-next="${i}">Berikutnya</button><button class="mini-action" data-q-delete="${i}">×</button></div></div>`).join("") || `<div class="empty-state"><strong>Urutan masih kosong.</strong>Tambahkan nama di atas.</div>`}</div><div class="form-actions"><button class="button button-coral" id="saveQueue">Simpan urutan</button></div></div></div>`;
@@ -337,6 +337,7 @@ panel.addEventListener("submit", async (e) => {
       if (form.dataset.saving === "true") return;
 
       const values = Object.fromEntries(new FormData(form).entries());
+      const status = form.querySelector("#profileSaveStatus");
 
       try {
         values.classPhoto = normalizeClassPhotoUrl(values.classPhoto);
