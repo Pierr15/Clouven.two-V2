@@ -1,3 +1,7 @@
+import { createTypewriter } from "./typewriter.js";
+import { titleSettings, MAX_TITLE_VARIATIONS } from "./title-settings.js";
+import { escapeHTML } from "./utils.js";
+
 export function mountTitleEditor(form, profile) {
   const initial = titleSettings(profile.titleAnimation);
   const section = document.createElement("section");
