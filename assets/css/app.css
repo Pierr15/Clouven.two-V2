@@ -2372,10 +2372,10 @@ button:disabled {
   content: "";
   position: absolute;
   visibility: visible;
-  right: -0.14em;
-  bottom: 0.06em;
+  right: -0.10em;
+  top: 0.16em;
   width: 2px;
-  height: 0.76em;
+  height: 0.72em;
   border-radius: 1px;
   background: var(--coral);
   animation: heading-caret-blink 1s step-end infinite;
