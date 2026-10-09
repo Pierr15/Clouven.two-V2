@@ -2368,33 +2368,36 @@ button:disabled {
 .typewriter-char {
   position: relative;
 }
-
-/* Karakter typewriter */
+/* 1. Reset total semua gaya typewriter char sebelumnya */
 .typewriter-char {
+  display: inline;
+  position: static;
+}
+
+/* 2. Gunakan border-left pada karakter tepat SETELAH karakter dengan data-caret, 
+      ATAU gunakan border-right pada elemen data-caret itu sendiri dengan cara ini: */
+.typewriter-char[data-caret] {
   position: relative;
 }
 
-/* Kursor vertikal di ujung karakter aktif */
 .typewriter-char[data-caret]::after {
   content: "";
-  position: absolute;
-  right: -0.10em;
-  top: 0.16em;
-  width: 2px;
-  height: 0.72em;
-  border-radius: 1px;
+  display: inline-block;
+  position: relative;
+  vertical-align: baseline;
+  width: 3px;
+  height: 0.9em;
+  margin-left: 2px;
   background: var(--coral);
+  border-radius: 1px;
   animation: heading-caret-blink 1s step-end infinite;
   pointer-events: none;
 }
 
-/* Posisi kursor saat teks belum mulai muncul */
-.typewriter-char[data-caret="start"]::after {
-  left: 0;
-  right: auto;
-}
-
 @keyframes heading-caret-blink {
+  0%, 100% {
+    opacity: 1;
+  }
   50% {
     opacity: 0;
   }
