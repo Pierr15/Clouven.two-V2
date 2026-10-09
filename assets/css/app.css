@@ -2368,20 +2368,44 @@ button:disabled {
 .typewriter-char {
   position: relative;
 }
-/* Typewriter caret effect using border-right */
-.typewriter-char[data-caret] {
-  border-right: 2px solid var(--coral);
-  margin-right: -2px;
-  animation: heading-caret-blink 1s step-end infinite;
+/* Typewriter container */
+.typewriter-container,
+.typewriter-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
+
+/* Typewriter characters */
+.typewriter-char {
+  position: relative;
+  display: inline-block;
+}
+
+/* Vertical caret on the active character */
+.typewriter-char[data-caret]::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -0.10em;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 0.75em;
+  border-radius: 1px;
+  background-color: var(--coral);
+  animation: heading-caret-blink 1s step-end infinite;
+  pointer-events: none;
+}
+
+/* Caret blinking animation */
 @keyframes heading-caret-blink {
   0%,
   100% {
-    border-color: transparent;
+    opacity: 1;
   }
 
   50% {
-    border-color: var(--coral);
+    opacity: 0;
   }
 }
 @media (prefers-reduced-motion: reduce) {
