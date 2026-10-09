@@ -2372,7 +2372,7 @@ button:disabled {
   content: "";
   position: absolute;
   visibility: visible;
-  right: -0.06em;
+  right: -0.14em;
   bottom: 0.06em;
   width: 2px;
   height: 0.76em;
