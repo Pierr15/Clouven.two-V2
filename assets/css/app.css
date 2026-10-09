@@ -2368,22 +2368,19 @@ button:disabled {
 .typewriter-char {
   position: relative;
 }
-```css
 .typewriter-char[data-caret]::after {
   content: "";
   position: absolute;
   visibility: visible;
   right: -0.06em;
-  bottom: 0.08em;
+  bottom: 0.06em;
   width: 2px;
-  height: 0.68em;
-  border-radius: 2px;
+  height: 0.76em;
+  border-radius: 1px;
   background: var(--coral);
   animation: heading-caret-blink 1s step-end infinite;
   pointer-events: none;
 }
-```
-
 .typewriter-char[data-caret="start"]::after {
   left: 0;
   right: auto;
