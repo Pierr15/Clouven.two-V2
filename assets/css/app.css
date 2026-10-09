@@ -2368,25 +2368,20 @@ button:disabled {
 .typewriter-char {
   position: relative;
 }
-.typewriter-char[data-caret]::after {
-  content: "";
-  display: inline-block;
-  width: 2px;
-  height: 1em;
-  margin-left: 2px;
-  vertical-align: baseline;
-  border-radius: 1px;
-  background-color: var(--coral);
+/* Typewriter caret effect using border-right */
+.typewriter-char[data-caret] {
+  border-right: 2px solid var(--coral);
+  margin-right: -2px;
   animation: heading-caret-blink 1s step-end infinite;
-  pointer-events: none;
-}
-.typewriter-char[data-caret="start"]::after {
-  left: 0;
-  right: auto;
 }
 @keyframes heading-caret-blink {
+  0%,
+  100% {
+    border-color: transparent;
+  }
+
   50% {
-    opacity: 0;
+    border-color: var(--coral);
   }
 }
 @media (prefers-reduced-motion: reduce) {
