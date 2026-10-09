@@ -2368,42 +2368,33 @@ button:disabled {
 .typewriter-char {
   position: relative;
 }
-/* Typewriter container */
-.typewriter-container,
-.typewriter-wrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-}
 
-/* Typewriter characters */
+/* Karakter typewriter */
 .typewriter-char {
   position: relative;
-  display: inline-block;
 }
 
-/* Vertical caret on the active character */
+/* Kursor vertikal di ujung karakter aktif */
 .typewriter-char[data-caret]::after {
   content: "";
   position: absolute;
-  top: 50%;
   right: -0.10em;
-  transform: translateY(-50%);
+  top: 0.16em;
   width: 2px;
-  height: 0.75em;
+  height: 0.72em;
   border-radius: 1px;
-  background-color: var(--coral);
+  background: var(--coral);
   animation: heading-caret-blink 1s step-end infinite;
   pointer-events: none;
 }
 
-/* Caret blinking animation */
-@keyframes heading-caret-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
+/* Posisi kursor saat teks belum mulai muncul */
+.typewriter-char[data-caret="start"]::after {
+  left: 0;
+  right: auto;
+}
 
+@keyframes heading-caret-blink {
   50% {
     opacity: 0;
   }
