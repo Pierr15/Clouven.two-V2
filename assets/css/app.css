@@ -2369,29 +2369,26 @@ button:disabled {
   position: relative;
 }
 
-/* Karakter: kotak stabil untuk posisi kursor */
+/* Pertahankan susunan teks aslinya */
 .typewriter-char {
-  display: inline-block;
   position: relative;
-  vertical-align: baseline;
 }
 
 /* Kursor vertikal */
 .typewriter-char[data-caret]::after {
   content: "";
   position: absolute;
-  top: 50%;
   right: -0.08em;
-  transform: translateY(-50%);
+  top: 0.16em;
   width: 2px;
   height: 0.72em;
   border-radius: 1px;
-  background-color: var(--coral);
+  background: var(--coral);
   animation: heading-caret-blink 1s step-end infinite;
   pointer-events: none;
 }
 
-/* Kursor saat animasi baru dimulai */
+/* Posisi kursor saat animasi baru dimulai */
 .typewriter-char[data-caret="start"]::after {
   left: 0;
   right: auto;
@@ -2402,6 +2399,7 @@ button:disabled {
     opacity: 0;
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .typewriter-line:first-child .typewriter-char {
