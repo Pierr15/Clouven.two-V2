@@ -2369,8 +2369,17 @@ button:disabled {
   position: relative;
 }
 
-/* Pertahankan susunan teks aslinya */
+/* Cegah kata terpotong di antara karakter typewriter */
+.typewriter-line {
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  min-width: 0;
+}
+
+/* Karakter tetap inline agar teks bisa membungkus di spasi */
 .typewriter-char {
+  display: inline;
   position: relative;
 }
 
@@ -2388,7 +2397,6 @@ button:disabled {
   pointer-events: none;
 }
 
-/* Posisi kursor saat animasi baru dimulai */
 .typewriter-char[data-caret="start"]::after {
   left: 0;
   right: auto;
@@ -2399,7 +2407,6 @@ button:disabled {
     opacity: 0;
   }
 }
-
 
 @media (prefers-reduced-motion: reduce) {
   .typewriter-line:first-child .typewriter-char {
