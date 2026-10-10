@@ -2369,43 +2369,25 @@ button:disabled {
   position: relative;
 }
 
-
-/* Typewriter: setiap variasi judul menempati area yang sama */
-.typewriter-title {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  width: 100%;
-  max-width: 620px;
-  min-width: 0;
-}
-
-.typewriter-line {
-  grid-area: 1 / 1;
-  min-width: 0;
-  width: 100%;
-  white-space: normal;
-  overflow-wrap: normal;
-  word-break: normal;
-}
-
+/* Kursor vertikal typewriter */
 .typewriter-char {
   position: relative;
 }
 
-/* Kursor vertikal */
 .typewriter-char[data-caret]::after {
   content: "";
   position: absolute;
-  top: 0.14em;
+  top: 0.12em;
   right: -0.07em;
   width: 2px;
   height: 0.74em;
   border-radius: 1px;
-  background: var(--coral);
+  background-color: var(--coral);
   animation: heading-caret-blink 1s step-end infinite;
   pointer-events: none;
 }
 
+/* Posisi kursor ketika animasi dimulai */
 .typewriter-char[data-caret="start"]::after {
   left: 0;
   right: auto;
@@ -2416,6 +2398,7 @@ button:disabled {
     opacity: 0;
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .typewriter-line:first-child .typewriter-char {
