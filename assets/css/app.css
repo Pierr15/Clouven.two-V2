@@ -2369,17 +2369,26 @@ button:disabled {
   position: relative;
 }
 
-/* Cegah kata terpotong di antara karakter typewriter */
-.typewriter-line {
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
+
+/* Typewriter: setiap variasi judul menempati area yang sama */
+.typewriter-title {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 620px;
   min-width: 0;
 }
 
-/* Karakter tetap inline agar teks bisa membungkus di spasi */
+.typewriter-line {
+  grid-area: 1 / 1;
+  min-width: 0;
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
 .typewriter-char {
-  display: inline;
   position: relative;
 }
 
@@ -2387,10 +2396,10 @@ button:disabled {
 .typewriter-char[data-caret]::after {
   content: "";
   position: absolute;
-  right: -0.08em;
-  top: 0.16em;
+  top: 0.14em;
+  right: -0.07em;
   width: 2px;
-  height: 0.72em;
+  height: 0.74em;
   border-radius: 1px;
   background: var(--coral);
   animation: heading-caret-blink 1s step-end infinite;
@@ -2412,6 +2421,7 @@ button:disabled {
   .typewriter-line:first-child .typewriter-char {
     visibility: visible !important;
   }
+
   .typewriter-char[data-caret]::after {
     display: none;
   }
