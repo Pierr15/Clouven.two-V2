@@ -782,6 +782,121 @@
         transition-duration: .01ms !important;
       }
     }
+
+    /* Keep the reference design in dark mode, but follow the site's shared theme in light mode. */
+    :root[data-theme="light"],
+    html[data-theme="light"],
+    body[data-theme="light"] {
+      color-scheme: light;
+    }
+
+    :root[data-theme="light"] html,
+    html[data-theme="light"],
+    body[data-theme="light"] {
+      background: #f7f5ee;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"],
+    html[data-theme="light"] body[data-login-mode="user"],
+    body[data-theme="light"] body[data-login-mode="user"] {
+      --login-bg: #f7f5ee;
+      --login-surface: #fffdf8;
+      --login-border: rgba(24, 48, 37, .14);
+      --login-text: #173126;
+      --login-muted: #53685b;
+      background: var(--login-bg);
+      color: var(--login-text);
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-visual {
+      border-right-color: rgba(24, 48, 37, .12);
+      background: #eaece2;
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-visual::after {
+      background:
+        linear-gradient(180deg,
+          rgba(247,245,238,.72) 0%,
+          rgba(247,245,238,.52) 30%,
+          rgba(247,245,238,.75) 61%,
+          rgba(247,245,238,.96) 100%),
+        linear-gradient(90deg, rgba(247,245,238,.18), rgba(247,245,238,.04) 80%);
+    }
+
+    :is(html, body, :root)[data-theme="light"] .login-brand-name,
+    :is(html, body, :root)[data-theme="light"] .login-brand-class,
+    :is(html, body, :root)[data-theme="light"] .login-school-name,
+    :is(html, body, :root)[data-theme="light"] .login-school-year,
+    :is(html, body, :root)[data-theme="light"] .login-visual-copy h1,
+    :is(html, body, :root)[data-theme="light"] .login-visual-copy > p:last-child,
+    :is(html, body, :root)[data-theme="light"] .login-visual-footer {
+      color: #173126;
+    }
+
+    :is(html, body, :root)[data-theme="light"] .login-brand-divider {
+      background: rgba(23,49,38,.25);
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-visual .eyebrow {
+      color: #a45a24;
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-panel {
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(81,130,92,.09), transparent 44%),
+        radial-gradient(ellipse at 0% 100%, rgba(247,101,92,.06), transparent 42%),
+        #f7f5ee;
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-card {
+      border-color: rgba(24,48,37,.14);
+      background: rgba(255,253,248,.94);
+      color: #173126;
+      box-shadow: 0 24px 65px rgba(35,48,37,.09), inset 0 1px 0 rgba(255,255,255,.8);
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-card h2,
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-card > p:not(.eyebrow),
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form label,
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-back,
+    :is(html, body, :root)[data-theme="light"] .login-panel-footer {
+      color: #173126;
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form input {
+      color: #173126;
+      background: #fffefa;
+      border-color: rgba(24,48,37,.2);
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form input::placeholder {
+      color: #718176;
+      opacity: 1;
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form input:focus {
+      background: #fffefa;
+      box-shadow: 0 0 0 4px rgba(247,101,92,.15);
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form button.button-coral {
+      color: #fffdf8;
+      background: linear-gradient(105deg, #ff9582, #ff7778);
+      box-shadow: 0 10px 24px rgba(247,101,92,.18);
+    }
+
+    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-school-logo {
+      box-shadow: 0 0 0 5px rgba(23,49,38,.06), 0 14px 34px rgba(23,49,38,.13);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body[data-login-mode="user"] *,
+      body[data-login-mode="user"] *::before,
+      body[data-login-mode="user"] *::after {
+        animation-duration: .01ms !important;
+      }
+    }
+
   </style>
 </head>
 
