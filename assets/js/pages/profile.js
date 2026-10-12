@@ -124,7 +124,7 @@ document.querySelector("#profileCard").addEventListener("click", async event => 
       }
       const { error } = await supabase.auth.updateUser({ data: { avatar_url: null } });
       if (error) throw error;
-      const { error: memberPhotoError } = await supabase.from("members").update({ photo: null }).eq("id", session.user.id);
+      const { error: memberPhotoError } = await supabase.from("members").update({ photo: "" }).eq("id", session.user.id);
       if (memberPhotoError) throw memberPhotoError;
       showToast("Foto profil dihapus.");
       location.reload();
