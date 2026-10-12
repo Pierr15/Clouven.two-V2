@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="id">
 <head>
@@ -783,117 +782,275 @@
       }
     }
 
-    /* Keep the reference design in dark mode, but follow the site's shared theme in light mode. */
-    :root[data-theme="light"],
-    html[data-theme="light"],
-    body[data-theme="light"] {
-      color-scheme: light;
+    /* REFERENCE MATCH OVERRIDES — keep the login composition independent
+       from generic .login-* rules in app.css. */
+    body[data-login-mode="user"] .login-page {
+      grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr) !important;
+      min-height: 100svh;
+      overflow: clip;
     }
-
-    :root[data-theme="light"] html,
-    html[data-theme="light"],
-    body[data-theme="light"] {
-      background: #f7f5ee;
+    body[data-login-mode="user"] .login-visual {
+      isolation: isolate !important;
+      justify-content: center !important;
+      padding: 126px clamp(36px, 8.4vw, 130px) 96px !important;
+      border-right: 1px solid rgba(255,255,255,.08);
+      background: #081a12 !important;
+      color: #f7f4eb;
     }
-
-    :root[data-theme="light"] body[data-login-mode="user"],
-    html[data-theme="light"] body[data-login-mode="user"],
-    body[data-theme="light"] body[data-login-mode="user"] {
-      --login-bg: #f7f5ee;
-      --login-surface: #fffdf8;
-      --login-border: rgba(24, 48, 37, .14);
-      --login-text: #173126;
-      --login-muted: #53685b;
-      background: var(--login-bg);
+    body[data-login-mode="user"] .login-visual::before {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: -2 !important;
+      width: auto !important;
+      height: auto !important;
+      border-radius: 0 !important;
+      opacity: 1 !important;
+      background: url("/assets/images/foto-sekolah.jpeg") center 48% / cover no-repeat !important;
+      transform: scale(1.015);
+      animation: photoReveal 1.1s ease both;
+    }
+    body[data-login-mode="user"] .login-visual::after {
+      content: "" !important;
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: -1 !important;
+      width: auto !important;
+      height: auto !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      border-radius: 0 !important;
+      transform: none !important;
+      background:
+        linear-gradient(180deg, rgba(4,17,11,.74) 0%, rgba(4,17,11,.42) 30%, rgba(4,17,11,.68) 60%, rgba(4,17,11,.96) 100%),
+        linear-gradient(90deg, rgba(4,17,11,.34), rgba(4,17,11,.02) 85%) !important;
+    }
+    body[data-login-mode="user"] .login-visual > * {
+      z-index: 1 !important;
+    }
+    body[data-login-mode="user"] .login-top-brand {
+      top: 28px;
+      left: clamp(24px, 4.4vw, 68px);
+      right: 24px;
+    }
+    body[data-login-mode="user"] .login-identity {
+      margin: 0 auto 30px !important;
+    }
+    body[data-login-mode="user"] .login-logo-orbit {
+      width: clamp(150px, 15vw, 190px) !important;
+    }
+    body[data-login-mode="user"] .login-visual-copy {
+      max-width: 610px !important;
+      margin: 0 auto !important;
+    }
+    body[data-login-mode="user"] .login-visual-copy h1 {
+      max-width: 610px !important;
+      font-size: clamp(43px, 4.35vw, 68px) !important;
+      line-height: 1.02 !important;
+    }
+    body[data-login-mode="user"] .login-visual-copy > p:last-child {
+      max-width: 440px;
+      color: rgba(244,244,235,.88) !important;
+      font-size: 14px;
+    }
+    body[data-login-mode="user"] .login-panel {
+      position: relative !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-height: 100svh !important;
+      padding: 108px clamp(34px, 4.5vw, 76px) 94px !important;
+      background:
+        radial-gradient(ellipse at 95% 0%, rgba(57,94,71,.13), transparent 45%),
+        radial-gradient(ellipse at 0% 100%, rgba(255,129,120,.035), transparent 42%),
+        var(--login-bg) !important;
+    }
+    body[data-login-mode="user"] .login-top-motto {
+      position: absolute;
+      top: 48px;
+      right: clamp(28px, 4vw, 64px);
+      display: flex;
+      align-items: center;
+      gap: 20px;
       color: var(--login-text);
+      font-family: "DM Mono", monospace;
+      font-size: 10px;
+      letter-spacing: .18em;
+      white-space: nowrap;
+    }
+    body[data-login-mode="user"] .login-top-motto i {
+      display: block;
+      width: 29px;
+      height: 1px;
+      background: var(--login-coral);
+    }
+    body[data-login-mode="user"] .login-card {
+      width: 100% !important;
+      max-width: 600px !important;
+      padding: clamp(34px, 3.7vw, 58px) !important;
+      border-radius: 18px !important;
+      background: rgba(17,32,24,.66) !important;
+      border: 1px solid var(--login-border) !important;
+      box-shadow: 0 24px 65px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.035) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    body[data-login-mode="user"] .login-card h2 {
+      font-size: clamp(36px, 3.1vw, 47px) !important;
+      line-height: 1.06 !important;
+    }
+    body[data-login-mode="user"] .login-card > p:not(.eyebrow) {
+      margin-top: 14px;
+      line-height: 1.8;
+    }
+    body[data-login-mode="user"] .login-form {
+      gap: 22px !important;
+      margin-top: 34px !important;
+    }
+    body[data-login-mode="user"] .login-form input {
+      min-height: 57px !important;
+      border-radius: 15px !important;
+      padding-inline: 17px !important;
+    }
+    body[data-login-mode="user"] .login-form button.button-coral {
+      min-height: 56px !important;
+      margin-top: 3px !important;
+      border-radius: 13px !important;
+      background: linear-gradient(105deg,#ff9582,#ff7778) !important;
+      color: #142017 !important;
+    }
+    body[data-login-mode="user"] .login-panel-footer {
+      right: clamp(28px, 4vw, 64px) !important;
+      bottom: 32px !important;
+      left: clamp(28px, 4vw, 64px) !important;
+      align-items: center;
+    }
+    body[data-login-mode="user"] .login-progress {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    body[data-login-mode="user"] .login-progress span {
+      display: block;
+      width: 28px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(157,181,166,.38);
+    }
+    body[data-login-mode="user"] .login-progress span.is-active {
+      width: 29px;
+      background: var(--login-coral);
+      box-shadow: 0 0 12px rgba(255,129,120,.2);
+    }
+    body[data-login-mode="user"] .login-footer-quote {
+      color: rgba(180,197,185,.68);
+      font-size: 11px;
     }
 
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-visual {
-      border-right-color: rgba(24, 48, 37, .12);
-      background: #eaece2;
-    }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-visual::after {
+    /* Light mode keeps the same composition and school photograph, but
+       changes the overlay and surfaces rather than rearranging the page. */
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual::after {
       background:
-        linear-gradient(180deg,
-          rgba(247,245,238,.72) 0%,
-          rgba(247,245,238,.52) 30%,
-          rgba(247,245,238,.75) 61%,
-          rgba(247,245,238,.96) 100%),
-        linear-gradient(90deg, rgba(247,245,238,.18), rgba(247,245,238,.04) 80%);
+        linear-gradient(180deg, rgba(247,245,238,.62) 0%, rgba(247,245,238,.48) 27%, rgba(28,47,36,.48) 58%, rgba(7,23,15,.88) 100%),
+        linear-gradient(90deg, rgba(247,245,238,.08), transparent 80%) !important;
     }
-
-    :is(html, body, :root)[data-theme="light"] .login-brand-name,
-    :is(html, body, :root)[data-theme="light"] .login-brand-class,
-    :is(html, body, :root)[data-theme="light"] .login-school-name,
-    :is(html, body, :root)[data-theme="light"] .login-school-year,
-    :is(html, body, :root)[data-theme="light"] .login-visual-copy h1,
-    :is(html, body, :root)[data-theme="light"] .login-visual-copy > p:last-child,
-    :is(html, body, :root)[data-theme="light"] .login-visual-footer {
-      color: #173126;
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual-copy h1,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-school-name,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-school-year,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-brand-name,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-brand-class,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual-footer {
+      color: #fffdf8 !important;
+      text-shadow: 0 1px 12px rgba(0,0,0,.22);
     }
-
-    :is(html, body, :root)[data-theme="light"] .login-brand-divider {
-      background: rgba(23,49,38,.25);
-    }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-visual .eyebrow {
-      color: #a45a24;
-    }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-panel {
+    :root[data-theme="light"] body[data-login-mode="user"] .login-panel {
       background:
-        radial-gradient(ellipse at 100% 0%, rgba(81,130,92,.09), transparent 44%),
-        radial-gradient(ellipse at 0% 100%, rgba(247,101,92,.06), transparent 42%),
-        #f7f5ee;
+        radial-gradient(ellipse at 95% 0%, rgba(90,131,94,.08), transparent 45%),
+        #f7f5ee !important;
     }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-card {
-      border-color: rgba(24,48,37,.14);
-      background: rgba(255,253,248,.94);
-      color: #173126;
-      box-shadow: 0 24px 65px rgba(35,48,37,.09), inset 0 1px 0 rgba(255,255,255,.8);
+    :root[data-theme="light"] body[data-login-mode="user"] .login-card {
+      background: rgba(255,253,248,.94) !important;
+      color: #173126 !important;
+      border-color: rgba(24,48,37,.14) !important;
+      box-shadow: 0 24px 65px rgba(35,48,37,.09), inset 0 1px 0 rgba(255,255,255,.85) !important;
     }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-card h2,
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-card > p:not(.eyebrow),
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form label,
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-back,
-    :is(html, body, :root)[data-theme="light"] .login-panel-footer {
-      color: #173126;
+    :root[data-theme="light"] body[data-login-mode="user"] .login-card h2,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-card > p:not(.eyebrow),
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form label,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-back,
+    :root[data-theme="light"] body[data-login-mode="user"] .login-top-motto {
+      color: #173126 !important;
     }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form input {
-      color: #173126;
-      background: #fffefa;
-      border-color: rgba(24,48,37,.2);
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form input {
+      color: #173126 !important;
+      background: #fffefa !important;
+      border-color: rgba(24,48,37,.2) !important;
     }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form input::placeholder {
-      color: #718176;
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form input::placeholder {
+      color: #718176 !important;
       opacity: 1;
     }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form input:focus {
-      background: #fffefa;
-      box-shadow: 0 0 0 4px rgba(247,101,92,.15);
+    :root[data-theme="light"] body[data-login-mode="user"] .login-panel-footer .login-footer-quote {
+      color: #65766b !important;
     }
 
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-form button.button-coral {
-      color: #fffdf8;
-      background: linear-gradient(105deg, #ff9582, #ff7778);
-      box-shadow: 0 10px 24px rgba(247,101,92,.18);
+    @media (max-width: 1000px) and (min-width: 721px) {
+      body[data-login-mode="user"] .login-visual {
+        padding: 100px 32px 80px !important;
+      }
+      body[data-login-mode="user"] .login-card {
+        padding: 32px 28px !important;
+      }
+      body[data-login-mode="user"] .login-top-motto {
+        gap: 10px;
+        font-size: 8px;
+      }
     }
-
-    :is(html, body, :root)[data-theme="light"] body[data-login-mode="user"] .login-school-logo {
-      box-shadow: 0 0 0 5px rgba(23,49,38,.06), 0 14px 34px rgba(23,49,38,.13);
+    @media (max-width: 720px) {
+      body[data-login-mode="user"] .login-page {
+        display: flex !important;
+        flex-direction: column !important;
+        overflow: visible !important;
+      }
+      body[data-login-mode="user"] .login-visual {
+        min-height: auto !important;
+        padding: 90px 24px 30px !important;
+      }
+      body[data-login-mode="user"] .login-visual::before {
+        background-position: center 44% !important;
+      }
+      body[data-login-mode="user"] .login-identity {
+        margin: 8px auto 26px !important;
+      }
+      body[data-login-mode="user"] .login-panel {
+        min-height: auto !important;
+        padding: 28px 18px 88px !important;
+      }
+      body[data-login-mode="user"] .login-top-motto {
+        display: none !important;
+      }
+      body[data-login-mode="user"] .login-card {
+        max-width: 540px !important;
+        padding: 28px 22px !important;
+      }
+      body[data-login-mode="user"] .login-panel-footer {
+        bottom: 24px !important;
+      }
+      body[data-login-mode="user"] .login-visual-copy h1 {
+        font-size: clamp(39px, 9.5vw, 53px) !important;
+      }
     }
-
-    @media (prefers-reduced-motion: reduce) {
-      body[data-login-mode="user"] *,
-      body[data-login-mode="user"] *::before,
-      body[data-login-mode="user"] *::after {
-        animation-duration: .01ms !important;
+    @media (max-width: 380px) {
+      body[data-login-mode="user"] .login-card {
+        padding: 24px 18px !important;
+      }
+      body[data-login-mode="user"] .login-panel-footer {
+        left: 20px !important;
+        right: 20px !important;
+      }
+      body[data-login-mode="user"] .login-footer-quote {
+        max-width: 175px;
+        text-align: right;
       }
     }
 
@@ -948,6 +1105,9 @@
     </section>
 
     <section class="login-panel">
+      <div class="login-top-motto" aria-label="Satu kelas, satu tujuan">
+        <span>SATU KELAS</span><i aria-hidden="true"></i><span>SATU TUJUAN</span>
+      </div>
       <div class="login-card">
         <p class="eyebrow">AKUN KELAS</p>
 
@@ -997,8 +1157,10 @@
       </div>
 
       <footer class="login-panel-footer">
-        <span>Ruang digital kelas kita</span>
-        <span>2026 / 2027</span>
+        <div class="login-progress" aria-label="Halaman login, 1 dari 3">
+          <span class="is-active"></span><span></span><span></span>
+        </div>
+        <span class="login-footer-quote">Proses hari ini, untuk masa depan nanti.</span>
       </footer>
     </section>
   </main>
