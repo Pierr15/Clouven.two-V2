@@ -101,7 +101,7 @@ export async function mountShell(active = "") {
         >
           <span class="profile-avatar">
             ${session.user?.user_metadata?.avatar_url ? `<img src="${escapeHTML(session.user.user_metadata.avatar_url)}" alt="" class="profile-avatar-image" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" />` : ""}
-            <span class="profile-initials">
+            <span class="profile-initials" ${session.user?.user_metadata?.avatar_url ? 'style="display:none"' : ""}>
               ${escapeHTML(
                 initials(
                   session.profile?.name ||
