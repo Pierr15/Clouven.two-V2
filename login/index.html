@@ -478,6 +478,47 @@
       transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
 
+    body[data-login-mode="user"] .password-input-wrap {
+      position: relative;
+      width: 100%;
+    }
+    body[data-login-mode="user"] .login-form .password-input-wrap input {
+      padding-right: 54px !important;
+    }
+    body[data-login-mode="user"] .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 9px;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: var(--login-muted);
+      font-size: 19px;
+      cursor: pointer;
+      transform: translateY(-50%);
+      transition: color .18s ease, background .18s ease;
+    }
+    body[data-login-mode="user"] .password-toggle:hover {
+      color: var(--login-coral);
+      background: rgba(127, 145, 132, .12);
+    }
+    body[data-login-mode="user"] .password-toggle:focus-visible {
+      outline: 2px solid var(--login-coral);
+      outline-offset: 2px;
+    }
+    :root[data-theme="light"] body[data-login-mode="user"] .password-toggle {
+      color: #65766b;
+    }
+    :root[data-theme="light"] body[data-login-mode="user"] .password-toggle:hover {
+      color: #173126;
+      background: rgba(24, 48, 37, .07);
+    }
+
     body[data-login-mode="user"] .login-form input::placeholder {
       color: #84968b;
     }
@@ -1326,14 +1367,19 @@
 
           <div class="form-field">
             <label for="field-2">Password</label>
-            <input
-              id="field-2"
-              name="password"
-              type="password"
-              placeholder="Masukkan password"
-              autocomplete="current-password"
-              required
-            />
+            <div class="password-input-wrap">
+              <input
+                id="field-2"
+                name="password"
+                type="password"
+                placeholder="Masukkan password"
+                autocomplete="current-password"
+                required
+              />
+              <button class="password-toggle" type="button" aria-label="Tampilkan password" aria-pressed="false" aria-controls="field-2">
+                <i class="ti ti-eye" aria-hidden="true"></i>
+              </button>
+            </div>
           </div>
 
           <button class="button button-coral" type="submit">
@@ -1355,5 +1401,22 @@
       </footer>
     </section>
   </main>
+  <script>
+    (() => {
+      const password = document.getElementById("field-2");
+      const toggle = document.querySelector(".password-toggle");
+      if (!password || !toggle) return;
+
+      toggle.addEventListener("click", () => {
+        const show = password.type === "password";
+        password.type = show ? "text" : "password";
+        toggle.setAttribute("aria-pressed", String(show));
+        toggle.setAttribute("aria-label", show ? "Sembunyikan password" : "Tampilkan password");
+        const icon = toggle.querySelector("i");
+        if (icon) icon.className = show ? "ti ti-eye-off" : "ti ti-eye";
+        password.focus({ preventScroll: true });
+      });
+    })();
+  </script>
 </body>
 </html>
