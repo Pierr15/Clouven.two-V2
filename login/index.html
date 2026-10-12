@@ -1054,6 +1054,102 @@
       }
     }
 
+
+    /* LOGO FIX: tetap di tengah, tidak bergeser saat hover/tap; shimmer tetap aktif. */
+    body[data-login-mode="user"] .login-logo-orbit {
+      display: grid !important;
+      place-items: center !important;
+      width: clamp(150px, 15vw, 190px) !important;
+      aspect-ratio: 1 / 1 !important;
+      flex: 0 0 auto !important;
+      margin-inline: auto !important;
+      transform: none !important;
+    }
+
+    body[data-login-mode="user"] .login-school-logo,
+    body[data-login-mode="user"] .login-school-logo:hover,
+    body[data-login-mode="user"] .login-school-logo:active,
+    body[data-login-mode="user"] .login-school-logo:focus,
+    body[data-login-mode="user"] .login-school-logo:focus-visible {
+      position: relative !important;
+      display: grid !important;
+      place-items: center !important;
+      width: 76% !important;
+      height: auto !important;
+      aspect-ratio: 1 / 1 !important;
+      flex: 0 0 auto !important;
+      margin: 0 auto !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      border: 3px solid var(--login-gold) !important;
+      border-radius: 50% !important;
+      background: #fff !important;
+      translate: 0 0 !important;
+      rotate: 0deg !important;
+      scale: 1 !important;
+      transform: none !important;
+      transition: box-shadow .25s ease, border-color .25s ease !important;
+      box-shadow:
+        0 0 0 5px rgba(255,255,255,.07),
+        0 0 22px rgba(255,200,87,.16),
+        0 14px 34px rgba(0,0,0,.3) !important;
+    }
+
+    body[data-login-mode="user"] .login-school-logo img,
+    body[data-login-mode="user"] .login-school-logo:hover img,
+    body[data-login-mode="user"] .login-school-logo:active img {
+      position: relative !important;
+      z-index: 1 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      padding: 5px !important;
+      margin: 0 !important;
+      box-sizing: border-box !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      border: 0 !important;
+      border-radius: 50% !important;
+      translate: 0 0 !important;
+      rotate: 0deg !important;
+      scale: 1 !important;
+      transform: none !important;
+    }
+
+    body[data-login-mode="user"] .login-school-logo::after {
+      pointer-events: none !important;
+    }
+
+    body[data-login-mode="user"] .login-school-logo:hover {
+      box-shadow:
+        0 0 0 6px rgba(255,255,255,.08),
+        0 0 28px rgba(255,200,87,.22),
+        0 14px 34px rgba(0,0,0,.3) !important;
+    }
+
+    @media (max-width: 1000px) and (min-width: 721px) {
+      body[data-login-mode="user"] .login-logo-orbit {
+        width: 135px !important;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body[data-login-mode="user"] .login-logo-orbit {
+        width: 120px !important;
+      }
+    }
+
+    @media (max-width: 380px) {
+      body[data-login-mode="user"] .login-logo-orbit {
+        width: 108px !important;
+      }
+    }
+
   </style>
 </head>
 
