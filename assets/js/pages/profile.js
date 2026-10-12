@@ -22,12 +22,33 @@ const shortcut = document.querySelector("#adminShortcut");
 shortcut.hidden = !can(session.role, "manage_class");
 shortcut.href = can(session.role, "admin") ? "/admin/" : "/kelola/";
 shortcut.textContent = can(session.role, "admin") ? "Admin Panel →" : "Kelola Kelas →";
+const developerAvatar = session.role === "developer";
+const avatarInput = document.createElement("input");
+avatarInput.type = "file";
+avatarInput.accept = "image/gif,image/webp,image/png,image/jpeg";
+avatarInput.hidden = true;
+avatarInput.id = "developerAvatarInput";
+document.body.appendChild(avatarInput);
+let avatarBusy = false;
+function avatarControls() {
+  if (!developerAvatar) return "";
+  const current = session.user?.user_metadata?.avatar_url || "";
+  return `<section class="developer-avatar-settings" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:18px 0;padding:16px;border:1px solid var(--line,rgba(120,120,120,.25));border-radius:16px">
+    <div style="width:72px;height:72px;flex:0 0 72px;border-radius:50%;overflow:hidden;background:var(--surface,rgba(120,120,120,.1));display:grid;place-items:center">
+      ${current ? `<img src="${escapeHTML(current)}" alt="Avatar developer" style="width:100%;height:100%;object-fit:cover">` : '<i class="ti ti-user-code" aria-hidden="true" style="font-size:30px"></i>'}
+    </div>
+    <div style="flex:1;min-width:180px"><strong>Foto profil developer</strong><p class="muted" style="margin:5px 0 10px">GIF, WebP animasi, PNG, atau JPG · maksimal 2 MB.</p>
+      <div class="form-actions"><button class="button button-light" type="button" id="chooseDeveloperAvatar">${current ? "Ganti avatar" : "Pilih avatar"}</button>${current ? '<button class="button button-light" type="button" id="removeDeveloperAvatar">Hapus</button>' : ""}</div>
+      <p class="form-help" id="developerAvatarStatus" role="status" aria-live="polite"></p>
+    </div>
+  </section>`;
+}
 function render() {
   const host = document.querySelector("#profileCard");
   if (showLoadState(host, memberState, progressState)) return;
   if (!member) { host.innerHTML = '<div class="empty-state"><strong>Profil belum tersedia.</strong>Hubungi pengurus untuk melengkapi data akunmu.</div>'; return; }
   const done = Object.values(progress).filter((x) => x.done).length;
-  document.querySelector("#profileCard").innerHTML = `<div class="card form-card"><p class="eyebrow">akun saya</p><h2>${styledName(member)}</h2><p class="muted">${ROLE_LABEL[member.role]} · ${escapeHTML(member?.classRole || "Anggota kelas")}</p><div class="grid grid-3" style="margin-top:22px"><div class="result-cell"><span>Nomor absen</span><strong>${escapeHTML(member?.number || "—")}</strong></div><div class="result-cell"><span>Username / NIS</span><strong>${escapeHTML(member?.username || "—")}</strong></div><div class="result-cell"><span>Tugas selesai</span><strong>${done}</strong></div></div>${member.instagram ? `<p class="member-instagram"><a href="${escapeHTML(instagramUrl(member.instagram))}" target="_blank" rel="noopener noreferrer"><i class="ti ti-brand-instagram" aria-hidden="true"></i> @${escapeHTML(member.instagram)}</a></p>` : ""}<div class="form-actions"><button class="button button-light" id="editMyInstagram" type="button"><i class="ti ti-brand-instagram" aria-hidden="true"></i> Edit Instagram</button></div>${can(member?.role, "edit_self") ? '<div class="form-actions"><button class="button button-light" id="editMyProfile" type="button"><i class="ti ti-edit" aria-hidden="true"></i> Edit biodata</button></div>' : ""}</div>`;
+  document.querySelector("#profileCard").innerHTML = `<div class="card form-card"><p class="eyebrow">akun saya</p><h2>${styledName(member)}</h2><p class="muted">${ROLE_LABEL[member.role]} · ${escapeHTML(member?.classRole || "Anggota kelas")}</p><div class="grid grid-3" style="margin-top:22px"><div class="result-cell"><span>Nomor absen</span><strong>${escapeHTML(member?.number || "—")}</strong></div><div class="result-cell"><span>Username / NIS</span><strong>${escapeHTML(member?.username || "—")}</strong></div><div class="result-cell"><span>Tugas selesai</span><strong>${done}</strong></div></div>${member.instagram ? `<p class="member-instagram"><a href="${escapeHTML(instagramUrl(member.instagram))}" target="_blank" rel="noopener noreferrer"><i class="ti ti-brand-instagram" aria-hidden="true"></i> @${escapeHTML(member.instagram)}</a></p>` : ""}${avatarControls()}<div class="form-actions"><button class="button button-light" id="editMyInstagram" type="button"><i class="ti ti-brand-instagram" aria-hidden="true"></i> Edit Instagram</button></div>${can(member?.role, "edit_self") ? '<div class="form-actions"><button class="button button-light" id="editMyProfile" type="button"><i class="ti ti-edit" aria-hidden="true"></i> Edit biodata</button></div>' : ""}</div>`;
   
 }
 subscribeMember(session.user.id, (value) => { member = value; nameSettings.update(value); }, memberState.update);
@@ -48,6 +69,59 @@ document.querySelector("#passwordForm").addEventListener("submit", async (event)
 });
 document.querySelector("#logoutBtn").addEventListener("click", async () => { await logout(); location.href = "/"; });
 
+avatarInput.addEventListener("change", async () => {
+  const file = avatarInput.files?.[0];
+  if (!file) return;
+  const allowed = new Set(["image/gif", "image/webp", "image/png", "image/jpeg"]);
+  const status = document.querySelector("#developerAvatarStatus");
+  if (!developerAvatar) { avatarInput.value = ""; return; }
+  if (!allowed.has(file.type)) { if(status) status.textContent = "Format tidak didukung. Pilih GIF, WebP, PNG, atau JPG."; avatarInput.value = ""; return; }
+  if (file.size > 2 * 1024 * 1024) { if(status) status.textContent = "Ukuran file maksimal 2 MB."; avatarInput.value = ""; return; }
+  if (avatarBusy) return;
+  avatarBusy = true;
+  const button = document.querySelector("#chooseDeveloperAvatar");
+  if (button) { button.disabled = true; button.textContent = "Mengunggah…"; }
+  if(status) status.textContent = "Mengunggah avatar…";
+  try {
+    const ext = ({ "image/gif":"gif", "image/webp":"webp", "image/png":"png", "image/jpeg":"jpg" })[file.type];
+    const path = `${session.user.id}/avatar-${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("developer-avatars").upload(path, file, { upsert: true, contentType: file.type, cacheControl: "3600" });
+    if (uploadError) throw uploadError;
+    const { data } = supabase.storage.from("developer-avatars").getPublicUrl(path);
+    const avatarUrl = `${data.publicUrl}${data.publicUrl.includes("?") ? "&" : "?"}v=${Date.now()}`;
+    const { error: updateError } = await supabase.auth.updateUser({ data: { avatar_url: avatarUrl } });
+    if (updateError) throw updateError;
+    showToast("Avatar developer berhasil diperbarui.");
+    location.reload();
+  } catch (error) {
+    console.error("Gagal mengunggah avatar developer:", error);
+    if(status) status.textContent = error.message || "Upload gagal. Pastikan bucket developer-avatars sudah disiapkan.";
+    showToast("Avatar gagal disimpan. Periksa konfigurasi Supabase Storage.");
+  } finally {
+    avatarBusy = false;
+    avatarInput.value = "";
+    const nextButton = document.querySelector("#chooseDeveloperAvatar");
+    if (nextButton) { nextButton.disabled = false; nextButton.textContent = "Pilih avatar"; }
+  }
+});
+document.querySelector("#profileCard").addEventListener("click", async event => {
+  if (!developerAvatar) return;
+  if (event.target.closest("#chooseDeveloperAvatar")) { avatarInput.click(); return; }
+  if (event.target.closest("#removeDeveloperAvatar")) {
+    const status = document.querySelector("#developerAvatarStatus");
+    if (!confirm("Hapus foto profil developer?")) return;
+    try {
+      const { error } = await supabase.auth.updateUser({ data: { avatar_url: null } });
+      if (error) throw error;
+      showToast("Foto profil dihapus.");
+      location.reload();
+    } catch (error) {
+      if(status) status.textContent = error.message || "Gagal menghapus avatar.";
+      showToast("Foto profil gagal dihapus.");
+    }
+    return;
+  }
+});
 document.querySelector("#profileCard").addEventListener("click", event => {
   const instagramButton=event.target.closest("#editMyInstagram");
   if(instagramButton && member)return editInstagram(member,{trigger:instagramButton,onSaved:payload=>{member={...member,...payload};render();memberState.retry?.();}});
