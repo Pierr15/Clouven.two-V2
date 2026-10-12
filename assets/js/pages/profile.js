@@ -34,7 +34,7 @@ function avatarControls() {
   if (!developerAvatar) return "";
   const current = session.user?.user_metadata?.avatar_url || "";
   return `<section class="developer-avatar-settings" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:18px 0;padding:16px;border:1px solid var(--line,rgba(120,120,120,.25));border-radius:16px">
-    <div style="width:72px;height:72px;flex:0 0 72px;border-radius:50%;overflow:hidden;background:var(--surface,rgba(120,120,120,.1));display:grid;place-items:center">
+    <div class="developer-shimmer-avatar" style="width:72px;height:72px;flex:0 0 72px;border-radius:50%;overflow:hidden;background:var(--surface,rgba(120,120,120,.1));display:grid;place-items:center">
       ${current ? `<img src="${escapeHTML(current)}" alt="Avatar developer" style="width:100%;height:100%;object-fit:cover">` : '<i class="ti ti-user-code" aria-hidden="true" style="font-size:30px"></i>'}
     </div>
     <div style="flex:1;min-width:180px"><strong>Foto profil developer</strong><p class="muted" style="margin:5px 0 10px">GIF, WebP animasi, PNG, atau JPG · maksimal 2 MB.</p>
