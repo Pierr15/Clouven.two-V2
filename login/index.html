@@ -5,10 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b1712" />
-  <meta
-    name="description"
-    content="Login Clouven — ruang digital kelas XI TKJ 2 SMK Negeri 1 Adiwerna."
-  />
+  <meta name="description" content="Login Clouven — ruang digital kelas XI TKJ 2 SMK Negeri 1 Adiwerna." />
 
   <title>Login · Clouven</title>
 
@@ -16,23 +13,13 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
 
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
-  />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
   <link rel="stylesheet" href="/assets/css/app.css?v=startup-transition-3" />
   <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
   <link rel="stylesheet" href="/assets/css/loading.css?v=startup-transition-3" />
-  <link
-    rel="icon"
-    href="/assets/images/favicon.svg?v=c2-1"
-    type="image/svg+xml"
-  />
+  <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="module" src="/assets/js/pages/login.js?v=startup-transition-3"></script>
@@ -41,25 +28,31 @@
   <style>
     :root {
       --login-bg: #0b1712;
-      --login-surface: #101f18;
-      --login-border: rgba(207, 226, 211, 0.15);
+      --login-surface: #102019;
+      --login-border: rgba(207, 226, 211, .14);
       --login-text: #f4f2e9;
       --login-muted: #a8b8ad;
       --login-coral: #ff8178;
       --login-gold: #ffc857;
     }
 
+    * {
+      box-sizing: border-box;
+    }
+
     html {
       min-height: 100%;
       background: var(--login-bg);
+      scroll-behavior: smooth;
     }
 
     body[data-login-mode="user"] {
       min-height: 100vh;
       margin: 0;
-      color: var(--login-text);
       background: var(--login-bg);
+      color: var(--login-text);
       font-family: "DM Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
     body[data-login-mode="user"] .page-noise {
@@ -67,27 +60,21 @@
       inset: 0;
       z-index: 5;
       pointer-events: none;
-      opacity: 0.12;
+      opacity: .07;
     }
 
-    /* ==================== LAYOUT ==================== */
+    /* MAIN LAYOUT */
 
     body[data-login-mode="user"] .login-page {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(0, 1.04fr) minmax(420px, 0.96fr);
-      min-height: 100vh;
-      overflow: hidden;
-      background:
-        radial-gradient(
-          ellipse at 85% 5%,
-          rgba(62, 100, 76, 0.13),
-          transparent 42%
-        ),
-        var(--login-bg);
+      grid-template-columns: minmax(0, 1fr) minmax(0, .92fr);
+      min-height: 100svh;
+      overflow: clip;
+      background: var(--login-bg);
     }
 
-    /* ==================== PANEL KIRI ==================== */
+    /* LEFT PANEL */
 
     body[data-login-mode="user"] .login-visual {
       position: relative;
@@ -96,11 +83,11 @@
       flex-direction: column;
       justify-content: center;
       min-width: 0;
-      min-height: 100vh;
-      padding: clamp(34px, 5.4vw, 82px);
+      min-height: 100svh;
+      padding: 105px clamp(32px, 5.2vw, 78px) 85px;
       overflow: hidden;
+      border-right: 1px solid rgba(255,255,255,.08);
       background: #0c1b13;
-      border-right: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     body[data-login-mode="user"] .login-visual::before {
@@ -108,11 +95,9 @@
       position: absolute;
       inset: 0;
       z-index: -2;
-      background-image: url("/assets/images/foto-sekolah.jpeg");
-      background-size: cover;
-      background-position: center;
-      transform: scale(1.035);
-      animation: login-photo-reveal 1.2s ease both;
+      background: url("/assets/images/foto-sekolah.jpeg") center 45% / cover no-repeat;
+      transform: scale(1.02);
+      animation: photoReveal 1.1s ease both;
     }
 
     body[data-login-mode="user"] .login-visual::after {
@@ -121,64 +106,60 @@
       inset: 0;
       z-index: -1;
       background:
-        linear-gradient(
-          180deg,
-          rgba(7, 20, 13, 0.77) 0%,
-          rgba(7, 20, 13, 0.43) 36%,
-          rgba(7, 20, 13, 0.79) 68%,
-          rgba(7, 20, 13, 0.97) 100%
-        ),
-        linear-gradient(
-          90deg,
-          rgba(7, 20, 13, 0.43),
-          rgba(7, 20, 13, 0.08) 75%
-        );
+        linear-gradient(180deg,
+          rgba(5,17,11,.72) 0%,
+          rgba(5,17,11,.48) 30%,
+          rgba(5,17,11,.72) 61%,
+          rgba(5,17,11,.97) 100%),
+        linear-gradient(90deg,
+          rgba(5,17,11,.30),
+          rgba(5,17,11,.04) 80%);
     }
 
     .login-top-brand {
       position: absolute;
-      top: 32px;
-      left: clamp(24px, 4.5vw, 68px);
+      top: 28px;
+      left: clamp(24px, 4vw, 58px);
       right: 24px;
       z-index: 2;
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 12px;
     }
 
     .login-brand-icon {
       display: grid;
       place-items: center;
-      width: 38px;
-      height: 38px;
-      flex: 0 0 auto;
+      flex: 0 0 34px;
+      width: 34px;
+      height: 34px;
       color: var(--login-coral);
-      font-size: 27px;
+      font-size: 25px;
     }
 
     .login-brand-name {
       color: #fff;
       font-family: "DM Mono", monospace;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
-      letter-spacing: 0.2em;
+      letter-spacing: .19em;
     }
 
     .login-brand-divider {
       width: 1px;
-      height: 25px;
-      margin: 0 7px;
-      background: rgba(255, 255, 255, 0.28);
+      height: 23px;
+      margin-inline: 5px;
+      background: rgba(255,255,255,.3);
     }
 
     .login-brand-class {
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255,255,255,.8);
       font-family: "DM Mono", monospace;
       font-size: 10px;
-      letter-spacing: 0.12em;
+      letter-spacing: .1em;
     }
 
-    /* ==================== IDENTITAS SEKOLAH ==================== */
+    /* SCHOOL IDENTITY */
 
     .login-identity {
       position: relative;
@@ -187,43 +168,41 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
-      margin: 12px auto 32px;
+      margin: 0 auto 32px;
       text-align: center;
-      animation: login-identity-slide 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      animation: identityEnter .8s ease both;
     }
 
     .login-logo-orbit {
       position: relative;
       display: grid;
       place-items: center;
-      width: clamp(174px, 19vw, 225px);
+      width: clamp(142px, 15vw, 178px);
       aspect-ratio: 1;
-      border: 1px solid rgba(255, 221, 159, 0.32);
+      border: 1px solid rgba(255,221,159,.32);
       border-radius: 50%;
-      background: radial-gradient(
-        circle,
-        rgba(255, 200, 87, 0.11),
-        rgba(255, 200, 87, 0.025) 62%,
-        transparent 70%
-      );
+      background: radial-gradient(circle,
+        rgba(255,200,87,.13),
+        rgba(255,200,87,.025) 63%,
+        transparent 72%);
     }
 
     .login-logo-orbit::before,
     .login-logo-orbit::after {
       content: "";
       position: absolute;
-      border: 1px solid rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255,255,255,.12);
       border-radius: 50%;
       pointer-events: none;
     }
 
     .login-logo-orbit::before {
-      inset: 10px;
+      inset: 9px;
     }
 
     .login-logo-orbit::after {
-      inset: -12px;
-      border-color: rgba(255, 200, 87, 0.12);
+      inset: -9px;
+      border-color: rgba(255,200,87,.13);
     }
 
     .login-orbit-dot {
@@ -234,11 +213,9 @@
       height: 7px;
       border-radius: 50%;
       background: var(--login-coral);
-      box-shadow: 0 0 15px rgba(255, 129, 120, 0.75);
-      animation: login-dot-float 3s ease-in-out infinite;
+      box-shadow: 0 0 14px rgba(255,129,120,.65);
+      animation: dotFloat 3s ease-in-out infinite;
     }
-
-    /* LOGO SEKOLAH + EFEK KILAU */
 
     .login-school-logo {
       position: relative;
@@ -252,11 +229,9 @@
       border-radius: 50%;
       background: #fff;
       box-shadow:
-        0 0 0 7px rgba(255, 255, 255, 0.06),
-        0 15px 38px rgba(0, 0, 0, 0.35);
-      transition:
-        transform 300ms ease,
-        box-shadow 300ms ease;
+        0 0 0 5px rgba(255,255,255,.07),
+        0 14px 34px rgba(0,0,0,.3);
+      transition: transform .25s ease, box-shadow .25s ease;
     }
 
     .login-school-logo img {
@@ -265,11 +240,10 @@
       display: block;
       width: 100%;
       height: 100%;
-      padding: 6px;
+      padding: 5px;
       object-fit: contain;
     }
 
-    /* Kilauan bergerak melintasi permukaan logo */
     .login-school-logo::after {
       content: "";
       position: absolute;
@@ -277,92 +251,74 @@
       top: -35%;
       bottom: -35%;
       left: -100%;
-      width: 65%;
+      width: 60%;
       pointer-events: none;
-      background: linear-gradient(
-        110deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.12) 35%,
-        rgba(255, 255, 255, 0.95) 50%,
-        rgba(255, 220, 150, 0.48) 56%,
-        transparent 75%
-      );
+      background: linear-gradient(110deg,
+        transparent,
+        rgba(255,255,255,.12) 35%,
+        rgba(255,255,255,.9) 50%,
+        rgba(255,220,150,.4) 57%,
+        transparent 76%);
       transform: skewX(-18deg);
-      animation: clouvenLogoShimmer 4s ease-in-out infinite;
-    }
-
-    @keyframes clouvenLogoShimmer {
-      0%, 15% {
-        left: -100%;
-        opacity: 0;
-      }
-
-      25% {
-        opacity: 1;
-      }
-
-      65%, 100% {
-        left: 140%;
-        opacity: 0;
-      }
+      animation: logoShimmer 4.8s ease-in-out infinite;
     }
 
     .login-school-logo:hover {
-      transform: translateY(-3px) scale(1.025);
+      transform: translateY(-3px);
       box-shadow:
-        0 0 0 9px rgba(255, 255, 255, 0.07),
-        0 20px 45px rgba(0, 0, 0, 0.4);
+        0 0 0 7px rgba(255,255,255,.08),
+        0 20px 38px rgba(0,0,0,.38);
     }
 
     .login-school-name {
-      margin: 28px 0 0;
+      margin: 22px 0 0;
       color: #fff;
       font-family: "DM Mono", monospace;
-      font-size: clamp(10px, 1vw, 13px);
+      font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.18em;
+      letter-spacing: .14em;
       line-height: 1.7;
     }
 
     .login-school-year {
-      margin: 9px 0 0;
-      color: rgba(255, 255, 255, 0.72);
+      margin: 7px 0 0;
+      color: rgba(255,255,255,.76);
       font-family: "DM Mono", monospace;
       font-size: 10px;
-      letter-spacing: 0.15em;
+      letter-spacing: .1em;
     }
 
-    /* ==================== HEADLINE KIRI ==================== */
+    /* LEFT HEADLINE */
 
     .login-visual-copy {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 590px;
-      margin: 0 auto;
-      animation: login-copy-rise 850ms 180ms ease both;
+      max-width: 520px;
+      margin-inline: auto;
+      animation: copyEnter .8s .12s ease both;
     }
 
     body[data-login-mode="user"] .login-visual .eyebrow {
-      margin: 0 0 17px;
+      margin: 0 0 14px;
       color: var(--login-gold);
       font-family: "DM Mono", monospace;
       font-size: 10px;
       font-weight: 500;
-      letter-spacing: 0.18em;
+      letter-spacing: .16em;
       line-height: 1.8;
       text-transform: uppercase;
     }
 
     .login-visual-copy h1 {
-      max-width: 620px;
+      max-width: 520px;
       margin: 0;
       color: #f7f4eb;
       font-family: "Fraunces", Georgia, serif;
-      font-size: clamp(42px, 5vw, 70px);
+      font-size: clamp(43px, 4.5vw, 65px);
       font-weight: 600;
-      letter-spacing: -0.055em;
-      line-height: 0.99;
+      letter-spacing: -.055em;
+      line-height: 1.02;
       text-wrap: balance;
     }
 
@@ -374,34 +330,34 @@
     }
 
     .login-visual-copy > p:last-child {
-      max-width: 450px;
-      margin: 20px 0 0;
-      color: rgba(240, 243, 236, 0.82);
-      font-size: 14px;
-      line-height: 1.9;
+      max-width: 410px;
+      margin: 17px 0 0;
+      color: rgba(240,243,236,.83);
+      font-size: 13px;
+      line-height: 1.85;
     }
 
     .login-visual-footer {
       position: absolute;
-      right: 25px;
-      bottom: 31px;
-      left: clamp(24px, 4.5vw, 68px);
+      right: 24px;
+      bottom: 25px;
+      left: clamp(24px, 4vw, 58px);
       z-index: 1;
       display: flex;
       align-items: center;
-      gap: 12px;
-      color: rgba(255, 255, 255, 0.75);
+      gap: 10px;
+      color: rgba(255,255,255,.76);
       font-family: "DM Mono", monospace;
       font-size: 9px;
-      letter-spacing: 0.14em;
+      letter-spacing: .12em;
     }
 
     .login-footer-symbol {
       color: var(--login-coral);
-      font-size: 19px;
+      font-size: 18px;
     }
 
-    /* ==================== PANEL LOGIN ==================== */
+    /* RIGHT PANEL */
 
     body[data-login-mode="user"] .login-panel {
       position: relative;
@@ -409,31 +365,27 @@
       align-items: center;
       justify-content: center;
       min-width: 0;
-      min-height: 100vh;
-      padding: clamp(28px, 5vw, 76px);
+      min-height: 100svh;
+      padding: 55px clamp(25px, 4vw, 62px);
       overflow: hidden;
       background:
-        radial-gradient(
-          ellipse at 95% 0%,
-          rgba(63, 103, 79, 0.12),
-          transparent 45%
-        ),
-        radial-gradient(
-          ellipse at 0% 100%,
-          rgba(255, 129, 120, 0.035),
-          transparent 45%
-        ),
+        radial-gradient(ellipse at 100% 0%,
+          rgba(63,103,79,.14),
+          transparent 44%),
+        radial-gradient(ellipse at 0% 100%,
+          rgba(255,129,120,.035),
+          transparent 42%),
         var(--login-bg);
     }
 
     body[data-login-mode="user"] .login-panel::before {
       content: "";
       position: absolute;
-      top: -140px;
-      right: -150px;
-      width: 330px;
+      top: -160px;
+      right: -160px;
+      width: 340px;
       aspect-ratio: 1;
-      border: 1px solid rgba(255, 200, 87, 0.1);
+      border: 1px solid rgba(255,200,87,.09);
       border-radius: 50%;
       pointer-events: none;
     }
@@ -442,41 +394,35 @@
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 570px;
-      padding: clamp(30px, 4vw, 54px);
+      max-width: 490px;
+      padding: clamp(28px, 3.2vw, 42px);
       border: 1px solid var(--login-border);
-      border-radius: 19px;
-      background: linear-gradient(
-        145deg,
-        rgba(255, 255, 255, 0.055),
-        rgba(255, 255, 255, 0.018) 55%,
-        rgba(255, 255, 255, 0.025)
-      );
+      border-radius: 20px;
+      background: rgba(17,32,24,.78);
       box-shadow:
-        0 25px 80px rgba(0, 0, 0, 0.17),
-        inset 0 1px 0 rgba(255, 255, 255, 0.035);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      animation: login-card-appear 750ms 100ms ease both;
+        0 24px 65px rgba(0,0,0,.2),
+        inset 0 1px 0 rgba(255,255,255,.035);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: cardEnter .7s .1s ease both;
     }
 
     body[data-login-mode="user"] .login-card > .eyebrow {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 0 0 21px;
+      margin: 0 0 19px;
       color: var(--login-coral);
       font-family: "DM Mono", monospace;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
-      letter-spacing: 0.17em;
+      letter-spacing: .16em;
       text-transform: uppercase;
     }
 
     body[data-login-mode="user"] .login-card > .eyebrow::after {
       content: "";
-      display: block;
-      width: 28px;
+      width: 27px;
       height: 1px;
       background: var(--login-coral);
     }
@@ -485,31 +431,31 @@
       margin: 0;
       color: var(--login-text);
       font-family: "Fraunces", Georgia, serif;
-      font-size: clamp(35px, 3.4vw, 49px);
+      font-size: clamp(35px, 3.2vw, 45px);
       font-weight: 600;
-      letter-spacing: -0.045em;
-      line-height: 1.08;
+      letter-spacing: -.045em;
+      line-height: 1.1;
       text-wrap: balance;
     }
 
     body[data-login-mode="user"] .login-card > p:not(.eyebrow) {
-      margin: 16px 0 0;
+      margin: 13px 0 0;
       color: var(--login-muted);
       font-size: 13px;
-      line-height: 1.85;
+      line-height: 1.8;
     }
 
     body[data-login-mode="user"] .login-form {
       display: flex;
       flex-direction: column;
-      gap: 22px;
-      margin-top: 34px;
+      gap: 19px;
+      margin-top: 28px;
     }
 
     body[data-login-mode="user"] .login-form .form-field {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
       min-width: 0;
     }
 
@@ -520,21 +466,17 @@
     }
 
     body[data-login-mode="user"] .login-form input {
-      box-sizing: border-box;
       width: 100%;
-      min-height: 55px;
-      padding: 0 16px;
-      border: 1px solid rgba(191, 217, 198, 0.2);
-      border-radius: 13px;
+      min-height: 52px;
+      padding: 0 15px;
+      border: 1px solid rgba(191,217,198,.2);
+      border-radius: 11px;
       outline: none;
-      background: rgba(6, 19, 13, 0.4);
+      background: rgba(6,19,13,.38);
       color: #f7f6ef;
-      font: inherit;
+      font-family: inherit;
       font-size: 13px;
-      transition:
-        border-color 220ms ease,
-        box-shadow 220ms ease,
-        background 220ms ease;
+      transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
     }
 
     body[data-login-mode="user"] .login-form input::placeholder {
@@ -542,41 +484,39 @@
     }
 
     body[data-login-mode="user"] .login-form input:hover {
-      border-color: rgba(191, 217, 198, 0.35);
+      border-color: rgba(191,217,198,.36);
     }
 
     body[data-login-mode="user"] .login-form input:focus {
       border-color: var(--login-coral);
-      background: rgba(6, 19, 13, 0.68);
-      box-shadow: 0 0 0 4px rgba(255, 129, 120, 0.1);
+      background: rgba(6,19,13,.6);
+      box-shadow: 0 0 0 4px rgba(255,129,120,.1);
     }
 
     body[data-login-mode="user"] .login-form button.button-coral {
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
       width: 100%;
-      min-height: 55px;
+      min-height: 53px;
       margin-top: 2px;
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 13px;
-      background: linear-gradient(105deg, #ff927c, #ff7778);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 11px;
+      background: linear-gradient(105deg,#ff9582,#ff7778);
       color: #142017;
-      font-family: "DM Sans", sans-serif;
-      font-size: 14px;
+      font-family: inherit;
+      font-size: 13px;
       font-weight: 700;
-      box-shadow: 0 10px 28px rgba(255, 116, 107, 0.14);
+      box-shadow: 0 9px 23px rgba(255,116,107,.13);
       cursor: pointer;
-      transition:
-        transform 220ms ease,
-        filter 220ms ease,
-        box-shadow 220ms ease;
+      transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
     }
 
     body[data-login-mode="user"] .login-form button.button-coral:hover {
       transform: translateY(-2px);
       filter: brightness(1.04);
-      box-shadow: 0 14px 30px rgba(255, 116, 107, 0.22);
+      box-shadow: 0 13px 27px rgba(255,116,107,.2);
     }
 
     body[data-login-mode="user"] .login-form button.button-coral:active {
@@ -587,11 +527,11 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      margin-top: 26px;
+      margin-top: 22px;
       color: #bdc9c0;
       font-size: 12px;
       text-decoration: none;
-      transition: color 180ms ease;
+      transition: color .2s ease;
     }
 
     body[data-login-mode="user"] .login-back:hover {
@@ -600,100 +540,83 @@
 
     .login-panel-footer {
       position: absolute;
-      right: clamp(28px, 5vw, 76px);
-      bottom: 29px;
-      left: clamp(28px, 5vw, 76px);
+      right: clamp(25px, 4vw, 62px);
+      bottom: 24px;
+      left: clamp(25px, 4vw, 62px);
       display: flex;
       justify-content: space-between;
-      gap: 15px;
-      color: rgba(180, 197, 185, 0.65);
+      gap: 14px;
+      color: rgba(180,197,185,.65);
       font-size: 10px;
     }
 
-    .login-panel-footer span {
-      line-height: 1.6;
+    /* ANIMATIONS */
+
+    @keyframes identityEnter {
+      from { opacity: 0; transform: translateY(-14px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ==================== ANIMASI ==================== */
-
-    @keyframes login-identity-slide {
-      from {
-        opacity: 0;
-        transform: translate3d(0, -22px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
+    @keyframes copyEnter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes login-copy-rise {
-      from {
-        opacity: 0;
-        transform: translate3d(0, 18px, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    @keyframes login-card-appear {
-      from {
-        opacity: 0;
-        transform: translate3d(15px, 0, 0);
-      }
-      to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-      }
+    @keyframes photoReveal {
+      from { opacity: .6; transform: scale(1.06); }
+      to { opacity: 1; transform: scale(1.02); }
     }
 
-    @keyframes login-photo-reveal {
-      from {
-        opacity: 0.5;
-        transform: scale(1.07);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1.035);
-      }
+    @keyframes dotFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
     }
 
-    @keyframes login-dot-float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-7px);
-      }
+    @keyframes logoShimmer {
+      0%, 15% { left: -100%; opacity: 0; }
+      25% { opacity: 1; }
+      65%, 100% { left: 140%; opacity: 0; }
     }
 
-    /* ==================== TABLET ==================== */
+    /* TABLET */
 
-    @media (max-width: 1000px) {
+    @media (max-width: 1000px) and (min-width: 721px) {
       body[data-login-mode="user"] .login-page {
-        grid-template-columns: minmax(0, 0.9fr) minmax(390px, 1.1fr);
+        grid-template-columns: minmax(0,.9fr) minmax(0,1.1fr);
       }
 
       body[data-login-mode="user"] .login-visual {
-        padding: 35px;
+        padding: 85px 30px 75px;
       }
 
       .login-top-brand {
-        left: 28px;
+        left: 25px;
+      }
+
+      .login-logo-orbit {
+        width: 135px;
+      }
+
+      .login-school-name {
+        font-size: 9px;
+        letter-spacing: .1em;
       }
 
       .login-visual-copy h1 {
-        font-size: clamp(40px, 5.4vw, 56px);
+        font-size: clamp(38px,4.8vw,49px);
       }
 
       body[data-login-mode="user"] .login-panel {
-        padding: 28px;
+        padding: 30px 24px;
       }
 
       body[data-login-mode="user"] .login-card {
-        padding: 32px;
+        padding: 29px 25px;
       }
 
       .login-panel-footer {
@@ -701,35 +624,39 @@
       }
     }
 
-    /* ==================== MOBILE ==================== */
+    /* MOBILE */
 
     @media (max-width: 720px) {
       body[data-login-mode="user"] .login-page {
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
+        min-height: 100svh;
         overflow: visible;
       }
 
       body[data-login-mode="user"] .login-visual {
-        box-sizing: border-box;
         align-items: center;
         min-height: auto;
-        padding: 100px 25px 40px;
+        padding: 88px 23px 30px;
         border-right: 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+        border-bottom: 1px solid rgba(255,255,255,.08);
+      }
+
+      body[data-login-mode="user"] .login-visual::before {
+        background-position: center 45%;
       }
 
       .login-top-brand {
-        top: 20px;
-        left: 23px;
-        gap: 9px;
+        top: 18px;
+        left: 21px;
+        gap: 8px;
       }
 
       .login-brand-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 23px;
+        flex-basis: 29px;
+        width: 29px;
+        height: 29px;
+        font-size: 22px;
       }
 
       .login-brand-name {
@@ -737,8 +664,8 @@
       }
 
       .login-brand-divider {
-        height: 20px;
-        margin: 0 3px;
+        height: 19px;
+        margin-inline: 3px;
       }
 
       .login-brand-class {
@@ -746,15 +673,15 @@
       }
 
       .login-identity {
-        margin: 8px auto 28px;
+        margin: 8px auto 26px;
       }
 
       .login-logo-orbit {
-        width: 142px;
+        width: 120px;
       }
 
       .login-school-name {
-        margin-top: 21px;
+        margin-top: 18px;
         font-size: 10px;
       }
 
@@ -763,58 +690,55 @@
       }
 
       .login-visual-copy {
-        width: 100%;
         max-width: 520px;
       }
 
       .login-visual-copy h1 {
-        font-size: clamp(42px, 10vw, 58px);
+        font-size: clamp(39px,9.5vw,53px);
       }
 
       .login-visual-copy > p:last-child {
-        margin-top: 15px;
-        font-size: 13px;
+        margin-top: 12px;
+        font-size: 12px;
       }
 
       .login-visual-footer {
         position: relative;
-        right: auto;
-        bottom: auto;
-        left: auto;
-        margin-top: 28px;
+        inset: auto;
+        align-self: flex-start;
+        margin-top: 22px;
         font-size: 8px;
       }
 
       body[data-login-mode="user"] .login-panel {
-        box-sizing: border-box;
         align-items: flex-start;
         min-height: auto;
-        padding: 30px 20px 42px;
+        padding: 25px 18px 35px;
       }
 
       body[data-login-mode="user"] .login-card {
         max-width: 520px;
         margin: 0 auto;
-        padding: 28px 23px;
-        border-radius: 17px;
+        padding: 26px 22px;
+        border-radius: 16px;
       }
 
       body[data-login-mode="user"] .login-card h2 {
-        font-size: clamp(34px, 8vw, 43px);
+        font-size: clamp(33px,8vw,41px);
       }
 
       body[data-login-mode="user"] .login-form {
-        gap: 19px;
-        margin-top: 28px;
+        gap: 17px;
+        margin-top: 24px;
       }
 
       body[data-login-mode="user"] .login-form input,
       body[data-login-mode="user"] .login-form button.button-coral {
-        min-height: 53px;
+        min-height: 51px;
       }
 
-      body[data-login-mode="user"] .login-back {
-        margin-top: 22px;
+      .login-panel-footer {
+        display: none;
       }
     }
 
@@ -825,15 +749,15 @@
       }
 
       .login-logo-orbit {
-        width: 125px;
+        width: 108px;
       }
 
       .login-visual-copy h1 {
-        font-size: 39px;
+        font-size: 37px;
       }
 
       body[data-login-mode="user"] .login-card {
-        padding: 25px 19px;
+        padding: 24px 18px;
       }
 
       .login-brand-class {
@@ -845,20 +769,17 @@
       .login-identity,
       .login-visual-copy,
       .login-card,
-      .login-logo-orbit,
       .login-orbit-dot,
-      body[data-login-mode="user"] .login-visual::before {
-        animation: none !important;
-      }
-
-      .login-school-logo,
-      body[data-login-mode="user"] .login-form input,
-      body[data-login-mode="user"] .login-form button.button-coral {
-        transition: none !important;
-      }
-
+      body[data-login-mode="user"] .login-visual::before,
       .login-school-logo::after {
         animation: none !important;
+      }
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
       }
     }
   </style>
@@ -881,7 +802,6 @@
       <div class="login-identity">
         <div class="login-logo-orbit">
           <span class="login-orbit-dot"></span>
-
           <div class="login-school-logo">
             <img
               src="/assets/images/logo-sekolah.png"
@@ -892,20 +812,12 @@
         </div>
 
         <p class="login-school-name">SMK NEGERI 1 ADIWERNA</p>
-
-        <p class="login-school-year">
-          XI TKJ 2 &nbsp;·&nbsp; 2026 / 2027
-        </p>
+        <p class="login-school-year">XI TKJ 2 &nbsp;·&nbsp; 2026 / 2027</p>
       </div>
 
       <div class="login-visual-copy">
         <p class="eyebrow">RUANG DIGITAL KELAS KITA</p>
-
-        <h1>
-          Masuk, lalu lanjut
-          <em>belajar.</em>
-        </h1>
-
+        <h1>Masuk, lalu lanjut <em>belajar.</em></h1>
         <p>
           Tugas, penyimpanan, anggota, dan progres pribadi
           tersedia setelah login.
@@ -929,9 +841,7 @@
           <span style="color: var(--login-coral)">kembali.</span>
         </h2>
 
-        <p>
-          Gunakan username atau NIS yang dibuat oleh Developer.
-        </p>
+        <p>Gunakan username atau NIS yang dibuat oleh Developer.</p>
 
         <form class="login-form" id="loginForm">
           <div class="form-field">
@@ -961,7 +871,7 @@
           </div>
 
           <button class="button button-coral" type="submit">
-            Masuk <span aria-hidden="true">&nbsp;→</span>
+            Masuk <span aria-hidden="true">→</span>
           </button>
         </form>
 
