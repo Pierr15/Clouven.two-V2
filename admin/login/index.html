@@ -15,6 +15,18 @@
       href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
       rel="stylesheet"
     />
+    <style>
+      .admin-password-wrap { position: relative; width: 100%; }
+      .admin-password-wrap input { width: 100%; padding-right: 52px !important; }
+      .admin-password-toggle {
+        position: absolute; top: 50%; right: 9px; transform: translateY(-50%);
+        display: grid; place-items: center; width: 36px; height: 36px;
+        border: 0; border-radius: 9px; background: transparent;
+        color: var(--login-muted, #718176); font-size: 19px; cursor: pointer;
+      }
+      .admin-password-toggle:hover { background: rgba(127,145,132,.12); }
+      .admin-password-toggle:focus-visible { outline: 2px solid var(--login-coral, #ff8178); outline-offset: 2px; }
+    </style>
     <link rel="stylesheet" href="/assets/css/app.css?v=startup-transition-3" />
     <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
     <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
@@ -53,12 +65,19 @@
               <label for="field-1">Username / NIS</label><input name="username" autocomplete="username" required / id="field-1">
             </div>
             <div class="form-field">
-              <label for="field-2">Password</label><input
-                name="password"
-                type="password"
-                autocomplete="current-password"
-                required
-              / id="field-2">
+              <label for="field-2">Password</label>
+              <div class="admin-password-wrap">
+                <input
+                  id="field-2"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                />
+                <button class="admin-password-toggle" type="button" aria-label="Tampilkan password" aria-pressed="false" aria-controls="field-2">
+                  <i class="ti ti-eye" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
             <button class="button button-dark" type="submit">
               Masuk ke Admin →
@@ -68,5 +87,21 @@
         </div>
       </section>
     </main>
-  </body>
+    <script>
+    (() => {
+      const password = document.getElementById("field-2");
+      const toggle = document.querySelector(".admin-password-toggle");
+      if (!password || !toggle) return;
+      toggle.addEventListener("click", () => {
+        const show = password.type === "password";
+        password.type = show ? "text" : "password";
+        toggle.setAttribute("aria-pressed", String(show));
+        toggle.setAttribute("aria-label", show ? "Sembunyikan password" : "Tampilkan password");
+        const icon = toggle.querySelector("i");
+        if (icon) icon.className = show ? "ti ti-eye-off" : "ti ti-eye";
+        password.focus({ preventScroll: true });
+      });
+    })();
+  </script>
+</body>
 </html>
