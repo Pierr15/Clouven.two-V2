@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="id">
 <head>
@@ -24,18 +25,9 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"
   />
-  <link
-    rel="stylesheet"
-    href="/assets/css/app.css?v=startup-transition-3"
-  />
-  <link
-    rel="stylesheet"
-    href="/assets/css/theme.css?v=avatar-source-5"
-  />
-  <link
-    rel="stylesheet"
-    href="/assets/css/loading.css?v=startup-transition-3"
-  />
+  <link rel="stylesheet" href="/assets/css/app.css?v=startup-transition-3" />
+  <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
+  <link rel="stylesheet" href="/assets/css/loading.css?v=startup-transition-3" />
   <link
     rel="icon"
     href="/assets/images/favicon.svg?v=c2-1"
@@ -43,20 +35,10 @@
   />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script
-    type="module"
-    src="/assets/js/pages/login.js?v=startup-transition-3"
-  ></script>
-  <script
-    type="module"
-    src="/assets/js/form-controls.js?v=forms-12"
-  ></script>
+  <script type="module" src="/assets/js/pages/login.js?v=startup-transition-3"></script>
+  <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script>
 
   <style>
-    /* ========================================
-       CLOUVEN LOGIN — MODERN EMERALD EDITION
-       ======================================== */
-
     :root {
       --login-bg: #0b1712;
       --login-surface: #101f18;
@@ -88,7 +70,7 @@
       opacity: 0.12;
     }
 
-    /* LAYOUT UTAMA */
+    /* ==================== LAYOUT ==================== */
 
     body[data-login-mode="user"] .login-page {
       position: relative;
@@ -105,9 +87,7 @@
         var(--login-bg);
     }
 
-    /* ========================================
-       PANEL KIRI — FOTO SEKOLAH
-       ======================================== */
+    /* ==================== PANEL KIRI ==================== */
 
     body[data-login-mode="user"] .login-visual {
       position: relative;
@@ -123,7 +103,6 @@
       border-right: 1px solid rgba(255, 255, 255, 0.07);
     }
 
-    /* Foto asli dari repository */
     body[data-login-mode="user"] .login-visual::before {
       content: "";
       position: absolute;
@@ -136,7 +115,6 @@
       animation: login-photo-reveal 1.2s ease both;
     }
 
-    /* Overlay agar teks terbaca */
     body[data-login-mode="user"] .login-visual::after {
       content: "";
       position: absolute;
@@ -157,7 +135,6 @@
         );
     }
 
-    /* Brand di bagian atas */
     .login-top-brand {
       position: absolute;
       top: 32px;
@@ -201,7 +178,8 @@
       letter-spacing: 0.12em;
     }
 
-    /* Logo dan orbit */
+    /* ==================== IDENTITAS SEKOLAH ==================== */
+
     .login-identity {
       position: relative;
       z-index: 1;
@@ -211,8 +189,7 @@
       width: 100%;
       margin: 12px auto 32px;
       text-align: center;
-      animation: login-identity-slide 900ms
-        cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      animation: login-identity-slide 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     }
 
     .login-logo-orbit {
@@ -261,9 +238,11 @@
       animation: login-dot-float 3s ease-in-out infinite;
     }
 
+    /* LOGO SEKOLAH + EFEK KILAU */
+
     .login-school-logo {
       position: relative;
-      z-index: 1;
+      isolation: isolate;
       display: grid;
       place-items: center;
       width: 76%;
@@ -281,11 +260,51 @@
     }
 
     .login-school-logo img {
+      position: relative;
+      z-index: 1;
       display: block;
       width: 100%;
       height: 100%;
       padding: 6px;
       object-fit: contain;
+    }
+
+    /* Kilauan bergerak melintasi permukaan logo */
+    .login-school-logo::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
+      top: -35%;
+      bottom: -35%;
+      left: -100%;
+      width: 65%;
+      pointer-events: none;
+      background: linear-gradient(
+        110deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.12) 35%,
+        rgba(255, 255, 255, 0.95) 50%,
+        rgba(255, 220, 150, 0.48) 56%,
+        transparent 75%
+      );
+      transform: skewX(-18deg);
+      animation: clouvenLogoShimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes clouvenLogoShimmer {
+      0%, 15% {
+        left: -100%;
+        opacity: 0;
+      }
+
+      25% {
+        opacity: 1;
+      }
+
+      65%, 100% {
+        left: 140%;
+        opacity: 0;
+      }
     }
 
     .login-school-logo:hover {
@@ -313,7 +332,8 @@
       letter-spacing: 0.15em;
     }
 
-    /* Headline kiri */
+    /* ==================== HEADLINE KIRI ==================== */
+
     .login-visual-copy {
       position: relative;
       z-index: 1;
@@ -381,9 +401,7 @@
       font-size: 19px;
     }
 
-    /* ========================================
-       PANEL KANAN — FORM LOGIN
-       ======================================== */
+    /* ==================== PANEL LOGIN ==================== */
 
     body[data-login-mode="user"] .login-panel {
       position: relative;
@@ -481,7 +499,6 @@
       line-height: 1.85;
     }
 
-    /* Form */
     body[data-login-mode="user"] .login-form {
       display: flex;
       flex-direction: column;
@@ -597,7 +614,8 @@
       line-height: 1.6;
     }
 
-    /* Animasi */
+    /* ==================== ANIMASI ==================== */
+
     @keyframes login-identity-slide {
       from {
         opacity: 0;
@@ -651,9 +669,7 @@
       }
     }
 
-    /* ========================================
-       RESPONSIVE TABLET
-       ======================================== */
+    /* ==================== TABLET ==================== */
 
     @media (max-width: 1000px) {
       body[data-login-mode="user"] .login-page {
@@ -685,9 +701,7 @@
       }
     }
 
-    /* ========================================
-       RESPONSIVE HP
-       ======================================== */
+    /* ==================== MOBILE ==================== */
 
     @media (max-width: 720px) {
       body[data-login-mode="user"] .login-page {
@@ -842,6 +856,10 @@
       body[data-login-mode="user"] .login-form button.button-coral {
         transition: none !important;
       }
+
+      .login-school-logo::after {
+        animation: none !important;
+      }
     }
   </style>
 </head>
@@ -850,7 +868,6 @@
   <div class="page-noise" aria-hidden="true"></div>
 
   <main class="login-page">
-    <!-- PANEL KIRI -->
     <section class="login-visual">
       <header class="login-top-brand">
         <span class="login-brand-icon" aria-hidden="true">
@@ -864,6 +881,7 @@
       <div class="login-identity">
         <div class="login-logo-orbit">
           <span class="login-orbit-dot"></span>
+
           <div class="login-school-logo">
             <img
               src="/assets/images/logo-sekolah.png"
@@ -873,9 +891,7 @@
           </div>
         </div>
 
-        <p class="login-school-name">
-          SMK NEGERI 1 ADIWERNA
-        </p>
+        <p class="login-school-name">SMK NEGERI 1 ADIWERNA</p>
 
         <p class="login-school-year">
           XI TKJ 2 &nbsp;·&nbsp; 2026 / 2027
@@ -904,7 +920,6 @@
       </footer>
     </section>
 
-    <!-- PANEL KANAN -->
     <section class="login-panel">
       <div class="login-card">
         <p class="eyebrow">AKUN KELAS</p>
