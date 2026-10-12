@@ -21,6 +21,21 @@ export async function mountShell(active = "") {
   const host = document.querySelector("#sidebar");
   if (!host) return null;
   const session = await getSession();
+  if (!document.querySelector("#developer-avatar-shimmer-styles")) {
+    const style = document.createElement("style");
+    style.id = "developer-avatar-shimmer-styles";
+    style.textContent = `
+      .developer-shimmer-avatar, .member-photo.is-developer { position: relative; isolation: isolate; overflow: hidden; }
+      .developer-shimmer-avatar::after, .member-photo.is-developer::after {
+        content: ""; position: absolute; z-index: 3; top: -35%; bottom: -35%; left: -100%; width: 60%;
+        pointer-events: none; background: linear-gradient(110deg, transparent, rgba(255,255,255,.12) 35%, rgba(255,255,255,.9) 50%, rgba(255,220,150,.4) 57%, transparent 76%);
+        transform: skewX(-18deg); animation: developerAvatarShimmer 4.8s ease-in-out infinite;
+      }
+      @keyframes developerAvatarShimmer { 0%, 15% { left: -100%; opacity: 0; } 25% { opacity: 1; } 65%, 100% { left: 140%; opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) { .developer-shimmer-avatar::after, .member-photo.is-developer::after { animation: none; } }
+    `;
+    document.head.appendChild(style);
+  }
   let collapsed = false;
   try {
     collapsed = localStorage.getItem("clouven-sidebar-collapsed") === "1";
@@ -99,7 +114,7 @@ export async function mountShell(active = "") {
           href="${session.user ? "/profile/" : "/login/"}"
           aria-label="${session.user ? "Buka profile" : "Login"}"
         >
-          <span class="profile-avatar">
+          <span class="profile-avatar${session.role === "developer" ? " developer-shimmer-avatar" : ""}">
             ${session.user?.user_metadata?.avatar_url ? `<img src="${escapeHTML(session.user.user_metadata.avatar_url)}" alt="" class="profile-avatar-image" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" />` : ""}
             <span class="profile-initials" ${session.user?.user_metadata?.avatar_url ? 'style="display:none"' : ""}>
               ${escapeHTML(
