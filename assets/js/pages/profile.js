@@ -111,6 +111,15 @@ document.querySelector("#profileCard").addEventListener("click", async event => 
     const status = document.querySelector("#developerAvatarStatus");
     if (!confirm("Hapus foto profil developer?")) return;
     try {
+      const currentUrl = session.user?.user_metadata?.avatar_url || "";
+      const marker = "/storage/v1/object/public/developer-avatars/";
+      if (currentUrl.includes(marker)) {
+        const objectPath = decodeURIComponent(new URL(currentUrl).pathname.split(marker)[1] || "");
+        if (objectPath) {
+          const { error: removeError } = await supabase.storage.from("developer-avatars").remove([objectPath]);
+          if (removeError) throw removeError;
+        }
+      }
       const { error } = await supabase.auth.updateUser({ data: { avatar_url: null } });
       if (error) throw error;
       showToast("Foto profil dihapus.");
