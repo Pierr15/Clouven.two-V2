@@ -27,3 +27,12 @@ create policy "Developers can delete own avatar" on storage.objects for delete t
  bucket_id='developer-avatars' and (storage.foldername(name))[1]=auth.uid()::text
  and exists (select 1 from public.members m where m.id=auth.uid() and m.role='developer')
 );
+
+-- Allow a developer to update only their own photo field in the member directory.
+-- Column-level permission avoids granting access to edit names, roles, or other member data.
+grant update (photo) on public.members to authenticated;
+drop policy if exists "Developers can update own member photo" on public.members;
+create policy "Developers can update own member photo" on public.members
+for update to authenticated
+using (id = auth.uid() and public.current_app_role() = 'developer')
+with check (id = auth.uid() and public.current_app_role() = 'developer');
