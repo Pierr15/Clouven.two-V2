@@ -861,6 +861,252 @@
         animation: none !important;
       }
     }
+  
+    /* CLOUVEN LOGIN POLISH — respects the shared theme.js preference */
+    :root[data-theme="light"] {
+      color-scheme: light;
+      --login-bg: #f4f7f2;
+      --login-surface: #ffffff;
+      --login-border: #dce6dc;
+      --login-text: #18382a;
+      --login-muted: #687c70;
+      --login-coral: #e9786d;
+      --login-gold: #d5a94f;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"],
+    :root[data-theme="light"] body[data-login-mode="user"] .login-page {
+      background: #f4f7f2;
+      color: #18382a;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual {
+      border-color: #dfe8dc;
+      background: #eaf1e8;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual::before {
+      opacity: .16;
+      background-position: center 45%;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual::after {
+      background: linear-gradient(180deg,
+        rgba(246,249,243,.84) 0%,
+        rgba(240,246,238,.86) 43%,
+        rgba(229,239,227,.98) 100%);
+    }
+
+    :root[data-theme="light"] .login-brand-name,
+    :root[data-theme="light"] .login-brand-class,
+    :root[data-theme="light"] .login-school-name {
+      color: #244a34;
+    }
+
+    :root[data-theme="light"] .login-brand-class,
+    :root[data-theme="light"] .login-school-year {
+      color: #617866;
+    }
+
+    :root[data-theme="light"] .login-brand-divider {
+      background: rgba(36,74,52,.22);
+    }
+
+    :root[data-theme="light"] .login-logo-orbit {
+      border-color: rgba(36,74,52,.18);
+      background: radial-gradient(circle, rgba(255,255,255,.88), rgba(226,239,225,.38) 65%, transparent 73%);
+    }
+
+    :root[data-theme="light"] .login-logo-orbit::before {
+      border-color: rgba(36,74,52,.12);
+    }
+
+    :root[data-theme="light"] .login-logo-orbit::after {
+      border-color: rgba(213,169,79,.25);
+    }
+
+    :root[data-theme="light"] .login-school-logo {
+      box-shadow: 0 0 0 5px rgba(255,255,255,.68), 0 12px 28px rgba(34,70,43,.13);
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-visual .eyebrow {
+      color: #98701b;
+    }
+
+    :root[data-theme="light"] .login-visual-copy h1 {
+      color: #18382a;
+      font-size: clamp(40px, 4.1vw, 59px);
+      line-height: 1.05;
+    }
+
+    :root[data-theme="light"] .login-visual-copy > p:last-child {
+      color: #536b5a;
+    }
+
+    :root[data-theme="light"] .login-visual-footer {
+      color: #58705f;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-panel {
+      background:
+        radial-gradient(ellipse at 100% 0%, rgba(222,238,220,.6), transparent 43%),
+        #f7f8f4;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-panel::before {
+      border-color: rgba(39,83,51,.09);
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-card {
+      max-width: 465px;
+      padding: clamp(28px, 3vw, 40px);
+      border-color: #e0e7dd;
+      border-radius: 20px;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 22px 58px rgba(34,66,43,.075), 0 2px 8px rgba(34,66,43,.025);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-card h2 {
+      color: #18382a;
+      font-size: clamp(34px, 3vw, 43px);
+      line-height: 1.12;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-card > p:not(.eyebrow) {
+      color: #718176;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form label {
+      color: #304b39;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form input {
+      border-color: #dce5db;
+      background: #f9fbf8;
+      color: #18382a;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form input::placeholder {
+      color: #9aa89d;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form input:hover {
+      border-color: #b8cdbb;
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form input:focus {
+      border-color: #5d9a70;
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(77,139,91,.11);
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-form button.button-coral {
+      background: linear-gradient(105deg,#ff9784,#ff7d79);
+      color: #203428;
+      box-shadow: 0 8px 20px rgba(228,111,99,.15);
+    }
+
+    :root[data-theme="light"] body[data-login-mode="user"] .login-back {
+      color: #64796b;
+    }
+
+    :root[data-theme="light"] .login-panel-footer {
+      color: #87968a;
+    }
+
+    /* Tighter balance on medium screens */
+    @media (min-width: 1001px) {
+      body[data-login-mode="user"] .login-page {
+        grid-template-columns: minmax(0, 1.02fr) minmax(430px, .98fr);
+      }
+      body[data-login-mode="user"] .login-visual {
+        padding-inline: clamp(34px, 5vw, 72px);
+      }
+      body[data-login-mode="user"] .login-panel {
+        padding-inline: clamp(30px, 4vw, 58px);
+      }
+    }
+
+    @media (max-height: 760px) and (min-width: 721px) {
+      body[data-login-mode="user"] .login-visual {
+        padding-top: 78px;
+        padding-bottom: 65px;
+      }
+      .login-identity {
+        margin-bottom: 22px;
+      }
+      .login-logo-orbit {
+        width: clamp(112px, 14vh, 150px);
+      }
+      .login-school-name {
+        margin-top: 15px;
+      }
+      body[data-login-mode="user"] .login-card {
+        padding-block: 27px;
+      }
+      body[data-login-mode="user"] .login-form {
+        gap: 15px;
+        margin-top: 22px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      :root[data-theme="light"] body[data-login-mode="user"] .login-visual {
+        padding: 82px 22px 28px;
+        border-bottom-color: #dfe8dc;
+      }
+      :root[data-theme="light"] body[data-login-mode="user"] .login-visual::after {
+        background: linear-gradient(180deg,
+          rgba(246,249,243,.82),
+          rgba(240,246,238,.91) 55%,
+          rgba(229,239,227,.99));
+      }
+      .login-logo-orbit {
+        width: 112px;
+      }
+      .login-identity {
+        margin-bottom: 22px;
+      }
+      .login-school-name {
+        margin-top: 16px;
+      }
+      .login-visual-copy h1 {
+        font-size: clamp(37px, 9vw, 49px);
+      }
+      .login-visual-copy > p:last-child {
+        max-width: 420px;
+      }
+      body[data-login-mode="user"] .login-panel {
+        padding: 22px 17px 32px;
+      }
+      :root[data-theme="light"] body[data-login-mode="user"] .login-card {
+        padding: 25px 21px;
+        border-radius: 16px;
+      }
+      body[data-login-mode="user"] .login-form {
+        margin-top: 22px;
+        gap: 16px;
+      }
+      .login-panel-footer {
+        display: none;
+      }
+    }
+
+    /* Keep the theme switch behavior aligned with theme.js */
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .login-identity, .login-visual-copy, .login-card,
+      .login-orbit-dot, .login-school-logo::after,
+      body[data-login-mode="user"] .login-visual::before {
+        animation: none !important;
+      }
+    }
+
   </style>
 </head>
 
