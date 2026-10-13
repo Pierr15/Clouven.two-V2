@@ -29,7 +29,7 @@ function photoObjectFromUrl(value, targetId) {
     if (parts.length !== 2 || parts[0] !== targetId) return null;
     const filename = parts[1];
     if (bucket === BUCKET && !OBJECT_NAME.test(filename)) return null;
-    if (bucket === LEGACY_BUCKET && !/^avatar-\\d+\\.(gif|webp|png|jpg)$/i.test(filename)) return null;
+    if (bucket === LEGACY_BUCKET && !/^avatar-\d+\.(gif|webp|png|jpg)$/i.test(filename)) return null;
     return { bucket, path };
   } catch {
     return null;
