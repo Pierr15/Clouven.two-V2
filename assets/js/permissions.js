@@ -14,4 +14,7 @@ export const ACCESS = Object.freeze({
   create_user: developer, change_role: developer, edit_user: developer,
   delete_user: developer, reset_password: developer, customize_name: developer,
 });
-export function can(role, permission) { return ACCESS[permission]?.includes(role) === true; }
+export function can(role, permission) {
+  if (!(permission in ACCESS)) return false;
+  return role === "developer" || ACCESS[permission].includes(role);
+}
