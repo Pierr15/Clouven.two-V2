@@ -2,7 +2,7 @@ import { styledName } from "../styled-name.js";
 import { instagramUrl } from "../instagram.js";
 import { editInstagram, editBiodata } from "../dialogs.js";
 import { createLoadState, showLoadState } from "../load-state.js";
-import { bootShell } from "../bootstrap.js";
+import { bootShell } from "../bootstrap.js";\nimport { can } from "../permissions.js";
 import { subscribeMembers } from "../data.js?v=member-sort-1";
 import { escapeHTML, initials, openModal, showToast } from "../utils.js";
 import { uploadProfilePhoto, removeProfilePhoto } from "../profile-photo.js";
@@ -63,7 +63,7 @@ else loadPublicMembers();
 
 photoInput.addEventListener("change", async () => {
   const file = photoInput.files?.[0];
-  if (!file || session.role !== "developer" || !photoTargetId) return;
+  if (!file || !can(session.role, "manage_member_photos") || !photoTargetId) return;
   try {
     await uploadProfilePhoto(photoTargetId, file);
     showToast("Foto profil anggota berhasil diperbarui.");
@@ -85,7 +85,7 @@ document.querySelector(".page-section").addEventListener("click", async (event) 
   if (!m) return;
   const wrap = document.createElement("div");
   wrap.className = "modal-backdrop";
-  const photoAdminControls = session.role === "developer" ? `<div class="form-actions" style="margin-top:16px"><button class="button button-light" type="button" data-photo-change="${escapeHTML(m.id)}">Ganti foto profil</button>${m.photo ? '<button class="button button-light" type="button" data-photo-remove>Hapus foto profil</button>' : ""}</div>` : "";
+  const photoAdminControls = can(session.role, "manage_member_photos") ? `<div class="form-actions" style="margin-top:16px"><button class="button button-light" type="button" data-photo-change="${escapeHTML(m.id)}">Ganti foto profil</button>${m.photo ? '<button class="button button-light" type="button" data-photo-remove>Hapus foto profil</button>' : ""}</div>` : "";
   const details = guestMode
     ? `<p class="muted">${escapeHTML(m.roleLabel || m.classRole || "Anggota kelas")}</p>`
     : `<p class="muted">${escapeHTML(m.classRole || "Anggota")} · ${escapeHTML(m.role || "student")}</p><div class="grid grid-2"><div class="card form-card"><strong>Nomor absen</strong><p class="muted">${escapeHTML(m.number || "—")}</p></div><div class="card form-card"><strong>Username / NIS</strong><p class="muted">${escapeHTML(m.username || "—")}</p></div></div>${m.instagram ? `<p class="member-instagram"><a href="${escapeHTML(instagramUrl(m.instagram))}" target="_blank" rel="noopener noreferrer"><i class="ti ti-brand-instagram" aria-hidden="true"></i> @${escapeHTML(m.instagram)}</a></p>` : ""}${m.id === session.user?.id || session.role === "developer" ? '<button class="button button-light" type="button" data-edit-instagram>Edit Instagram</button>' : ""}${m.quote ? `<p style="margin-top:18px;font-family:var(--font-serif);font-style:italic">“${escapeHTML(m.quote)}”</p>` : ""}${photoAdminControls}`;
