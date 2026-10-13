@@ -11,6 +11,7 @@ import { bootShell } from "../bootstrap.js";
 import { subscribeMember, subscribeProgress } from "../data.js";
 import { escapeHTML, showToast } from "../utils.js";
 import {browserPermission,browserEnabled,setBrowserEnabled,readPreferences,savePreferences} from "../notifications.js";
+import { uploadProfilePhoto, removeProfilePhoto } from "../profile-photo.js";
 
 const session = await requireAuth(); if (!session) throw new Error("redirect");
 await bootShell("profile");
@@ -27,19 +28,18 @@ const avatarInput = document.createElement("input");
 avatarInput.type = "file";
 avatarInput.accept = "image/gif,image/webp,image/png,image/jpeg";
 avatarInput.hidden = true;
-avatarInput.id = "developerAvatarInput";
+avatarInput.id = "profilePhotoInput";
 document.body.appendChild(avatarInput);
 let avatarBusy = false;
 function avatarControls() {
-  if (!developerAvatar) return "";
-  const current = session.user?.user_metadata?.avatar_url || "";
-  return `<section class="developer-avatar-settings" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:18px 0;padding:16px;border:1px solid var(--line,rgba(120,120,120,.25));border-radius:16px">
-    <div class="developer-shimmer-avatar" style="width:72px;height:72px;flex:0 0 72px;border-radius:50%;overflow:hidden;background:var(--surface,rgba(120,120,120,.1));display:grid;place-items:center">
-      ${current ? `<img src="${escapeHTML(current)}" alt="Avatar developer" style="width:100%;height:100%;object-fit:cover">` : '<i class="ti ti-user-code" aria-hidden="true" style="font-size:30px"></i>'}
+  const current = member?.photo || (developerAvatar ? session.user?.user_metadata?.avatar_url : "") || "";
+  return `<section class="profile-photo-settings" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:18px 0;padding:16px;border:1px solid var(--line,rgba(120,120,120,.25));border-radius:16px">
+    <div style="width:72px;height:72px;flex:0 0 72px;border-radius:50%;overflow:hidden;background:var(--surface,rgba(120,120,120,.1));display:grid;place-items:center">
+      ${current ? `<img src="${escapeHTML(current)}" alt="Foto profil" style="width:100%;height:100%;object-fit:cover">` : '<i class="ti ti-user-circle" aria-hidden="true" style="font-size:38px"></i>'}
     </div>
-    <div style="flex:1;min-width:180px"><strong>Foto profil developer</strong><p class="muted" style="margin:5px 0 10px">GIF, WebP animasi, PNG, atau JPG · maksimal 2 MB.</p>
-      <div class="form-actions"><button class="button button-light" type="button" id="chooseDeveloperAvatar">${current ? "Ganti avatar" : "Pilih avatar"}</button>${current ? '<button class="button button-light" type="button" id="removeDeveloperAvatar">Hapus</button>' : ""}</div>
-      <p class="form-help" id="developerAvatarStatus" role="status" aria-live="polite"></p>
+    <div style="flex:1;min-width:180px"><strong>Foto profil</strong><p class="muted" style="margin:5px 0 10px">GIF, WebP, PNG, atau JPG · maksimal 2 MB. Foto dapat dilihat publik.</p>
+      <div class="form-actions"><button class="button button-light" type="button" id="chooseProfilePhoto">${current ? "Ganti foto" : "Pilih foto"}</button>${current ? '<button class="button button-light" type="button" id="removeProfilePhoto">Hapus foto</button>' : ""}</div>
+      <p class="form-help" id="profilePhotoStatus" role="status" aria-live="polite"></p>
     </div>
   </section>`;
 }
@@ -72,67 +72,42 @@ document.querySelector("#logoutBtn").addEventListener("click", async () => { awa
 avatarInput.addEventListener("change", async () => {
   const file = avatarInput.files?.[0];
   if (!file) return;
-  const allowed = new Set(["image/gif", "image/webp", "image/png", "image/jpeg"]);
-  const status = document.querySelector("#developerAvatarStatus");
-  if (!developerAvatar) { avatarInput.value = ""; return; }
-  if (!allowed.has(file.type)) { if(status) status.textContent = "Format tidak didukung. Pilih GIF, WebP, PNG, atau JPG."; avatarInput.value = ""; return; }
-  if (file.size > 2 * 1024 * 1024) { if(status) status.textContent = "Ukuran file maksimal 2 MB."; avatarInput.value = ""; return; }
+  const status = document.querySelector("#profilePhotoStatus");
   if (avatarBusy) return;
   avatarBusy = true;
-  const button = document.querySelector("#chooseDeveloperAvatar");
+  const button = document.querySelector("#chooseProfilePhoto");
   if (button) { button.disabled = true; button.textContent = "Mengunggah…"; }
-  if(status) status.textContent = "Mengunggah avatar…";
+  if (status) status.textContent = "Memvalidasi dan mengunggah foto…";
   try {
-    const ext = ({ "image/gif":"gif", "image/webp":"webp", "image/png":"png", "image/jpeg":"jpg" })[file.type];
-    const path = `${session.user.id}/avatar-${Date.now()}.${ext}`;
-    const { error: uploadError } = await supabase.storage.from("developer-avatars").upload(path, file, { upsert: true, contentType: file.type, cacheControl: "3600" });
-    if (uploadError) throw uploadError;
-    const { data } = supabase.storage.from("developer-avatars").getPublicUrl(path);
-    const avatarUrl = `${data.publicUrl}${data.publicUrl.includes("?") ? "&" : "?"}v=${Date.now()}`;
-    const { error: updateError } = await supabase.auth.updateUser({ data: { avatar_url: avatarUrl } });
-    if (updateError) throw updateError;
-    const { error: memberPhotoError } = await supabase.from("members").update({ photo: avatarUrl }).eq("id", session.user.id);
-    if (memberPhotoError) throw memberPhotoError;
-    showToast("Avatar developer berhasil diperbarui.");
+    await uploadProfilePhoto(session.user.id, file);
+    showToast("Foto profil berhasil diperbarui.");
     location.reload();
   } catch (error) {
-    console.error("Gagal mengunggah avatar developer:", error);
-    if(status) status.textContent = error.message || "Upload gagal. Pastikan bucket developer-avatars sudah disiapkan.";
-    showToast("Avatar gagal disimpan. Periksa konfigurasi Supabase Storage.");
+    console.error("Gagal menyimpan foto profil:", error);
+    if (status) status.textContent = error.message || "Upload gagal. Coba lagi.";
+    showToast(error.message || "Foto profil gagal disimpan.");
   } finally {
     avatarBusy = false;
     avatarInput.value = "";
-    const nextButton = document.querySelector("#chooseDeveloperAvatar");
-    if (nextButton) { nextButton.disabled = false; nextButton.textContent = "Pilih avatar"; }
+    const nextButton = document.querySelector("#chooseProfilePhoto");
+    if (nextButton) { nextButton.disabled = false; nextButton.textContent = member?.photo ? "Ganti foto" : "Pilih foto"; }
   }
 });
-document.querySelector("#profileCard").addEventListener("click", async event => {
-  if (!developerAvatar) return;
-  if (event.target.closest("#chooseDeveloperAvatar")) { avatarInput.click(); return; }
-  if (event.target.closest("#removeDeveloperAvatar")) {
-    const status = document.querySelector("#developerAvatarStatus");
-    if (!confirm("Hapus foto profil developer?")) return;
-    try {
-      const currentUrl = session.user?.user_metadata?.avatar_url || "";
-      const marker = "/storage/v1/object/public/developer-avatars/";
-      if (currentUrl.includes(marker)) {
-        const objectPath = decodeURIComponent(new URL(currentUrl).pathname.split(marker)[1] || "");
-        if (objectPath) {
-          const { error: removeError } = await supabase.storage.from("developer-avatars").remove([objectPath]);
-          if (removeError) throw removeError;
-        }
-      }
-      const { error } = await supabase.auth.updateUser({ data: { avatar_url: null } });
-      if (error) throw error;
-      const { error: memberPhotoError } = await supabase.from("members").update({ photo: "" }).eq("id", session.user.id);
-      if (memberPhotoError) throw memberPhotoError;
-      showToast("Foto profil dihapus.");
-      location.reload();
-    } catch (error) {
-      if(status) status.textContent = error.message || "Gagal menghapus avatar.";
-      showToast("Foto profil gagal dihapus.");
-    }
-    return;
+document.querySelector("#profileCard").addEventListener("click", async (event) => {
+  if (event.target.closest("#chooseProfilePhoto")) { avatarInput.click(); return; }
+  if (!event.target.closest("#removeProfilePhoto")) return;
+  if (!confirm("Hapus foto profil kamu?")) return;
+  const status = document.querySelector("#profilePhotoStatus");
+  const button = document.querySelector("#removeProfilePhoto");
+  if (button) button.disabled = true;
+  try {
+    await removeProfilePhoto(session.user.id);
+    showToast("Foto profil berhasil dihapus.");
+    location.reload();
+  } catch (error) {
+    if (status) status.textContent = error.message || "Gagal menghapus foto profil.";
+    showToast(error.message || "Foto profil gagal dihapus.");
+    if (button) button.disabled = false;
   }
 });
 document.querySelector("#profileCard").addEventListener("click", event => {

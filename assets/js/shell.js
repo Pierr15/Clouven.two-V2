@@ -41,7 +41,7 @@ export async function mountShell(active = "") {
     collapsed = localStorage.getItem("clouven-sidebar-collapsed") === "1";
   } catch {}
   document.body.classList.toggle("sidebar-collapsed", collapsed);
-  const protectedKeys = new Set(["tasks", "calendar", "storage", "members"]);
+  const protectedKeys = new Set(["tasks", "calendar", "storage"]);
   host.className = `sidebar${collapsed ? " is-collapsed" : ""}`;
   document.documentElement.classList.remove("sidebar-precollapsed");
   host.innerHTML = `
@@ -115,8 +115,8 @@ export async function mountShell(active = "") {
           aria-label="${session.user ? "Buka profile" : "Login"}"
         >
           <span class="profile-avatar${session.role === "developer" ? " developer-shimmer-avatar" : ""}">
-            ${session.user?.user_metadata?.avatar_url ? `<img src="${escapeHTML(session.user.user_metadata.avatar_url)}" alt="" class="profile-avatar-image" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" />` : ""}
-            <span class="profile-initials" ${session.user?.user_metadata?.avatar_url ? 'style="display:none"' : ""}>
+            ${(session.profile?.photo || session.user?.user_metadata?.avatar_url) ? `<img src="${escapeHTML(session.profile?.photo || session.user.user_metadata.avatar_url)}" alt="" class="profile-avatar-image" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" />` : ""}
+            <span class="profile-initials" ${(session.profile?.photo || session.user?.user_metadata?.avatar_url) ? 'style="display:none"' : ""}>
               ${escapeHTML(
                 initials(
                   session.profile?.name ||
