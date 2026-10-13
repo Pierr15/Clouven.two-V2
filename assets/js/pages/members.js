@@ -10,7 +10,7 @@ import { uploadProfilePhoto, removeProfilePhoto } from "../profile-photo.js";
 
 const session = await bootShell("members");
 const signedIn = Boolean(session?.user);
-const guestMode = !signedIn;
+const guestMode = !can(session?.role || "guest", "members");
 let members = [];
 let photoTargetId = "";
 let photoTargetClose = null;
@@ -59,7 +59,7 @@ async function loadPublicMembers() {
     listState.update({ status: "error", hasData: false, retry: loadPublicMembers });
   }
 }
-if (signedIn) subscribeMembers(v => { members = v; }, listState.update);
+if (!guestMode) subscribeMembers(v => { members = v; }, listState.update);
 else loadPublicMembers();
 
 photoInput.addEventListener("change", async () => {
