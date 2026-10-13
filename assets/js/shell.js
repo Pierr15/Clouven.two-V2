@@ -41,7 +41,7 @@ export async function mountShell(active = "") {
     collapsed = localStorage.getItem("clouven-sidebar-collapsed") === "1";
   } catch {}
   document.body.classList.toggle("sidebar-collapsed", collapsed);
-  const protectedKeys = new Set(["tasks", "calendar", "storage", "members"]);
+  const protectedKeys = new Set(["tasks", "calendar", "storage"]);
   host.className = `sidebar${collapsed ? " is-collapsed" : ""}`;
   document.documentElement.classList.remove("sidebar-precollapsed");
   host.innerHTML = `
