@@ -37,7 +37,7 @@ function avatarControls() {
     <div style="width:72px;height:72px;flex:0 0 72px;border-radius:50%;overflow:hidden;background:var(--surface,rgba(120,120,120,.1));display:grid;place-items:center">
       ${current ? `<img src="${escapeHTML(current)}" alt="Foto profil" style="width:100%;height:100%;object-fit:cover">` : '<i class="ti ti-user-circle" aria-hidden="true" style="font-size:38px"></i>'}
     </div>
-    <div style="flex:1;min-width:180px"><strong>Foto profil</strong><p class="muted" style="margin:5px 0 10px">GIF, WebP, PNG, atau JPG · maksimal 2 MB. Foto dapat dilihat publik.</p>
+    <div style="flex:1;min-width:180px"><strong>Foto profil</strong><p class="muted" style="margin:5px 0 10px">GIF, WebP, PNG, atau JPG · maksimal 1 MB. Foto dapat dilihat publik.</p>
       <div class="form-actions"><button class="button button-light" type="button" id="chooseProfilePhoto">${current ? "Ganti foto" : "Pilih foto"}</button>${current ? '<button class="button button-light" type="button" id="removeProfilePhoto">Hapus foto</button>' : ""}</div>
       <p class="form-help" id="profilePhotoStatus" role="status" aria-live="polite"></p>
     </div>
