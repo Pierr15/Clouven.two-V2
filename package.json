@@ -9,6 +9,7 @@
     "migrate:firebase": "node scripts/migrate-firebase-to-supabase.mjs",
     "start": "node scripts/serve.mjs",
     "start:4173": "set PORT=4173&& node scripts/serve.mjs",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "test:profile-photo": "node tests/profile-photo-access.mjs"
   },
   "dependencies": {
