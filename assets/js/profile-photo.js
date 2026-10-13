@@ -2,7 +2,7 @@ import { supabase } from "./supabase.js";
 import { authHeader } from "./auth.js";
 
 const BUCKET = "profile-photos";
-const MAX_BYTES = 2 * 1024 * 1024;
+const MAX_BYTES = 1 * 1024 * 1024;
 const MIME_EXT = Object.freeze({
   "image/gif": "gif",
   "image/webp": "webp",
@@ -15,7 +15,7 @@ async function validateImage(file) {
     throw new Error("Format tidak didukung. Pilih GIF, WebP, PNG, atau JPG.");
   }
   if (file.size <= 0 || file.size > MAX_BYTES) {
-    throw new Error("Ukuran foto harus lebih dari 0 byte dan maksimal 2 MB.");
+    throw new Error("Ukuran foto harus lebih dari 0 byte dan maksimal 1 MB.");
   }
   const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
   const starts = (...values) => values.every((value, index) => bytes[index] === value);
