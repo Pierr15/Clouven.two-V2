@@ -64,6 +64,13 @@ export default async function handler(req, res) {
     if (targetError) throw targetError;
     if (!target) throw httpError("Akun anggota tidak ditemukan.", 404);
 
+    let legacyAvatar = "";
+    if (target.role === "developer") {
+      const { data: authRecord, error: authReadError } = await adminSupabase.auth.admin.getUserById(targetId);
+      if (authReadError) throw authReadError;
+      legacyAvatar = authRecord.user?.user_metadata?.avatar_url || "";
+    }
+    const previousPhoto = target.photo || legacyAvatar;
     let nextPhoto = "";
     if (action === "set") {
       const path = String(input.path || "");
@@ -98,8 +105,17 @@ export default async function handler(req, res) {
     if (updateError) throw updateError;
     if (!updated) throw httpError("Foto profil tidak dapat disimpan.", 404);
 
-    if (target.photo && target.photo !== nextPhoto) {
-      await removePreviousPhoto(target.photo, targetId);
+    if (target.role === "developer") {
+      const { data: authRecord, error: authReadError } = await adminSupabase.auth.admin.getUserById(targetId);
+      if (authReadError) console.warn("Metadata avatar Developer gagal dibaca setelah pembaruan foto.", authReadError.message);
+      else {
+        const metadata = { ...(authRecord.user?.user_metadata || {}), avatar_url: nextPhoto || null };
+        const { error: metadataError } = await adminSupabase.auth.admin.updateUserById(targetId, { user_metadata: metadata });
+        if (metadataError) console.warn("Metadata avatar Developer gagal disinkronkan.", metadataError.message);
+      }
+    }
+    if (previousPhoto && previousPhoto !== nextPhoto) {
+      await removePreviousPhoto(previousPhoto, targetId);
     }
     return res.status(200).json({ ok: true, targetId, photo: nextPhoto });
   } catch (error) {
