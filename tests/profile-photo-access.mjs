@@ -10,7 +10,7 @@ for (const permission of Object.keys(ACCESS)) {
 assert.equal(can("developer", "permission-that-does-not-exist"), false, "Unknown permissions must fail closed");
 
 assert.equal(can("guest", "view_member_photos"), true, "Guest can view public profile photos");
-assert.equal(can("guest", "members"), true, "Guest can open the public member directory");
+assert.equal(can("guest", "members"), false, "Member data permission remains authenticated-only");
 assert.equal(can("guest", "manage_own_photo"), false, "Guest cannot upload or remove a profile photo");
 assert.equal(can("guest", "manage_member_photos"), false, "Guest cannot manage other members' photos");
 
