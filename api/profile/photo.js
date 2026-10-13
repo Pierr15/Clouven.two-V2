@@ -25,7 +25,11 @@ function photoObjectFromUrl(value, targetId) {
     const path = tail.join("/");
     if (![BUCKET, LEGACY_BUCKET].includes(bucket)) return null;
     if (!path.startsWith(`${targetId}/`) || path.includes("..")) return null;
-    if (bucket === LEGACY_BUCKET && !OBJECT_NAME.test(path.slice(targetId.length + 1).split("/").at(-1))) return null;
+    const parts = path.split("/");
+    if (parts.length !== 2 || parts[0] !== targetId) return null;
+    const filename = parts[1];
+    if (bucket === BUCKET && !OBJECT_NAME.test(filename)) return null;
+    if (bucket === LEGACY_BUCKET && !/^avatar-\\d+\\.(gif|webp|png|jpg)$/i.test(filename)) return null;
     return { bucket, path };
   } catch {
     return null;
