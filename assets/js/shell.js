@@ -115,8 +115,8 @@ export async function mountShell(active = "") {
           aria-label="${session.user ? "Buka profile" : "Login"}"
         >
           <span class="profile-avatar${session.role === "developer" ? " developer-shimmer-avatar" : ""}">
-            ${session.user?.user_metadata?.avatar_url ? `<img src="${escapeHTML(session.user.user_metadata.avatar_url)}" alt="" class="profile-avatar-image" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" />` : ""}
-            <span class="profile-initials" ${session.user?.user_metadata?.avatar_url ? 'style="display:none"' : ""}>
+            ${(session.profile?.photo || session.user?.user_metadata?.avatar_url) ? `<img src="${escapeHTML(session.profile?.photo || session.user.user_metadata.avatar_url)}" alt="" class="profile-avatar-image" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit" />` : ""}
+            <span class="profile-initials" ${(session.profile?.photo || session.user?.user_metadata?.avatar_url) ? 'style="display:none"' : ""}>
               ${escapeHTML(
                 initials(
                   session.profile?.name ||
