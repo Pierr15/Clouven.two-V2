@@ -8,7 +8,10 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "run_worker_first": true,
-    "vars": {},
+    "vars": {
+     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_41bkBRphPsoAuuUVeZl_Qw_K5FiH-oZ",
+      "SUPABASE_URL": "https://dtizydctrugvihnivosg.supabase.co"
+    },
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   }
