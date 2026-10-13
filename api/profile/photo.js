@@ -2,7 +2,7 @@ import { adminSupabase, verifyRequest } from "../_lib/supabaseAdmin.js";
 
 const BUCKET = "profile-photos";
 const LEGACY_BUCKET = "developer-avatars";
-const MAX_BYTES = 2 * 1024 * 1024;
+const MAX_BYTES = 1 * 1024 * 1024;
 const MIME_TYPES = new Set(["image/gif", "image/webp", "image/png", "image/jpeg"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const OBJECT_NAME = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(gif|webp|png|jpg)$/i;
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
       const size = Number(object.metadata?.size ?? object.metadata?.contentLength);
       const mime = String(object.metadata?.mimetype || object.metadata?.contentType || "");
       if (!Number.isFinite(size) || size <= 0 || size > MAX_BYTES) {
-        throw httpError("Ukuran foto harus antara 1 byte dan 2 MB.", 400);
+        throw httpError("Ukuran foto harus antara 1 byte dan 1 MB.", 400);
       }
       if (mime && !MIME_TYPES.has(mime)) throw httpError("Format foto tidak didukung.", 400);
 
