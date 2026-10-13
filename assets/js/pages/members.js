@@ -9,7 +9,6 @@ import { escapeHTML, initials, openModal, showToast } from "../utils.js";
 import { uploadProfilePhoto, removeProfilePhoto } from "../profile-photo.js";
 
 const session = await bootShell("members");
-const signedIn = Boolean(session?.user);
 const guestMode = !can(session?.role || "guest", "members");
 let members = [];
 let photoTargetId = "";
