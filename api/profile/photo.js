@@ -74,7 +74,7 @@ export default async function handler(req, res) {
       if (authReadError) throw authReadError;
       legacyAvatar = authRecord.user?.user_metadata?.avatar_url || "";
     }
-    const previousPhoto = target.photo || legacyAvatar;
+    const previousPhotos = [...new Set([target.photo, legacyAvatar].filter(Boolean))];
     let nextPhoto = "";
     if (action === "set") {
       const path = String(input.path || "");
@@ -118,8 +118,8 @@ export default async function handler(req, res) {
         if (metadataError) console.warn("Metadata avatar Developer gagal disinkronkan.", metadataError.message);
       }
     }
-    if (previousPhoto && previousPhoto !== nextPhoto) {
-      await removePreviousPhoto(previousPhoto, targetId);
+    for (const previousPhoto of previousPhotos) {
+      if (previousPhoto !== nextPhoto) await removePreviousPhoto(previousPhoto, targetId);
     }
     return res.status(200).json({ ok: true, targetId, photo: nextPhoto });
   } catch (error) {
