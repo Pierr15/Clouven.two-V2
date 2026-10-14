@@ -1,4 +1,4 @@
-@import url("./styled-name.css?v=names-19");
+@import url("./styled-name.css?v=names-20");
 @import url("./productivity.css");
 :root {
   --ink: #1b2c25;
@@ -3826,16 +3826,16 @@ input[type="number"] {
   margin-inline-start: .28em;
   padding: .22em;
   vertical-align: -.34em;
-  border: 1px solid rgba(191, 224, 255, .72);
+  border: 0;
   border-radius: .42em;
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
   font-size: 14px;
   line-height: 1;
-  background: linear-gradient(135deg, #00d5ff 0%, #2875ff 30%, #7047ff 62%, #e34dff 100%) !important;
-  background-size: 240% 240% !important;
-  animation: owner-terminal-gradient 5s ease-in-out infinite, owner-terminal-glow 3s ease-in-out infinite;
-  box-shadow: 0 0 .18em rgba(0, 213, 255, .9), 0 .22em .7em rgba(112, 71, 255, .42), inset 0 1px 0 rgba(255,255,255,.38);
+  background: transparent !important;
+  background-size: auto !important;
+  animation: none;
+  box-shadow: none;
   text-shadow: 0 1px 2px rgba(10, 25, 70, .3);
   -webkit-text-stroke: 0;
 }
