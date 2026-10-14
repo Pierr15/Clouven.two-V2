@@ -328,5 +328,182 @@ export async function mountShell(active = "") {
     else if (!mobile.matches && menuHadFocus) collapseButton?.focus();
   });
   setMobileOpen(false, false);
+
+  // Mobile floating dock: keep the existing desktop sidebar and permission logic intact.
+  window.__clouvenMobileDockCleanup?.();
+  const dock = document.createElement("div");
+  dock.className = "mobile-dock";
+  const protectedDockKeys = new Set(["tasks", "calendar", "storage"]);
+  const dockHref = (key, href) =>
+    protectedDockKeys.has(key) && !session.user
+      ? "/login/?next=" + encodeURIComponent(href)
+      : href;
+  const dockLink = (key, href, icon, label) =>
+    '<a class="mobile-dock-item' + (active === key ? " is-active" : "") + '" href="' +
+    dockHref(key, href) + '" aria-label="' + label + '" title="' + label + '"' +
+    (active === key ? ' aria-current="page"' : "") + '><i class="ti ti-' + icon +
+    '" aria-hidden="true"></i></a>';
+  const auxiliaryLinks = [
+    ["calendar", "/kalender/", "calendar-event", "Kalender"],
+    ["tools", "/tools/", "tools", "Tools"],
+    ["members", "/anggota/", "users", "Anggota"],
+  ];
+  const auxiliaryMarkup = auxiliaryLinks.map(([key, href, icon, label]) =>
+    '<a class="mobile-dock-panel-link' + (active === key ? " is-active" : "") +
+    '" href="' + dockHref(key, href) + '"' +
+    (active === key ? ' aria-current="page"' : "") + '><i class="ti ti-' + icon +
+    '" aria-hidden="true"></i><span>' + label + '</span></a>'
+  ).join("");
+  const managementMarkup = session.user && can(session.role, "manage_class")
+    ? '<a class="mobile-dock-panel-link" href="' +
+      (can(session.role, "admin") ? "/admin/" : "/kelola/") +
+      '"><i class="ti ti-user-shield" aria-hidden="true"></i><span>' +
+      (can(session.role, "admin") ? "Admin Panel" : "Kelola Kelas") + '</span></a>'
+    : "";
+  dock.innerHTML = [
+    '<section class="mobile-dock-panel" id="mobileDockPanel" aria-label="Menu lainnya" hidden>',
+      '<div class="mobile-dock-panel-heading"><strong>Menu lainnya</strong>',
+        '<button class="mobile-dock-panel-close" type="button" data-dock-close aria-label="Tutup menu lainnya" title="Tutup menu lainnya"><i class="ti ti-x" aria-hidden="true"></i></button>',
+      '</div>',
+      '<nav class="mobile-dock-panel-links" aria-label="Menu tambahan">',
+        auxiliaryMarkup,
+        managementMarkup,
+        '<a class="mobile-dock-panel-link" href="' + (session.user ? "/profile/" : "/login/") + '"><i class="ti ti-user-circle" aria-hidden="true"></i><span>' + (session.user ? "Profil" : "Login") + '</span></a>',
+      '</nav>',
+      '<div class="mobile-dock-panel-tools">',
+        '<div class="mobile-dock-notifications-slot"></div>',
+        '<button class="mobile-dock-panel-link mobile-dock-theme" type="button" data-theme-toggle aria-label="Dark mode" title="Dark mode"><i class="ti ti-moon" data-theme-icon aria-hidden="true"></i><span data-theme-label>Dark mode</span></button>',
+        (session.user ? '<button class="mobile-dock-panel-link" type="button" data-dock-logout aria-label="Logout"><i class="ti ti-logout-2" aria-hidden="true"></i><span>Logout</span></button>' : ""),
+      '</div>',
+    '</section>',
+    '<div class="mobile-dock-shell">',
+      '<nav class="mobile-dock-nav" aria-label="Navigasi utama">',
+        dockLink("home", "/", "home", "Home"),
+        dockLink("schedule", "/jadwal/", "calendar-week", "Jadwal"),
+        dockLink("tasks", "/tugas/", "clipboard-list", "Tugas"),
+        dockLink("storage", "/penyimpanan/", "brand-google-drive", "Storage"),
+        '<button class="mobile-dock-item mobile-dock-more' + (["calendar", "tools", "members", "admin", "manage"].includes(active) ? " is-active" : "") + '" type="button" data-dock-more aria-controls="mobileDockPanel" aria-expanded="false" aria-label="Lainnya" title="Lainnya"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>',
+      '</nav>',
+      '<button class="mobile-dock-peek" type="button" data-dock-peek aria-label="Tampilkan navigasi" title="Tampilkan navigasi" aria-expanded="false" hidden><span aria-hidden="true"></span></button>',
+    '</div>',
+  ].join("");
+  document.body.appendChild(dock);
+
+  const dockPanel = dock.querySelector("#mobileDockPanel");
+  const dockNav = dock.querySelector(".mobile-dock-nav");
+  const dockMore = dock.querySelector("[data-dock-more]");
+  const dockPeek = dock.querySelector("[data-dock-peek]");
+  const notificationHost = host.querySelector("#notificationHost");
+  const notificationSlot = dock.querySelector(".mobile-dock-notifications-slot");
+  let dockPanelOpen = false;
+  let dockCompact = false;
+  let lastDockScrollY = window.scrollY;
+  let dockIdleTimer = 0;
+  let dockScrollFrame = 0;
+  const dockAbort = new AbortController();
+  const dockOptions = { signal: dockAbort.signal };
+
+  function setDockCompact(compact) {
+    if (compact && dockPanelOpen) return;
+    dockCompact = compact;
+    dock.classList.toggle("is-compact", compact);
+    dockNav.inert = compact;
+    dockNav.setAttribute("aria-hidden", String(compact));
+    dockPeek.hidden = !compact;
+    dockPeek.setAttribute("aria-expanded", String(!compact));
+  }
+  function closeDockPanel(restoreFocus = false) {
+    if (!dockPanelOpen) return;
+    dockPanelOpen = false;
+    dockPanel.hidden = true;
+    dockMore.setAttribute("aria-expanded", "false");
+    dockMore.classList.remove("is-active-panel");
+    if (restoreFocus && mobile.matches) dockMore.focus({ preventScroll: true });
+  }
+  function openDockPanel() {
+    setDockCompact(false);
+    dockPanelOpen = true;
+    dockPanel.hidden = false;
+    dockMore.setAttribute("aria-expanded", "true");
+    dockMore.classList.add("is-active-panel");
+  }
+  function syncDockVisibility() {
+    const mobileOpen = mobile.matches && host.classList.contains("is-mobile-open");
+    dock.hidden = !mobile.matches;
+    dock.inert = !mobile.matches || mobileOpen;
+    dock.setAttribute("aria-hidden", String(!mobile.matches || mobileOpen));
+    if (mobile.matches && notificationHost && notificationSlot && notificationHost.parentElement !== notificationSlot) {
+      notificationSlot.appendChild(notificationHost);
+    } else if (!mobile.matches && notificationHost && notificationHost.parentElement !== host) {
+      host.appendChild(notificationHost);
+    }
+    if (!mobile.matches || mobileOpen) {
+      closeDockPanel(false);
+      setDockCompact(false);
+    }
+  }
+  dockMore.addEventListener("click", () => {
+    if (dockPanelOpen) closeDockPanel(true);
+    else openDockPanel();
+  }, dockOptions);
+  dockPeek.addEventListener("click", () => {
+    clearTimeout(dockIdleTimer);
+    setDockCompact(false);
+    dockMore.focus({ preventScroll: true });
+  }, dockOptions);
+  dock.querySelector("[data-dock-close]").addEventListener("click", () => closeDockPanel(true), dockOptions);
+  dock.addEventListener("click", async event => {
+    const logoutButton = event.target.closest("[data-dock-logout]");
+    if (!logoutButton) return;
+    logoutButton.disabled = true;
+    try {
+      await logout();
+      location.href = "/login/";
+    } catch (error) {
+      console.error("Logout gagal:", error);
+      alert("Logout gagal. Coba lagi.");
+      logoutButton.disabled = false;
+    }
+  }, dockOptions);
+  document.addEventListener("click", event => {
+    if (dockPanelOpen && !dock.contains(event.target)) closeDockPanel(false);
+  }, dockOptions);
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && dockPanelOpen) {
+      event.preventDefault();
+      closeDockPanel(true);
+    }
+  }, dockOptions);
+  menu?.addEventListener("click", () => {
+    closeDockPanel(false);
+    syncDockVisibility();
+  }, dockOptions);
+  const onDockScroll = () => {
+    if (!mobile.matches || dockPanelOpen || host.classList.contains("is-mobile-open")) return;
+    const currentY = window.scrollY;
+    const delta = currentY - lastDockScrollY;
+    lastDockScrollY = currentY;
+    if (delta > 2 && currentY > 48) setDockCompact(true);
+    else if (delta < -3) setDockCompact(false);
+    clearTimeout(dockIdleTimer);
+    dockIdleTimer = window.setTimeout(() => {
+      if (!dockPanelOpen) setDockCompact(false);
+    }, 1000);
+  };
+  window.addEventListener("scroll", onDockScroll, { passive: true, signal: dockAbort.signal });
+  mobile.addEventListener("change", () => {
+    lastDockScrollY = window.scrollY;
+    syncDockVisibility();
+  }, dockOptions);
+  // The existing notification center is moved, not remounted, so its listeners and live channel stay unique.
+  syncDockVisibility();
+  window.__clouvenMobileDockCleanup = () => {
+    clearTimeout(dockIdleTimer);
+    if (dockScrollFrame) cancelAnimationFrame(dockScrollFrame);
+    dockAbort.abort();
+    dock.remove();
+    if (notificationHost && notificationHost.parentElement !== host) host.appendChild(notificationHost);
+  };
+
   return session;
 }
