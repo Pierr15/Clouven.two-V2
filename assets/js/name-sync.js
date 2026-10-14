@@ -7,15 +7,10 @@ let refreshSync=async()=>{};
 export function refreshNameSync() { return refreshSync(); }
 
 async function publicDeveloperProfiles() {
-  try {
-    const response=await fetch('/api/public/developer-name',{cache:'no-store'});
-    const data=await response.json().catch(()=>null);
-    if(response.ok && Array.isArray(data))return data;
-  } catch {}
-  // Compatibility for static hosting and databases that already expose the narrow public view.
-  const {data,error}=await readWithTimeout(()=>supabase.from('public_developer_name_profiles').select('*'));
-  if(error)throw error;
-  return data || [];
+  const response=await fetch('/api/public/developer-name',{cache:'no-store'});
+  const data=await response.json().catch(()=>null);
+  if(response.ok && Array.isArray(data))return data;
+  throw new Error(data?.error || 'Profil nama istimewa belum tersedia.');
 }
 
 export function startNameSync(session) {
