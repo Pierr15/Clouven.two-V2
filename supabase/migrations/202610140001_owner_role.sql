@@ -297,7 +297,7 @@ begin
    and e.start_at - make_interval(mins=>e.notification_offset) > now() - interval '20 minutes'
  on conflict do nothing;
  get diagnostics n = row_count; return added+n;
-end; $;
+end; $$;
 
 create or replace function public.productivity_broadcast() returns trigger language plpgsql security definer set search_path = '' as $$
 begin
@@ -319,7 +319,7 @@ begin
   from public.members m where m.role in ('student','class_officer','teacher','developer','owner') on conflict do nothing;
  end if;
  return new;
-end; $;
+end; $$;
 
 
 -- Extend the Rev9 member/task/progress read-write matrix to the higher Owner role.
