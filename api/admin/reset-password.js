@@ -10,5 +10,24 @@ export default async function handler(req,res) {
     const {error:updateError}=await adminSupabase.auth.admin.updateUserById(uid,{password});
     if(updateError)throw updateError;
     return res.status(200).json({ok:true});
-  }catch(error){return res.status(error.status||500).json({error:error.status?error.message:"Password belum dapat direset. Coba lagi."});}
+ } catch (error) {
+  console.error("[admin/reset-password] failed", {
+    name: error?.name,
+    message: error?.message,
+    code: error?.code,
+    status: error?.status,
+    details: error?.details,
+    hint: error?.hint,
+  });
+
+  const status = Number(error?.status);
+
+  return res
+    .status(status >= 400 && status < 600 ? status : 500)
+    .json({
+      error: status >= 400 && status < 500
+        ? error.message
+        : "Password belum dapat direset. Coba lagi.",
+    });
+}
 }
