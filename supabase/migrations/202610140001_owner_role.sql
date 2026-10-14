@@ -1,37 +1,12 @@
 -- ClouvenTwo: single protected Owner role and explicit owner-to-owner transfer.
--- This migration promotes the requested account by its login username/NIS (not its attendance number).
+-- Initial ownership is bootstrapped separately through a trusted Supabase SQL session.
 
 begin;
 
-do $preflight$
-declare
-  target_count integer;
-  target_role text;
-  existing_owner_count integer;
-begin
-  select count(*), min(role)
-    into target_count, target_role
-    from public.members
-   where username = '25.22976';
+-- Keep the migration generic: the first Owner identity is assigned separately
+-- through a trusted Supabase SQL session after the app build supports this role.
 
-  if target_count <> 1 then
-    raise exception 'Owner bootstrap aborted: username 25.22976 must match exactly one member, found %', target_count;
-  end if;
 
-  if target_role not in ('developer', 'owner') then
-    raise exception 'Owner bootstrap aborted: target must currently be Developer or Owner, got %', target_role;
-  end if;
-
-  select count(*) into existing_owner_count
-    from public.members
-   where role = 'owner'
-     and username <> '25.22976';
-
-  if existing_owner_count > 0 then
-    raise exception 'Owner bootstrap aborted: a different Owner already exists';
-  end if;
-end
-$preflight$;
 
 alter table public.members
   drop constraint if exists members_role_check;
@@ -79,28 +54,7 @@ create policy "Owner can read owner transfer audit"
   to authenticated
   using (public.current_app_role() = 'owner');
 
--- Bootstrap assignment happens before the protective trigger is installed.
-update public.members
-   set role = 'owner',
-       updated_at = now(),
-       updated_by = id
- where username = '25.22976'
-   and role = 'developer';
 
--- Re-running after a successful bootstrap is safe, but must never displace another owner.
-do $verify_owner$
-declare
-  owner_count integer;
-  target_is_owner boolean;
-begin
-  select count(*) into owner_count from public.members where role = 'owner';
-  select exists(select 1 from public.members where username = '25.22976' and role = 'owner')
-    into target_is_owner;
-  if owner_count <> 1 or not target_is_owner then
-    raise exception 'Owner bootstrap verification failed: expected exactly one Owner assigned to username 25.22976';
-  end if;
-end
-$verify_owner$;
 
 create or replace function public.guard_owner_role_changes()
 returns trigger
