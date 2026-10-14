@@ -3,7 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadEnvFile } from 'node:process';
-import configHandler from '../api/config.js';
+import configHandler from '../server/api-handlers/config.js';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 // Process environment wins over .env.local; .env.local wins over .env.
@@ -17,11 +17,19 @@ const port = Number(process.env.PORT || 3000);
 const routes = new Set(['', 'jadwal', 'kalender', 'tugas', 'tools', 'tools/spinning-wheel', 'penyimpanan', 'anggota', 'profile', 'login', 'admin', 'admin/login', 'kelola']);
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 const apiRoutes = new Map([
-  ['/api/notifications/run', {module: '../api/notifications/run.js'}],
-  ['/api/drive/upload', {module: '../api/drive/upload.js', raw: true}],
-  ['/api/drive/download', {module: '../api/drive/download.js'}],
-  ['/api/drive/manage', {module: '../api/drive/manage.js', json: true}],
-  ['/api/public/developer-name', {module: '../api/public/developer-name.js'}],
+  ['/api/notifications/run', {module: '../server/api-handlers/notifications/run.js'}],
+  ['/api/drive/upload', {module: '../server/api-handlers/drive/upload.js', raw: true}],
+  ['/api/drive/download', {module: '../server/api-handlers/drive/download.js'}],
+  ['/api/drive/manage', {module: '../server/api-handlers/drive/manage.js', json: true}],
+  ['/api/public/developer-name', {module: '../server/api-handlers/public/developer-name.js'}],
+  ['/api/public/member-photos', {module: '../server/api-handlers/public/member-photos.js'}],
+  ['/api/admin/create-user', {module: '../server/api-handlers/admin/create-user.js', json: true}],
+  ['/api/admin/delete-user', {module: '../server/api-handlers/admin/delete-user.js', json: true}],
+  ['/api/admin/reset-password', {module: '../server/api-handlers/admin/reset-password.js', json: true}],
+  ['/api/admin/update-user', {module: '../server/api-handlers/admin/update-user.js', json: true}],
+  ['/api/profile/instagram', {module: '../server/api-handlers/profile/instagram.js', json: true}],
+  ['/api/profile/photo', {module: '../server/api-handlers/profile/photo.js', json: true}],
+  ['/api/profile/update', {module: '../server/api-handlers/profile/update.js', json: true}],
 ]);
 const handlers = new Map();
 
