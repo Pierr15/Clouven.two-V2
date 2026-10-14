@@ -257,6 +257,7 @@ create policy "Privileged users can update own member photo"
   using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
   with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
 
+notify pgrst, 'reload schema';
 commit;
  or length(settings->>'name_color_1')<>7 or
      (settings->>'name_color_2') !~ '^#[0-9A-Fa-f]{6}
