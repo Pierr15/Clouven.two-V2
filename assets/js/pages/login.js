@@ -22,7 +22,7 @@ document.querySelector("#loginForm").addEventListener("submit", async (event) =>
     const session = await getSession(credential.user);
     if (adminMode && !can(session.role, "admin")) {
       await logout();
-      throw new Error("Panel Admin hanya tersedia untuk Developer. Gunakan halaman Login untuk masuk ke akun kelas.");
+      throw new Error("Panel Admin hanya tersedia untuk Developer atau Owner. Gunakan halaman Login untuk masuk ke akun kelas.");
     }
     // The next authenticated page consumes this once. Guests never receive this marker.
     sessionStorage.setItem("clouven-login-brand-user", session.user.id);
