@@ -292,6 +292,11 @@ export async function mountShell(active = "") {
   // On mobile, the top-right control opens the account menu instead of the sidebar.
   const mobileTopbar = menu?.closest(".mobile-topbar");
   const mobileProfileMenuId = "mobileProfileMenu";
+  const notificationHostForHeader = host.querySelector("#notificationHost");
+  if (mobileTopbar && notificationHostForHeader) {
+    mobileTopbar.insertBefore(notificationHostForHeader, menu || null);
+    notificationHostForHeader.classList.add("mobile-header-notifications");
+  }
   const avatarPhoto = session.profile?.photo || session.user?.user_metadata?.avatar_url || "";
   const avatarName = session.profile?.name || session.user?.user_metadata?.name || "Guest";
   const avatarMarkup = avatarPhoto
@@ -430,14 +435,9 @@ export async function mountShell(active = "") {
       '</div>',
       '<nav class="mobile-dock-panel-links" aria-label="Menu tambahan">',
         auxiliaryMarkup,
-        managementMarkup,
-        '<a class="mobile-dock-panel-link" href="' + (session.user ? "/profile/" : "/login/") + '"><i class="ti ti-user-circle" aria-hidden="true"></i><span>' + (session.user ? "Profil" : "Login") + '</span></a>',
+        
       '</nav>',
-      '<div class="mobile-dock-panel-tools">',
-        '<div class="mobile-dock-notifications-slot"></div>',
-        '<button class="mobile-dock-panel-link mobile-dock-theme" type="button" data-theme-toggle aria-label="Dark mode" title="Dark mode"><i class="ti ti-moon" data-theme-icon aria-hidden="true"></i><span data-theme-label>Dark mode</span></button>',
-        (session.user ? '<button class="mobile-dock-panel-link" type="button" data-dock-logout aria-label="Logout"><i class="ti ti-logout-2" aria-hidden="true"></i><span>Logout</span></button>' : ""),
-      '</div>',
+ 
     '</section>',
     '<div class="mobile-dock-shell">',
       '<nav class="mobile-dock-nav" aria-label="Navigasi utama">',
@@ -457,7 +457,7 @@ export async function mountShell(active = "") {
   const dockMore = dock.querySelector("[data-dock-more]");
   const dockPeek = dock.querySelector("[data-dock-peek]");
   const notificationHost = host.querySelector("#notificationHost");
-  const notificationSlot = dock.querySelector(".mobile-dock-notifications-slot");
+  const notificationSlot = null;
   let dockPanelOpen = false;
   let dockCompact = false;
   let lastDockScrollY = window.scrollY;
@@ -496,10 +496,12 @@ export async function mountShell(active = "") {
     dock.hidden = !mobile.matches;
     dock.inert = !mobile.matches || mobileOpen;
     dock.setAttribute("aria-hidden", String(!mobile.matches || mobileOpen));
-    if (mobile.matches && notificationHost && notificationSlot && notificationHost.parentElement !== notificationSlot) {
-      notificationSlot.appendChild(notificationHost);
-    } else if (!mobile.matches && notificationHost && notificationHost.parentElement !== host) {
+    if (!mobile.matches && notificationHost && notificationHost.parentElement !== host) {
       host.appendChild(notificationHost);
+      notificationHost.classList.remove("mobile-header-notifications");
+    } else if (mobile.matches && notificationHost && mobileTopbar && notificationHost.parentElement !== mobileTopbar) {
+      mobileTopbar.insertBefore(notificationHost, menu || null);
+      notificationHost.classList.add("mobile-header-notifications");
     }
     if (!mobile.matches || mobileOpen) {
       closeDockPanel(false);
