@@ -30,6 +30,10 @@
     if (button.closest(".account-drawer")) {
       button.closest(".sidebar-account")?.dispatchEvent(new Event("clouven:close-account"));
     }
+    if (button.closest(".mobile-profile-menu")) {
+      button.closest(".mobile-profile-menu").hidden = true;
+      document.querySelector(".mobile-profile-trigger")?.setAttribute("aria-expanded", "false");
+    }
   }
 
   async function toggle(button) {
@@ -38,6 +42,7 @@
     const icon = button.querySelector("[data-theme-icon]");
     const avatar = button.closest(".sidebar-account")?.querySelector(".profile-avatar") || document.querySelector(".mobile-profile-trigger .mobile-profile-avatar");
     const rect = avatar?.getBoundingClientRect();
+    const mobileProfileMenu = button.closest(".mobile-profile-menu");
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!document.startViewTransition || reducedMotion || !rect?.width || !rect?.height) {
       dismissDrawer(button);
@@ -76,7 +81,7 @@
       root.style.setProperty("--theme-icon-width", horizontal(iconRect.width));
       root.style.setProperty("--theme-icon-height", vertical(iconRect.height));
     }
-    root.toggleAttribute("data-theme-icon-in-drawer", Boolean(button.closest(".account-drawer")));
+    root.toggleAttribute("data-theme-icon-in-drawer", Boolean(button.closest(".account-drawer") || mobileProfileMenu));
     avatar.setAttribute("data-theme-origin-avatar", "");
     icon?.setAttribute("data-theme-rotating", "");
     root.classList.add("theme-transitioning");
