@@ -3715,32 +3715,7 @@ input[type="number"] {
 }
 
 
-@media (max-width: 820px) {
-  ::view-transition-old(root) {
-    animation: mobile-theme-old .24s ease both;
-    z-index: 1;
-  }
-  ::view-transition-new(root) {
-    animation: mobile-theme-reveal .62s cubic-bezier(.2,.75,.2,1) both;
-    z-index: 2;
-  }
-}
-@keyframes mobile-theme-old {
-  to { opacity: .92; }
-}
-@keyframes mobile-theme-reveal {
-  from {
-    clip-path: circle(0 at var(--mobile-theme-origin-x, calc(100% - 32px)) var(--mobile-theme-origin-y, 32px));
-  }
-  to {
-    clip-path: circle(150vmax at var(--mobile-theme-origin-x, calc(100% - 32px)) var(--mobile-theme-origin-y, 32px));
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(root),
-  ::view-transition-new(root) { animation: none !important; }
-}
-
+/* Theme reveal uses the shared desktop variables and snapshot animation. */
 
 /* Final mobile navigation refinements. */
 @media (max-width: 820px) {
@@ -3794,6 +3769,48 @@ input[type="number"] {
 @media (prefers-reduced-motion: reduce) {
   .category-icon-swap,
   .mobile-dock-panel:not([hidden]) {
+    animation: none !important;
+  }
+}
+
+
+/* Match mobile theme reveal to desktop: assets/css/theme.css owns the circle origin. */
+@media (max-width: 820px) {
+  .mobile-dock {
+    --mobile-dock-drawer-gap: 12px;
+  }
+  .mobile-dock-panel {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(100% + var(--mobile-dock-drawer-gap)) !important;
+    width: min(320px, calc(100vw - 28px)) !important;
+    max-width: calc(100vw - 28px);
+    margin: 0 !important;
+    transform: translate3d(-50%, 0, 0);
+    transform-origin: bottom center;
+    z-index: 80;
+  }
+  .mobile-dock-panel.is-opening {
+    animation: mobile-category-drawer-open .24s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .mobile-dock-panel.is-closing {
+    pointer-events: none;
+    animation: mobile-category-drawer-close .18s cubic-bezier(.4,0,.2,1) both;
+  }
+  @keyframes mobile-category-drawer-open {
+    from { opacity: 0; transform: translate3d(-50%, 12px, 0) scale(.97); }
+    to { opacity: 1; transform: translate3d(-50%, 0, 0) scale(1); }
+  }
+  @keyframes mobile-category-drawer-close {
+    from { opacity: 1; transform: translate3d(-50%, 0, 0) scale(1); }
+    to { opacity: 0; transform: translate3d(-50%, 8px, 0) scale(.98); }
+  }
+  .mobile-dock-panel-heading .mobile-dock-panel-close { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-dock-panel.is-opening,
+  .mobile-dock-panel.is-closing {
     animation: none !important;
   }
 }
