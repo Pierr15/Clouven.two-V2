@@ -36,7 +36,7 @@
     if (switching) return;
     const next = root.dataset.theme === "dark" ? "light" : "dark";
     const icon = button.querySelector("[data-theme-icon]");
-    const avatar = button.closest(".sidebar-account")?.querySelector(".profile-avatar");
+    const avatar = button.closest(".sidebar-account")?.querySelector(".profile-avatar") || document.querySelector(".mobile-profile-trigger .mobile-profile-avatar");
     const rect = avatar?.getBoundingClientRect();
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!document.startViewTransition || reducedMotion || !rect?.width || !rect?.height) {
