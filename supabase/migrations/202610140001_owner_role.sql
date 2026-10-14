@@ -366,6 +366,64 @@ begin
  return new;
 end; $;
 
+
+-- Extend the Rev9 member/task/progress read-write matrix to the higher Owner role.
+drop policy if exists "Members can read task summaries" on public.task_summaries;
+create policy "Members can read task summaries" on public.task_summaries
+  for select to authenticated
+  using (public.current_app_role() in ('student','class_officer','teacher','developer','owner'));
+
+drop policy if exists "Authenticated can read tasks" on public.tasks;
+create policy "Authenticated can read tasks" on public.tasks
+  for select to authenticated
+  using (public.current_app_role() in ('student','class_officer','teacher','developer','owner'));
+
+drop policy if exists "Authenticated can read members" on public.members;
+create policy "Authenticated can read members" on public.members
+  for select to authenticated
+  using (public.current_app_role() in ('student','class_officer','teacher','developer','owner'));
+
+drop policy if exists "Authenticated can read resources" on public.resources;
+create policy "Authenticated can read resources" on public.resources
+  for select to authenticated
+  using (public.current_app_role() in ('student','class_officer','teacher','developer','owner'));
+
+drop policy if exists "Users can read allowed progress" on public.task_progress;
+create policy "Users can read allowed progress" on public.task_progress
+  for select to authenticated
+  using (
+    public.current_app_role() in ('student','class_officer','teacher','developer','owner')
+    and ((select auth.uid()) = user_id or public.current_app_role() in ('class_officer','teacher','developer','owner'))
+  );
+
+drop policy if exists "Users can insert allowed progress" on public.task_progress;
+create policy "Users can insert allowed progress" on public.task_progress
+  for insert to authenticated
+  with check (
+    public.current_app_role() in ('student','class_officer','teacher','developer','owner')
+    and ((select auth.uid()) = user_id or public.current_app_role() in ('teacher','developer','owner'))
+  );
+
+drop policy if exists "Users can update allowed progress" on public.task_progress;
+create policy "Users can update allowed progress" on public.task_progress
+  for update to authenticated
+  using (
+    public.current_app_role() in ('student','class_officer','teacher','developer','owner')
+    and ((select auth.uid()) = user_id or public.current_app_role() in ('teacher','developer','owner'))
+  )
+  with check (
+    public.current_app_role() in ('student','class_officer','teacher','developer','owner')
+    and ((select auth.uid()) = user_id or public.current_app_role() in ('teacher','developer','owner'))
+  );
+
+drop policy if exists "Users can delete allowed progress" on public.task_progress;
+create policy "Users can delete allowed progress" on public.task_progress
+  for delete to authenticated
+  using (
+    public.current_app_role() in ('student','class_officer','teacher','developer','owner')
+    and ((select auth.uid()) = user_id or public.current_app_role() in ('teacher','developer','owner'))
+  );
+
 -- Compatibility fallback for public pages that synchronize privileged display names without login.
 create or replace view public.public_developer_name_profiles as
 select id, name, role, name_style, name_color_1, name_color_2, name_color_3
