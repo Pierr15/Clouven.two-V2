@@ -3289,6 +3289,7 @@ input[type="number"] {
 .mobile-dock { display: none; }
 @media (max-width: 820px) {
   .mobile-dock {
+    display: block;
     --dock-surface: rgba(251, 250, 246, .84);
     --dock-border: rgba(40, 75, 61, .2);
     --dock-shadow: 0 12px 38px rgba(25, 45, 36, .2);
@@ -3380,7 +3381,7 @@ input[type="number"] {
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--green) 22%, transparent);
   }
   .mobile-dock.is-compact {
-    transform: translate3d(-50%, 28px, 0);
+    transform: translate3d(-50%, 18px, 0);
     opacity: .94;
   }
   .mobile-dock.is-compact .mobile-dock-shell {
@@ -3510,4 +3511,12 @@ input[type="number"] {
 @keyframes mobile-dock-panel-in {
   from { opacity: 0; transform: translateY(6px) scale(.98); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 820px) {
+  :root[data-theme="dark"] .mobile-dock {
+    --dock-surface: rgba(18, 28, 23, .9);
+    --dock-border: rgba(231, 238, 232, .18);
+    --dock-shadow: 0 14px 38px rgba(0, 0, 0, .38);
+  }
 }
