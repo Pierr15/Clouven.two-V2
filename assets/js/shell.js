@@ -289,7 +289,70 @@ export async function mountShell(active = "") {
     if (open) host.querySelector(".sidebar-close")?.focus();
     else if (restoreFocus && mobile.matches) menu?.focus();
   }
-  menu?.addEventListener("click", () => setMobileOpen(true));
+  // On mobile, the top-right control opens the account menu instead of the sidebar.
+  const mobileTopbar = menu?.closest(".mobile-topbar");
+  const mobileProfileMenuId = "mobileProfileMenu";
+  const avatarPhoto = session.profile?.photo || session.user?.user_metadata?.avatar_url || "";
+  const avatarName = session.profile?.name || session.user?.user_metadata?.name || "Guest";
+  const avatarMarkup = avatarPhoto
+    ? '<img src="' + escapeHTML(avatarPhoto) + '" alt="" class="mobile-profile-avatar-image">'
+    : '<span class="mobile-profile-avatar-initials">' + escapeHTML(initials(avatarName)) + '</span>';
+  if (menu && mobileTopbar) {
+    menu.innerHTML = '<span class="mobile-profile-avatar' + (session.role === "developer" ? " developer-shimmer-avatar" : "") + '">' + avatarMarkup + '</span>';
+    menu.classList.add("mobile-profile-trigger");
+    menu.setAttribute("aria-label", "Buka menu profil");
+    menu.setAttribute("aria-controls", mobileProfileMenuId);
+    menu.setAttribute("aria-expanded", "false");
+    const managementLink = session.user && can(session.role, "manage_class")
+      ? '<a class="mobile-profile-menu-item" href="' + (can(session.role, "admin") ? "/admin/" : "/kelola/") + '"><i class="ti ti-user-shield" aria-hidden="true"></i><span>' + (can(session.role, "admin") ? "Admin Panel" : "Kelola Kelas") + '</span></a>'
+      : "";
+    const profileMenu = document.createElement("section");
+    profileMenu.id = mobileProfileMenuId;
+    profileMenu.className = "mobile-profile-menu";
+    profileMenu.hidden = true;
+    profileMenu.setAttribute("aria-label", "Menu akun");
+    profileMenu.innerHTML =
+      '<div class="mobile-profile-menu-heading"><span>' + escapeHTML(avatarName) + '</span><small>' + escapeHTML(ROLE_LABEL[session.role] || "Guest") + '</small></div>' +
+      managementLink +
+      '<a class="mobile-profile-menu-item" href="' + (session.user ? "/profile/" : "/login/") + '"><i class="ti ti-user-circle" aria-hidden="true"></i><span>' + (session.user ? "Profil" : "Login") + '</span></a>' +
+      '<button class="mobile-profile-menu-item" type="button" data-theme-toggle aria-label="Ganti mode tampilan"><i class="ti ti-moon" data-theme-icon aria-hidden="true"></i><span data-theme-label>Mode gelap/terang</span></button>' +
+      (session.user ? '<button class="mobile-profile-menu-item" type="button" data-mobile-profile-logout><i class="ti ti-logout-2" aria-hidden="true"></i><span>Logout</span></button>' : "");
+    mobileTopbar.appendChild(profileMenu);
+    menu.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const opening = profileMenu.hidden;
+      profileMenu.hidden = !opening;
+      menu.setAttribute("aria-expanded", String(opening));
+    });
+    profileMenu.addEventListener("click", async (event) => {
+      const logoutButton = event.target.closest("[data-mobile-profile-logout]");
+      if (!logoutButton) return;
+      logoutButton.disabled = true;
+      try {
+        await logout();
+        location.href = "/login/";
+      } catch (error) {
+        console.error("Logout gagal:", error);
+        alert("Logout gagal. Coba lagi.");
+        logoutButton.disabled = false;
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target) && !menu.contains(event.target)) {
+        profileMenu.hidden = true;
+        menu.setAttribute("aria-expanded", "false");
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !profileMenu.hidden) {
+        profileMenu.hidden = true;
+        menu.setAttribute("aria-expanded", "false");
+        menu.focus({ preventScroll: true });
+      }
+    });
+  } else {
+    menu?.addEventListener("click", () => setMobileOpen(true));
+  }
   host
     .querySelector(".sidebar-close")
     ?.addEventListener("click", () => setMobileOpen(false));
