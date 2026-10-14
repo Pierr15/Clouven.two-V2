@@ -1,4 +1,4 @@
-@import url("./styled-name.css?v=names-17");
+@import url("./styled-name.css?v=names-18");
 @import url("./productivity.css");
 :root {
   --ink: #1b2c25;
@@ -3820,17 +3820,20 @@ input[type="number"] {
 .styled-name .owner-terminal-badge {
   display: inline-grid;
   place-items: center;
-  margin-inline-start: .28em;
-  width: 1.72em;
-  height: 1.72em;
-  padding: .22em;
+  flex: 0 0 20px;
+  width: 20px;
+  min-width: 20px;
+  max-width: 20px;
+  height: 20px;
+  margin-inline-start: 4px;
+  padding: 2px;
   box-sizing: border-box;
-  vertical-align: -.34em;
+  vertical-align: middle;
   border: 1px solid rgba(191, 224, 255, .72);
   border-radius: .42em;
   color: #fff !important;
   -webkit-text-fill-color: #fff !important;
-  font-size: 1em;
+  font-size: 14px;
   line-height: 1;
   background: linear-gradient(135deg, #16b8ff 0%, #1768f5 38%, #4f46e5 70%, #8b5cf6 100%) !important;
   background-size: 240% 240% !important;
