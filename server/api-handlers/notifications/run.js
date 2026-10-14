@@ -1,5 +1,5 @@
 import { timingSafeEqual } from "node:crypto";
-import { adminSupabase } from "../_lib/supabaseAdmin.js";
+import { adminSupabase } from "../../../api/_lib/supabaseAdmin.js";
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");

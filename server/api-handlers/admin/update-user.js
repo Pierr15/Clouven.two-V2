@@ -1,5 +1,5 @@
-import { adminSupabase, verifyPermission } from "../_lib/supabaseAdmin.js";
-import { profilePatch, rejectFields } from "../_lib/profiles.js";
+import { adminSupabase, verifyPermission } from "../../../api/_lib/supabaseAdmin.js";
+import { profilePatch, rejectFields } from "../../../api/_lib/profiles.js";
 
 const ROLES = new Set(["student", "class_officer", "teacher", "developer"]);
 

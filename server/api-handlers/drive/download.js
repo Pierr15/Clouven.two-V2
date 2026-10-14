@@ -1,7 +1,7 @@
-import { verifyPermission } from "../_lib/supabaseAdmin.js";
-import { getDriveAccessToken } from "../_lib/drive.js";
+import { verifyPermission } from "../../../api/_lib/supabaseAdmin.js";
+import { getDriveAccessToken } from "../../../api/_lib/drive.js";
 
-import { registeredResource, validateClassFile } from "../_lib/driveResource.js";
+import { registeredResource, validateClassFile } from "../../../api/_lib/driveResource.js";
 
 export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).json({ error: "Method not allowed" });

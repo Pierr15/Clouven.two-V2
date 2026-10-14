@@ -1,4 +1,4 @@
-import { adminSupabase, verifyRequest } from "../_lib/supabaseAdmin.js";
+import { adminSupabase, verifyRequest } from "../../../api/_lib/supabaseAdmin.js";
 
 const BUCKET = "profile-photos";
 const LEGACY_BUCKET = "developer-avatars";

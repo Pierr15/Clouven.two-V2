@@ -1,4 +1,4 @@
-import { adminSupabase } from "../_lib/supabaseAdmin.js";
+import { adminSupabase } from "../../../api/_lib/supabaseAdmin.js";
 
 const publicFields = "id,name,role,name_style,name_color_1,name_color_2,name_color_3";
 

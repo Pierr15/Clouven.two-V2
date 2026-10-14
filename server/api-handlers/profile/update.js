@@ -1,5 +1,5 @@
-import {adminSupabase, verifyPermission} from "../_lib/supabaseAdmin.js";
-import {profilePatch, rejectFields} from "../_lib/profiles.js";
+import {adminSupabase, verifyPermission} from "../../../api/_lib/supabaseAdmin.js";
+import {profilePatch, rejectFields} from "../../../api/_lib/profiles.js";
 export default async function handler(req,res) {
   if (req.method !== "POST") return res.status(405).json({error:"Method not allowed"});
   try {

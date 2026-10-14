@@ -1,7 +1,7 @@
-import { adminSupabase, verifyPermission } from "../_lib/supabaseAdmin.js";
-import { getDriveAccessToken, destinationFolder } from "../_lib/drive.js";
-import { registeredResource, validateClassFile } from "../_lib/driveResource.js";
-import { rejectFields } from "../_lib/profiles.js";
+import { adminSupabase, verifyPermission } from "../../../api/_lib/supabaseAdmin.js";
+import { getDriveAccessToken, destinationFolder } from "../../../api/_lib/drive.js";
+import { registeredResource, validateClassFile } from "../../../api/_lib/driveResource.js";
+import { rejectFields } from "../../../api/_lib/profiles.js";
 
 export default async function handler(req,res) {
   if(req.method!=="POST")return res.status(405).json({error:"Method not allowed"});

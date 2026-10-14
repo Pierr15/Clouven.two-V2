@@ -1,5 +1,5 @@
-import { verifyRequest } from "../_lib/supabaseAdmin.js";
-import { destinationFolder, getDriveAccessToken } from "../_lib/drive.js";
+import { verifyRequest } from "../../../api/_lib/supabaseAdmin.js";
+import { destinationFolder, getDriveAccessToken } from "../../../api/_lib/drive.js";
 
 export const config = { api: { bodyParser: false } };
 const MAX_BYTES = 3 * 1024 * 1024;
