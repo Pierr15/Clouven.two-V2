@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     .split("/")
     .filter(Boolean)
     .join("/");
-  const loadRoute = routes[routePath];
+  const loadRoute = Object.hasOwn(routes, routePath) ? routes[routePath] : null;
 
   if (!loadRoute) {
     res.setHeader("Cache-Control", "no-store");
