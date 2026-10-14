@@ -7,7 +7,9 @@ const routes = {
 export default async function handler(req, res) {
   const rawPath = req.query?.path;
   const routePath = (Array.isArray(rawPath) ? rawPath.join("/") : String(rawPath || ""))
-    .replace(/^\\/+|\\/+$/g, "");
+    .split("/")
+    .filter(Boolean)
+    .join("/");
   const loadRoute = routes[routePath];
 
   if (!loadRoute) {
