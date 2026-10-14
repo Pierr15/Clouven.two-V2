@@ -10,7 +10,8 @@
     "start": "node scripts/serve.mjs",
     "start:4173": "set PORT=4173&& node scripts/serve.mjs",
     "build:cloudflare": "node scripts/build-cloudflare.mjs",
-    "test:profile-photo": "node tests/profile-photo-access.mjs"
+    "test:profile-photo": "node tests/profile-photo-access.mjs",
+    "test:vercel-api": "node tests/vercel-api-consolidation.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
