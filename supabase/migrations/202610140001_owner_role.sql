@@ -154,6 +154,7 @@ $function$;
 
 revoke all on function public.transfer_owner(uuid) from public, anon;
 grant execute on function public.transfer_owner(uuid) to authenticated;
+revoke all on function public.transfer_owner(uuid) from public, anon;
 revoke all on function public.guard_owner_role_changes() from public, anon, authenticated;
 
 create or replace function public.guard_name_customization()
@@ -327,7 +328,7 @@ create policy "Users can delete allowed progress" on public.task_progress
   );
 
 -- Compatibility fallback for public pages that synchronize privileged display names without login.
-create or replace view public.public_developer_name_profiles as
+create or replace view public.public_developer_name_profiles with (security_invoker = true) as
 select id, name, role, name_style, name_color_1, name_color_2, name_color_3
   from public.members
  where role in ('developer', 'owner');
