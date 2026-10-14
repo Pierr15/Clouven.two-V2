@@ -16,7 +16,7 @@ function paintName(node,user) {
   if(user?.role==='owner') {
     node.append(document.createTextNode(' '));
     const badge=document.createElement('i');
-    badge.className='ti ti-terminal owner-terminal-badge';
+    badge.className='ti ti-terminal-2 owner-terminal-badge';
     badge.setAttribute('role','img');
     badge.setAttribute('aria-label','Owner');
     badge.title='Owner';
