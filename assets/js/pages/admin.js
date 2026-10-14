@@ -171,7 +171,7 @@ function render() {
     panel.innerHTML = `<div class="admin-section"><div class="card form-card"><p class="eyebrow">pusat tugas</p><h2>Kelola Tugas</h2><form id="taskForm"><input type="hidden" name="id"><div class="form-grid" style="margin-top:18px"><div class="form-field"><label for="admin-field-14">Judul</label><input name="title" required id="admin-field-14"></div><div class="form-field"><label for="admin-field-15">Mata pelajaran</label><select name="subject" required id="admin-field-15"></select></div><div class="form-field"><label for="admin-field-16">Deadline</label><input name="due" type="date" required id="admin-field-16"></div><div class="form-field"><label for="admin-field-17">Guru</label><select name="teacher" required id="admin-field-17"></select></div><div class="form-field full"><label for="admin-field-18">Deskripsi</label><textarea name="description" id="admin-field-18"></textarea></div></div><div class="form-actions"><button class="button button-coral" type="submit">Simpan tugas</button><button class="button button-light" type="reset">Kosongkan</button></div></form></div><div class="admin-list">${taskRows()}</div></div>`;
   if (active === "users" && !classMode)
     panel.innerHTML = hasRole(session.role, "developer")
-      ? `<div class="admin-section"><div class="card form-card"><p class="eyebrow">developer only</p><h2>Buat Akun</h2><p class="muted">Buat akun untuk anggota kelas. Pengguna dapat masuk memakai username atau NIS.</p><form id="userForm"><div class="form-grid" style="margin-top:18px"><div class="form-field">
+      ? `<div class="admin-section"><div class="card form-card"><p class="eyebrow">developer &amp; owner</p><h2>Buat Akun</h2><p class="muted">Buat akun untuk anggota kelas. Pengguna dapat masuk memakai username atau NIS.</p><form id="userForm"><div class="form-grid" style="margin-top:18px"><div class="form-field">
   <label for="admin-field-19">Nama lengkap</label>
   <input
     name="name"
@@ -218,7 +218,7 @@ function render() {
             .join("") ||
           `<div class="empty-state"><strong>Belum ada akun terdaftar.</strong>Buat akun pertama melalui formulir di atas.</div>`
         }</div><p class="form-help" style="margin-top:12px">Role disimpan di database dan langsung dipakai RLS. Hak akses baru berlaku pada request berikutnya.</p></div></div>`
-      : `<div class="notice error">Hanya Developer yang dapat mengelola akun dan role.</div>`;
+      : `<div class="notice error">Fitur pengelolaan akun tersedia untuk Developer dan Owner.</div>`;
   if (active === "schedule")
     scheduleEditor = mountScheduleEditor(
       panel.querySelector("#scheduleForm"),
