@@ -457,9 +457,7 @@ export async function mountShell(active = "") {
     : "";
   dock.innerHTML = [
     '<section class="mobile-dock-panel" id="mobileDockPanel" aria-label="Menu lainnya" hidden>',
-      '<div class="mobile-dock-panel-heading"><strong>Menu lainnya</strong>',
-        '<button class="mobile-dock-panel-close" type="button" data-dock-close aria-label="Tutup menu lainnya" title="Tutup menu lainnya"><i class="ti ti-x" aria-hidden="true"></i></button>',
-      '</div>',
+      '<div class="mobile-dock-panel-heading"><strong>Menu lainnya</strong></div>',
       '<nav class="mobile-dock-panel-links" aria-label="Menu tambahan">',
         auxiliaryMarkup,
         
@@ -502,21 +500,42 @@ export async function mountShell(active = "") {
     dockPeek.hidden = !compact;
     dockPeek.setAttribute("aria-expanded", String(!compact));
   }
+  function swapCategoryIcon(open) {
+    const icon = dockMore.querySelector("[data-category-icon]");
+    if (!icon) return;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !icon.animate) {
+      icon.className = "ti ti-category-" + (open ? "minus" : "plus");
+      return;
+    }
+    icon.animate([
+      { transform: "rotate(0deg) scale(1)", opacity: 1 },
+      { transform: "rotate(90deg) scale(.72)", opacity: .15 }
+    ], { duration: 150, easing: "cubic-bezier(.4, 0, .2, 1)", fill: "forwards" }).finished.then(() => {
+      icon.className = "ti ti-category-" + (open ? "minus" : "plus");
+      icon.animate([
+        { transform: "rotate(-90deg) scale(.72)", opacity: .15 },
+        { transform: "rotate(0deg) scale(1)", opacity: 1 }
+      ], { duration: 180, easing: "cubic-bezier(.2, .8, .2, 1)" });
+    }).catch(() => {});
+  }
   function closeDockPanel(restoreFocus = false) {
     if (!dockPanelOpen) return;
     dockPanelOpen = false;
-    dockPanel.hidden = true;
     dockMore.setAttribute("aria-expanded", "false");
     dockMore.setAttribute("aria-label", "Buka kategori");
     dockMore.title = "Buka kategori";
     dockMore.classList.remove("is-active-panel");
-    const categoryIcon = dockMore.querySelector("[data-category-icon]");
-    if (categoryIcon) {
-      categoryIcon.classList.remove("category-icon-swap");
-      void categoryIcon.offsetWidth;
-      categoryIcon.classList.add("category-icon-swap");
-      categoryIcon.className = "ti ti-category-plus category-icon-swap";
-    }
+    swapCategoryIcon(false);
+    dockPanel.classList.remove("is-opening");
+    dockPanel.classList.add("is-closing");
+    const finishClose = () => {
+      dockPanel.hidden = true;
+      dockPanel.classList.remove("is-closing");
+      dockPanel.removeEventListener("animationend", finishClose);
+    };
+    dockPanel.addEventListener("animationend", finishClose);
+    window.setTimeout(finishClose, 260);
     if (restoreFocus && mobile.matches) dockMore.focus({ preventScroll: true });
   }
   function openDockPanel() {
@@ -527,13 +546,12 @@ export async function mountShell(active = "") {
     dockMore.setAttribute("aria-label", "Tutup kategori");
     dockMore.title = "Tutup kategori";
     dockMore.classList.add("is-active-panel");
-    const categoryIcon = dockMore.querySelector("[data-category-icon]");
-    if (categoryIcon) {
-      categoryIcon.classList.remove("category-icon-swap");
-      void categoryIcon.offsetWidth;
-      categoryIcon.className = "ti ti-category-minus category-icon-swap";
-    }
-    dockPanel.querySelector(".mobile-dock-panel-close")?.focus({ preventScroll: true });
+    dockPanel.classList.remove("is-closing");
+    dockPanel.classList.remove("is-opening");
+    void dockPanel.offsetWidth;
+    dockPanel.classList.add("is-opening");
+    swapCategoryIcon(true);
+    dockMore.focus({ preventScroll: true });
   }
   function syncDockVisibility() {
     const mobileOpen = mobile.matches && host.classList.contains("is-mobile-open");
@@ -561,7 +579,7 @@ export async function mountShell(active = "") {
     setDockCompact(false);
     dockMore.focus({ preventScroll: true });
   }, dockOptions);
-  dock.querySelector("[data-dock-close]").addEventListener("click", () => closeDockPanel(true), dockOptions);
+  
   dock.addEventListener("click", async event => {
     const logoutButton = event.target.closest("[data-dock-logout]");
     if (!logoutButton) return;
@@ -589,8 +607,14 @@ export async function mountShell(active = "") {
     syncDockVisibility();
   }, dockOptions);
   const onDockScroll = () => {
-    if (!mobile.matches || dockPanelOpen || host.classList.contains("is-mobile-open")) return;
+    if (!mobile.matches || host.classList.contains("is-mobile-open")) return;
     const currentY = window.scrollY;
+    if (dockPanelOpen && Math.abs(currentY - lastDockScrollY) > 1) {
+      closeDockPanel(false);
+      setDockCompact(true);
+      lastDockScrollY = currentY;
+      return;
+    }
     const delta = currentY - lastDockScrollY;
     lastDockScrollY = currentY;
     // Once the user scrolls, the dock stays minimized until the capsule is tapped.
