@@ -25,7 +25,7 @@ function avatar(member) {
   return member.photo || `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250"><rect width="300" height="250" fill="#d8e5d1"/><circle cx="150" cy="105" r="52" fill="#f3c69f"/><path d="M70 250q15-92 80-92t80 92" fill="#284b3d"/><text x="150" y="225" text-anchor="middle" fill="#fff" font-family="Arial" font-size="30" font-weight="700">${escapeHTML(initials(member.name))}</text></svg>`)}`;
 }
 function memberCard(m) {
-  return `<button class="member-card" data-member="${escapeHTML(m.id)}"><span class="member-photo${m.role === "developer" ? " is-developer" : ""}"><img src="${escapeHTML(avatar(m))}" alt="Foto ${escapeHTML(m.name)}"></span><span class="member-card-copy"><h3>${styledName(m)}</h3><p>${escapeHTML(m.roleLabel || m.classRole || "Anggota")}</p>${!guestMode && m.instagram ? `<span class="member-instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i> @${escapeHTML(m.instagram)}</span>` : ""}</span></button>`;
+  return `<button class="member-card" data-member="${escapeHTML(m.id)}"><span class="member-photo${["developer", "owner"].includes(m.role) ? " is-developer" : ""}"><img src="${escapeHTML(avatar(m))}" alt="Foto ${escapeHTML(m.name)}"></span><span class="member-card-copy"><h3>${styledName(m)}</h3><p>${escapeHTML(m.roleLabel || m.classRole || "Anggota")}</p>${!guestMode && m.instagram ? `<span class="member-instagram"><i class="ti ti-brand-instagram" aria-hidden="true"></i> @${escapeHTML(m.instagram)}</span>` : ""}</span></button>`;
 }
 function isHomeroomTeacher(member) {
   return String(member.classRole || "").replace(/\s+/g, "").toLowerCase() === "walikelas";
