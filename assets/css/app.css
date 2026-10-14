@@ -3814,3 +3814,21 @@ input[type="number"] {
     animation: none !important;
   }
 }
+
+
+/* Owner terminal badge is rendered by the shared StyledName component on every page. */
+.styled-name .owner-terminal-badge {
+  display: inline-block;
+  margin-inline-start: .12em;
+  color: var(--coral-dark);
+  font-size: .78em;
+  line-height: 1;
+  vertical-align: .06em;
+  -webkit-text-fill-color: var(--coral-dark);
+  background: none;
+  background-clip: initial;
+}
+[data-theme="dark"] .styled-name .owner-terminal-badge {
+  color: var(--coral);
+  -webkit-text-fill-color: var(--coral);
+}
