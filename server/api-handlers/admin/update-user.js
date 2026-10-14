@@ -36,6 +36,12 @@ export default async function handler(req, res) {
     if (readError) throw readError;
     if (!target)
       return res.status(404).json({ error: "Akun tidak ditemukan." });
+    if (target.role === "owner" && input.role && actor.role !== "owner") {
+      return res.status(403).json({ error: "Role Owner tidak dapat diubah oleh Developer. Gunakan transfer kepemilikan dari Owner Console." });
+    }
+    if (input.role === "owner") {
+      return res.status(403).json({ error: "Role Owner hanya dapat diberikan melalui transfer kepemilikan yang disetujui Owner." });
+    }
     const patch = {
       ...profilePatch(input),
       updated_at: new Date().toISOString(),
