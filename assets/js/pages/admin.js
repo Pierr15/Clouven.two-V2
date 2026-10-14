@@ -13,6 +13,7 @@ import { mountTitleEditor } from "../title-editor.js";
 import { createLoadState, showLoadState } from "../load-state.js";
 import { requirePermission, hasRole, authHeader } from "../auth.js";
 import { bootShell } from "../bootstrap.js";
+import { supabase } from "../supabase.js";
 import {
   DEFAULT_PROFILE,
   subscribeProfile,
@@ -73,7 +74,7 @@ const states = Object.fromEntries(
     createLoadState("admin-" + key, label, () => {
       if (
         active === key ||
-        (key === "users" && active === "apel") ||
+        (key === "users" && ["apel", "owner_console"].includes(active)) ||
         (key === "catalog" && ["tasks", "schedule"].includes(active))
       )
         render();
@@ -126,6 +127,10 @@ function render() {
     )
   )
     return;
+  if (active === "owner_console") {
+    renderOwnerConsole();
+    return;
+  }
   if (active === "catalog") {
     mountCatalogEditor(panel, catalog, (value) => {
       catalog = value;
@@ -208,7 +213,7 @@ function render() {
       ? ` · Panggilan: ${escapeHTML(m.nickname)}`
       : " · Belum ada nama panggilan"
   }
-</div></div><div class="row-actions"><button class="mini-action" data-biodata="${m.id}">Biodata</button>${m.id !== session.user.id ? `<button class="mini-action" data-reset-password="${m.id}">Reset password</button><button class="mini-action danger-action" data-delete-account="${m.id}">Hapus akun</button>` : ""}<select aria-label="Role ${escapeHTML(m.name)}" ${m.id === session.user.id ? "disabled" : ""} data-role-select="${m.id}" style="width:auto;padding:6px 8px;font-size:10px"><option value="student" ${m.role === "student" ? "selected" : ""}>Student</option><option value="class_officer" ${m.role === "class_officer" ? "selected" : ""}>Class Officer</option><option value="teacher" ${m.role === "teacher" ? "selected" : ""}>Teacher</option><option value="developer" ${m.role === "developer" ? "selected" : ""}>Developer</option></select>${m.id !== session.user.id ? `<button class="mini-action" data-update-user="${m.id}">Simpan role</button>` : ""}</div></div>`,
+</div></div><div class="row-actions"><button class="mini-action" data-biodata="${m.id}">Biodata</button>${m.id !== session.user.id && (m.role !== "owner" || session.role === "owner") ? `<button class="mini-action" data-reset-password="${m.id}">Reset password</button><button class="mini-action danger-action" data-delete-account="${m.id}">Hapus akun</button>` : ""}${m.role === "owner" ? '<span class="task-status">Owner · terkunci</span>' : `<select aria-label="Role ${escapeHTML(m.name)}" ${m.id === session.user.id ? "disabled" : ""} data-role-select="${m.id}" style="width:auto;padding:6px 8px;font-size:10px"><option value="student" ${m.role === "student" ? "selected" : ""}>Student</option><option value="class_officer" ${m.role === "class_officer" ? "selected" : ""}>Class Officer</option><option value="teacher" ${m.role === "teacher" ? "selected" : ""}>Teacher</option><option value="developer" ${m.role === "developer" ? "selected" : ""}>Developer</option></select>${m.id !== session.user.id ? `<button class="mini-action" data-update-user="${m.id}">Simpan role</button>` : ""}`}</div></div>`,
             )
             .join("") ||
           `<div class="empty-state"><strong>Belum ada akun terdaftar.</strong>Buat akun pertama melalui formulir di atas.</div>`
@@ -470,7 +475,7 @@ panel.addEventListener("submit", async (e) => {
 });
 panel.addEventListener("click", async (e) => {
   const t = e.target.closest("button") || e.target;
-  if (!classMode && session.role === "developer") {
+  if (!classMode && hasRole(session.role, "developer")) {
     const member = members.find(
       (m) =>
         m.id ===
