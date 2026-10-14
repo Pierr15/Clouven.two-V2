@@ -7,6 +7,7 @@ export default async function handler(req,res) {
     const {data:target,error}=await adminSupabase.from("members").select("id,username,role").eq("id",uid).maybeSingle();
     if(error)throw error;
     if(!target)return res.status(404).json({error:"Akun tidak ditemukan."});
+    if(target.role==="owner")return res.status(403).json({error:"Akun Owner tidak dapat dihapus. Transfer kepemilikan terlebih dahulu."});
     if(confirmation!==target.username)return res.status(400).json({error:"Ketik username akun dengan tepat untuk menghapus."});
     if(target.role==="developer"){
       const {data:developers,error:listError}=await adminSupabase.from("members").select("id").eq("role","developer");
