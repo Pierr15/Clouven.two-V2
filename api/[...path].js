@@ -1,7 +1,7 @@
 const routes = {
-  "profile/photo": () => import("./_handlers/profile/photo.js"),
-  "profile/instagram": () => import("./_handlers/profile/instagram.js"),
-  "public/member-photos": () => import("./_handlers/public/member-photos.js"),
+  "profile/photo": () => import("../lib/api-handlers/profile/photo.js"),
+  "profile/instagram": () => import("../lib/api-handlers/profile/instagram.js"),
+  "public/member-photos": () => import("../lib/api-handlers/public/member-photos.js"),
 };
 
 export default async function handler(req, res) {

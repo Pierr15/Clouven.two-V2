@@ -7,9 +7,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const apiRoot = path.join(root, "api");
 const routerPath = path.join(apiRoot, "[...path].js");
 const routes = [
-  ["profile/photo", "api/_handlers/profile/photo.js", "api/profile/photo.js"],
-  ["profile/instagram", "api/_handlers/profile/instagram.js", "api/profile/instagram.js"],
-  ["public/member-photos", "api/_handlers/public/member-photos.js", "api/public/member-photos.js"],
+  ["profile/photo", "lib/api-handlers/profile/photo.js", "api/profile/photo.js"],
+  ["profile/instagram", "lib/api-handlers/profile/instagram.js", "api/profile/instagram.js"],
+  ["public/member-photos", "lib/api-handlers/public/member-photos.js", "api/public/member-photos.js"],
 ];
 
 async function listFunctions(directory) {
