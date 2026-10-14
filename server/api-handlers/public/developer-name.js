@@ -10,11 +10,11 @@ export default async function handler(req, res) {
     const { data, error } = await adminSupabase
       .from("members")
       .select(publicFields)
-      .eq("role", "developer");
+      .in("role", ["developer", "owner"]);
     if (error) throw error;
     return res.status(200).json(Array.isArray(data) ? data : []);
   } catch (error) {
-    console.error("Gagal membaca tampilan nama Developer", error);
-    return res.status(503).json({ error: "Tampilan nama Developer belum tersedia." });
+    console.error("Gagal membaca tampilan nama privileged user", error);
+    return res.status(503).json({ error: "Tampilan nama privileged user belum tersedia." });
   }
 }
