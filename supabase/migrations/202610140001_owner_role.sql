@@ -181,7 +181,6 @@ returns jsonb language plpgsql security definer set search_path='' as $$
 declare actor public.members; saved public.members;
 begin
   if auth.uid() is null then raise exception 'Silakan login.' using errcode='42501'; end if;
-  -- Row lock makes saving atomic with concurrent role updates/demotion.
   select * into actor from public.members where id=auth.uid() for update;
   if actor.id is null or actor.role not in ('developer','owner') then
     raise exception 'Fitur ini hanya tersedia untuk Developer dan Owner.' using errcode='42501';
@@ -195,63 +194,11 @@ begin
      (settings->>'name_style') not in ('default','solid','gradient','flow','neon','prism','shimmer') or
      jsonb_typeof(settings->'name_color_1') is distinct from 'string' or
      jsonb_typeof(settings->'name_color_2') is distinct from 'string' or
-     (settings->>'name_color_1') !~ '^#[0-9A-Fa-f]{6}
-create or replace view public.public_developer_name_profiles as
-select id, name, role, name_style, name_color_1, name_color_2, name_color_3
-  from public.members
- where role in ('developer', 'owner');
-grant select on public.public_developer_name_profiles to anon, authenticated;
-
--- Let both privileged roles manage their own avatar while keeping this policy narrow.
-drop policy if exists "Developers can update own member photo" on public.members;
-create policy "Privileged users can update own member photo"
-  on public.members
-  for update
-  to authenticated
-  using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
-  with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
-
-notify pgrst, 'reload schema';
-commit;
- or length(settings->>'name_color_1')<>7 or
-     (settings->>'name_color_2') !~ '^#[0-9A-Fa-f]{6}
-create or replace view public.public_developer_name_profiles as
-select id, name, role, name_style, name_color_1, name_color_2, name_color_3
-  from public.members
- where role in ('developer', 'owner');
-grant select on public.public_developer_name_profiles to anon, authenticated;
-
--- Let both privileged roles manage their own avatar while keeping this policy narrow.
-drop policy if exists "Developers can update own member photo" on public.members;
-create policy "Privileged users can update own member photo"
-  on public.members
-  for update
-  to authenticated
-  using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
-  with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
-
-commit;
- or length(settings->>'name_color_2')<>7 or
+     (settings->>'name_color_1') !~ '^#[0-9A-Fa-f]{6}$' or length(settings->>'name_color_1')<>7 or
+     (settings->>'name_color_2') !~ '^#[0-9A-Fa-f]{6}$' or length(settings->>'name_color_2')<>7 or
      (jsonb_typeof(settings->'name_color_3') <> 'null' and (
        jsonb_typeof(settings->'name_color_3') is distinct from 'string' or
-       (settings->>'name_color_3') !~ '^#[0-9A-Fa-f]{6}
-create or replace view public.public_developer_name_profiles as
-select id, name, role, name_style, name_color_1, name_color_2, name_color_3
-  from public.members
- where role in ('developer', 'owner');
-grant select on public.public_developer_name_profiles to anon, authenticated;
-
--- Let both privileged roles manage their own avatar while keeping this policy narrow.
-drop policy if exists "Developers can update own member photo" on public.members;
-create policy "Privileged users can update own member photo"
-  on public.members
-  for update
-  to authenticated
-  using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
-  with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
-
-commit;
- or length(settings->>'name_color_3')<>7)) then
+       (settings->>'name_color_3') !~ '^#[0-9A-Fa-f]{6}$' or length(settings->>'name_color_3')<>7)) then
     raise exception 'Style atau warna tidak valid.' using errcode='22023';
   end if;
   update public.members set
