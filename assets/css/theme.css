@@ -140,7 +140,9 @@
 }
 .theme-transitioning::view-transition-image-pair(root) { isolation: isolate; }
 .theme-transitioning::view-transition { pointer-events: none; }
-.theme-transitioning .sidebar.is-collapsed .account-drawer { view-transition-name: theme-drawer; }
+  .theme-transitioning .sidebar.is-collapsed .account-drawer { view-transition-name: theme-drawer; }
+.theme-transitioning .mobile-profile-menu { view-transition-name: theme-drawer; }
+.theme-transitioning .mobile-profile-menu { view-transition-name: theme-drawer; }
 .theme-transitioning::view-transition-group(theme-drawer) { z-index: 3; }
 .theme-transitioning::view-transition-old(theme-drawer) {
   animation: theme-drawer-dismiss 180ms ease both;
