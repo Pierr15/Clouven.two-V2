@@ -13,6 +13,7 @@ import { mountTitleEditor } from "../title-editor.js";
 import { createLoadState, showLoadState } from "../load-state.js";
 import { requirePermission, hasRole, authHeader } from "../auth.js";
 import { bootShell } from "../bootstrap.js";
+import { supabase } from "../supabase.js";
 import {
   DEFAULT_PROFILE,
   subscribeProfile,
@@ -73,7 +74,7 @@ const states = Object.fromEntries(
     createLoadState("admin-" + key, label, () => {
       if (
         active === key ||
-        (key === "users" && active === "apel") ||
+        (key === "users" && ["apel", "owner_console"].includes(active)) ||
         (key === "catalog" && ["tasks", "schedule"].includes(active))
       )
         render();
@@ -112,6 +113,10 @@ function render() {
     .forEach((b) =>
       b.classList.toggle("is-active", b.dataset.adminTab === active),
     );
+  if (active === "owner_console") {
+    renderOwnerConsole();
+    return;
+  }
   if (
     showLoadState(
       panel,
@@ -166,7 +171,7 @@ function render() {
     panel.innerHTML = `<div class="admin-section"><div class="card form-card"><p class="eyebrow">pusat tugas</p><h2>Kelola Tugas</h2><form id="taskForm"><input type="hidden" name="id"><div class="form-grid" style="margin-top:18px"><div class="form-field"><label for="admin-field-14">Judul</label><input name="title" required id="admin-field-14"></div><div class="form-field"><label for="admin-field-15">Mata pelajaran</label><select name="subject" required id="admin-field-15"></select></div><div class="form-field"><label for="admin-field-16">Deadline</label><input name="due" type="date" required id="admin-field-16"></div><div class="form-field"><label for="admin-field-17">Guru</label><select name="teacher" required id="admin-field-17"></select></div><div class="form-field full"><label for="admin-field-18">Deskripsi</label><textarea name="description" id="admin-field-18"></textarea></div></div><div class="form-actions"><button class="button button-coral" type="submit">Simpan tugas</button><button class="button button-light" type="reset">Kosongkan</button></div></form></div><div class="admin-list">${taskRows()}</div></div>`;
   if (active === "users" && !classMode)
     panel.innerHTML = hasRole(session.role, "developer")
-      ? `<div class="admin-section"><div class="card form-card"><p class="eyebrow">developer only</p><h2>Buat Akun</h2><p class="muted">Buat akun untuk anggota kelas. Pengguna dapat masuk memakai username atau NIS.</p><form id="userForm"><div class="form-grid" style="margin-top:18px"><div class="form-field">
+      ? `<div class="admin-section"><div class="card form-card"><p class="eyebrow">developer &amp; owner</p><h2>Buat Akun</h2><p class="muted">Buat akun untuk anggota kelas. Pengguna dapat masuk memakai username atau NIS.</p><form id="userForm"><div class="form-grid" style="margin-top:18px"><div class="form-field">
   <label for="admin-field-19">Nama lengkap</label>
   <input
     name="name"
@@ -208,12 +213,12 @@ function render() {
       ? ` · Panggilan: ${escapeHTML(m.nickname)}`
       : " · Belum ada nama panggilan"
   }
-</div></div><div class="row-actions"><button class="mini-action" data-biodata="${m.id}">Biodata</button>${m.id !== session.user.id ? `<button class="mini-action" data-reset-password="${m.id}">Reset password</button><button class="mini-action danger-action" data-delete-account="${m.id}">Hapus akun</button>` : ""}<select aria-label="Role ${escapeHTML(m.name)}" ${m.id === session.user.id ? "disabled" : ""} data-role-select="${m.id}" style="width:auto;padding:6px 8px;font-size:10px"><option value="student" ${m.role === "student" ? "selected" : ""}>Student</option><option value="class_officer" ${m.role === "class_officer" ? "selected" : ""}>Class Officer</option><option value="teacher" ${m.role === "teacher" ? "selected" : ""}>Teacher</option><option value="developer" ${m.role === "developer" ? "selected" : ""}>Developer</option></select>${m.id !== session.user.id ? `<button class="mini-action" data-update-user="${m.id}">Simpan role</button>` : ""}</div></div>`,
+</div></div><div class="row-actions"><button class="mini-action" data-biodata="${m.id}">Biodata</button>${m.id !== session.user.id && (m.role !== "owner" || session.role === "owner") ? `<button class="mini-action" data-reset-password="${m.id}">Reset password</button><button class="mini-action danger-action" data-delete-account="${m.id}">Hapus akun</button>` : ""}${m.role === "owner" ? '<span class="task-status">Owner · terkunci</span>' : `<select aria-label="Role ${escapeHTML(m.name)}" ${m.id === session.user.id ? "disabled" : ""} data-role-select="${m.id}" style="width:auto;padding:6px 8px;font-size:10px"><option value="student" ${m.role === "student" ? "selected" : ""}>Student</option><option value="class_officer" ${m.role === "class_officer" ? "selected" : ""}>Class Officer</option><option value="teacher" ${m.role === "teacher" ? "selected" : ""}>Teacher</option><option value="developer" ${m.role === "developer" ? "selected" : ""}>Developer</option></select>${m.id !== session.user.id ? `<button class="mini-action" data-update-user="${m.id}">Simpan role</button>` : ""}`}</div></div>`,
             )
             .join("") ||
           `<div class="empty-state"><strong>Belum ada akun terdaftar.</strong>Buat akun pertama melalui formulir di atas.</div>`
         }</div><p class="form-help" style="margin-top:12px">Role disimpan di database dan langsung dipakai RLS. Hak akses baru berlaku pada request berikutnya.</p></div></div>`
-      : `<div class="notice error">Hanya Developer yang dapat mengelola akun dan role.</div>`;
+      : `<div class="notice error">Fitur pengelolaan akun tersedia untuk Developer dan Owner.</div>`;
   if (active === "schedule")
     scheduleEditor = mountScheduleEditor(
       panel.querySelector("#scheduleForm"),
@@ -249,6 +254,101 @@ function render() {
   if (profileForm) titleEditor = mountTitleEditor(profileForm, profile);
 }
 
+
+async function loadOwnerTransferAudit() {
+  const host = panel.querySelector("#ownerTransferAudit");
+  if (!host) return;
+  host.innerHTML = '<p class="muted">Memuat riwayat transfer…</p>';
+  try {
+    const { data, error } = await supabase
+      .from("owner_transfer_audit")
+      .select("id,previous_owner_id,new_owner_id,changed_by,changed_at")
+      .order("changed_at", { ascending: false })
+      .limit(20);
+    if (error) throw error;
+    host.innerHTML = (data || []).map(entry => {
+      const previous = members.find(member => member.id === entry.previous_owner_id);
+      const next = members.find(member => member.id === entry.new_owner_id);
+      const actor = members.find(member => member.id === entry.changed_by);
+      const date = entry.changed_at ? new Date(entry.changed_at).toLocaleString("id-ID") : "Waktu tidak tersedia";
+      return '<div class="admin-list-item owner-audit-item"><div><strong>' +
+        (previous ? styledName(previous) : "Akun sebelumnya") + ' → ' +
+        (next ? styledName(next) : "Akun berikutnya") +
+        '</strong><p class="muted">' + escapeHTML(date) + '</p></div><div class="muted">Disetujui ' +
+        (actor ? styledName(actor) : "Owner") + '</div></div>';
+    }).join("") || '<div class="empty-state"><strong>Belum ada transfer.</strong>Riwayat akan muncul setelah kepemilikan dialihkan.</div>';
+  } catch (error) {
+    host.innerHTML = '<div class="notice error">Riwayat belum dapat dimuat. ' + escapeHTML(error.message || "") + '</div>';
+  }
+}
+
+function renderOwnerConsole() {
+  if (session.role !== "owner") {
+    panel.innerHTML = '<div class="notice error">Fitur ini hanya tersedia untuk Owner.</div>';
+    return;
+  }
+  const candidates = members.filter(member => member.role !== "owner");
+  panel.innerHTML = `<div class="admin-section owner-console">
+    <div class="card form-card">
+      <p class="eyebrow">otoritas tertinggi</p>
+      <h2>Owner Console</h2>
+      <p class="muted">Area eksklusif Owner untuk transfer kepemilikan dan meninjau riwayat perubahan. Developer tidak dapat melakukan tindakan ini.</p>
+    </div>
+    <div class="card form-card">
+      <p class="eyebrow">transfer kepemilikan</p>
+      <h3>Pilih Owner berikutnya</h3>
+      <p class="form-help">Transfer akan mengubah role akun ini menjadi Developer dan memberikan role Owner kepada akun pilihan. Hanya satu Owner yang dapat aktif.</p>
+      <form id="ownerTransferForm">
+        <div class="form-field"><label for="ownerTransferTarget">Akun tujuan</label>
+          <select name="target_user_id" id="ownerTransferTarget" required>
+            <option value="">Pilih anggota…</option>
+            ${candidates.map(member => '<option value="' + escapeHTML(member.id) + '">' + escapeHTML(member.name) + ' · ' + escapeHTML(member.username || "tanpa username") + ' · ' + escapeHTML(member.role) + '</option>').join("")}
+          </select>
+        </div>
+        <div class="form-field"><label for="ownerTransferConfirm">Ketik TRANSFER OWNER untuk mengonfirmasi</label><input name="confirmation" id="ownerTransferConfirm" autocomplete="off" required placeholder="TRANSFER OWNER"></div>
+        <div class="form-actions"><button class="button button-coral" type="submit" ${candidates.length ? "" : "disabled"}>Transfer kepemilikan</button></div>
+        <p class="form-help" id="ownerTransferStatus" role="status" hidden></p>
+      </form>
+    </div>
+    <div class="card form-card">
+      <p class="eyebrow">audit</p><h3>Riwayat transfer Owner</h3>
+      <div class="admin-list" id="ownerTransferAudit"><p class="muted">Memuat riwayat…</p></div>
+    </div>
+  </div>`;
+  const form = panel.querySelector("#ownerTransferForm");
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const status = form.querySelector("#ownerTransferStatus");
+    const targetId = form.elements.target_user_id.value;
+    const target = members.find(member => member.id === targetId);
+    if (!target || target.role === "owner") {
+      status.textContent = "Pilih akun tujuan yang valid.";
+      status.hidden = false;
+      return;
+    }
+    if (form.elements.confirmation.value.trim() !== "TRANSFER OWNER") {
+      status.textContent = "Konfirmasi tidak cocok. Ketik TRANSFER OWNER persis.";
+      status.hidden = false;
+      return;
+    }
+    if (!window.confirm("Transfer role Owner ke " + target.name + "? Akun ini akan menjadi Developer setelah transfer.")) return;
+    const submit = form.querySelector('[type="submit"]');
+    submit.disabled = true;
+    status.hidden = true;
+    try {
+      const { error } = await supabase.rpc("transfer_owner", { target_user_id: targetId });
+      if (error) throw error;
+      showToast("Kepemilikan berhasil dialihkan. Sesi ini kini menjadi Developer.");
+      location.replace("/admin/");
+    } catch (error) {
+      status.textContent = error.message || "Transfer kepemilikan gagal.";
+      status.hidden = false;
+      submit.disabled = false;
+    }
+  });
+  loadOwnerTransferAudit();
+}
+
 function switchDay(next) {
   day = next;
   offSchedule?.();
@@ -268,6 +368,13 @@ catalogTab.type = "button";
 catalogTab.dataset.adminTab = "catalog";
 catalogTab.textContent = "Mapel & Guru";
 document.querySelector("#adminNav").append(catalogTab);
+if (session.role === "owner" && !classMode) {
+  const ownerTab = document.createElement("button");
+  ownerTab.type = "button";
+  ownerTab.dataset.adminTab = "owner_console";
+  ownerTab.innerHTML = '<i class="ti ti-terminal" aria-hidden="true"></i> Owner Console';
+  document.querySelector("#adminNav").append(ownerTab);
+}
 async function refreshCatalog() {
   states.catalog.update({
     status: "loading",
@@ -470,7 +577,7 @@ panel.addEventListener("submit", async (e) => {
 });
 panel.addEventListener("click", async (e) => {
   const t = e.target.closest("button") || e.target;
-  if (!classMode && session.role === "developer") {
+  if (!classMode && hasRole(session.role, "developer")) {
     const member = members.find(
       (m) =>
         m.id ===

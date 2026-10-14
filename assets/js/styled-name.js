@@ -9,10 +9,19 @@ function currentProfile(user) {
   return profiles.get(String(user.id)) || (authoritative ? {name:user.name,role:'guest'} : user);
 }
 function paintName(node,user) {
-  node.textContent=String(user?.name || 'Pengguna');
+  node.replaceChildren(document.createTextNode(String(user?.name || 'Pengguna')));
   const config=resolveNameCustomization(user);
   node.dataset.nameStyle=config.name_style;
   node.removeAttribute('style');
+  if(user?.role==='owner') {
+    node.append(document.createTextNode(' '));
+    const badge=document.createElement('i');
+    badge.className='ti ti-terminal owner-terminal-badge';
+    badge.setAttribute('role','img');
+    badge.setAttribute('aria-label','Owner');
+    badge.title='Owner';
+    node.append(badge);
+  }
   if(config.name_style==='default')return;
   const colors=[config.name_color_1,config.name_color_2,config.name_color_3 || config.name_color_1];
   colors.forEach((color,i)=>{

@@ -5,9 +5,15 @@ import {can} from "../assets/js/permissions.js";
 Object.assign(process.env,{SUPABASE_URL:"https://local.invalid",SUPABASE_SECRET_KEY:"local-test-only",GOOGLE_CLIENT_ID:"test",GOOGLE_CLIENT_SECRET:"test",GOOGLE_DRIVE_REFRESH_TOKEN:"test",GOOGLE_DRIVE_ROOT_FOLDER_ID:"class-root"});
 registerHooks({resolve(s,c,next){return s==="@supabase/supabase-js"?{url:"data:text/javascript,export const createClient=()=>globalThis.__apiMock",shortCircuit:true}:next(s,c);}});
 const roles=["guest","student","class_officer","teacher","developer"];
+const memberRoles=[...roles.slice(1),"owner"];
 let members,resources,calls,driveCalls,dbFail,outside,trashed;
-function reset(){members=roles.slice(1).map(role=>({id:role,role,name:role,username:role,class_role:"Anggota"}));resources=[{id:"resource-1",drive_file_id:"class-file-123",name:"Materi.pdf",subject:"ASJ",kind:"materi"}];calls=[];driveCalls=[];dbFail=false;outside=false;trashed=false;}
+function reset(){members=memberRoles.map(role=>({id:role,role,name:role,username:role,class_role:"Anggota"}));resources=[{id:"resource-1",drive_file_id:"class-file-123",name:"Materi.pdf",subject:"ASJ",kind:"materi"}];calls=[];driveCalls=[];dbFail=false;outside=false;trashed=false;}
 reset();
+assert.equal(can("owner","owner_console"),true,"owner can enter Owner Console");
+assert.equal(can("owner","transfer_owner"),true,"owner can transfer ownership");
+assert.equal(can("owner","admin"),true,"owner inherits developer permissions");
+assert.equal(can("developer","owner_console"),false,"developer cannot use Owner Console");
+assert.equal(can("developer","transfer_owner"),false,"developer cannot transfer ownership");
 globalThis.__apiMock={
  auth:{getUser:async token=>({data:{user:token==="guest"?null:{id:token}},error:null}),admin:{
   updateUserById:async(uid,patch)=>{calls.push({action:"password",uid,keys:Object.keys(patch)});return {error:null};},

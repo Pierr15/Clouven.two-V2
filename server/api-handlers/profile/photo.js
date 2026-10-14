@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     const targetId = String(input.targetId || actor.uid);
 
     if (!UUID.test(targetId)) throw httpError("Target akun tidak valid.", 400);
-    if (targetId !== actor.uid && actor.role !== "developer") {
+    if (targetId !== actor.uid && !["developer", "owner"].includes(actor.role)) {
       throw httpError("Kamu hanya dapat mengelola foto profil sendiri.", 403);
     }
     if (!["set", "remove"].includes(action)) throw httpError("Aksi foto tidak valid.", 400);
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
     if (!target) throw httpError("Akun anggota tidak ditemukan.", 404);
 
     let legacyAvatar = "";
-    if (target.role === "developer") {
+    if (["developer", "owner"].includes(target.role)) {
       const { data: authRecord, error: authReadError } = await adminSupabase.auth.admin.getUserById(targetId);
       if (authReadError) throw authReadError;
       legacyAvatar = authRecord.user?.user_metadata?.avatar_url || "";

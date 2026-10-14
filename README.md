@@ -38,9 +38,9 @@ Username/NIS tetap dipetakan internal menjadi `<username>@clouven.local`, jadi u
 
 ## Role
 
-Lima role: Guest, Student, Class Officer, Teacher, Developer. Keputusan fitur memakai matriks eksplisit; misalnya Class Officer dapat melihat progres anggota lain namun tidak mengubahnya.
+Enam role: Guest, Student, Class Officer, Teacher, Developer, dan Owner. Owner adalah role tertinggi; semua izin Developer tetap tersedia, ditambah Owner Console, transfer kepemilikan yang memerlukan sesi Owner aktif, serta audit transfer. Badge terminal otomatis tampil di sebelah nama Owner melalui renderer nama bersama. Developer tidak dapat mengubah role, mereset password, atau menghapus akun Owner.
 
-Role tersimpan di `public.members.role`. RLS membaca role tersebut melalui fungsi SQL `current_app_role()` / `has_app_role()`. Mengubah role tidak membutuhkan custom-claim refresh.
+Role tersimpan di `public.members.role`. Database membatasi maksimal satu Owner dengan unique partial index. Perubahan role Owner hanya dapat dilakukan melalui RPC `transfer_owner()` oleh Owner yang sedang login; setiap transfer tercatat di `public.owner_transfer_audit`. RLS membaca role melalui `current_app_role()` / `has_app_role()`.
 
 ---
 
@@ -67,6 +67,8 @@ supabase/migrations/202609070001_forms_instagram_rev12.sql
 ```
 
 Untuk database lama yang sudah memiliki schema awal, jalankan **hanya migrasi Revisi 9**. Jangan mengulang schema awal pada database yang sudah memiliki policies.
+
+Untuk mengaktifkan role Owner pada database yang telah memakai Rev12, jalankan migrasi tambahan **202610140001_owner_role.sql** setelah build aplikasi berisi dukungan Owner tersedia. Migrasi ini menginstal batas satu Owner, proteksi database, transfer owner, dan audit. Penetapan Owner pertama harus dilakukan melalui sesi SQL tepercaya setelah aplikasi terdeploy; jangan menambahkan NIS pribadi ke file migrasi.
 
 Schema awal membuat:
 

@@ -23,7 +23,7 @@ const shortcut = document.querySelector("#adminShortcut");
 shortcut.hidden = !can(session.role, "manage_class");
 shortcut.href = can(session.role, "admin") ? "/admin/" : "/kelola/";
 shortcut.textContent = can(session.role, "admin") ? "Admin Panel →" : "Kelola Kelas →";
-const developerAvatar = session.role === "developer";
+const developerAvatar = ["developer", "owner"].includes(session.role);
 const avatarInput = document.createElement("input");
 avatarInput.type = "file";
 avatarInput.accept = "image/gif,image/webp,image/png,image/jpeg";
