@@ -9,7 +9,7 @@ export const adminSupabase = createClient(url, secretKey, {
   auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
 });
 
-const ranks = { guest: 0, student: 1, class_officer: 2, teacher: 3, developer: 4 };
+const ranks = { guest: 0, student: 1, class_officer: 2, teacher: 3, developer: 4, owner: 5 };
 
 export async function verifyRequest(req, minimum = "student") {
   const token = String(req.headers.authorization || "").replace(/^Bearer\s+/i, "");
