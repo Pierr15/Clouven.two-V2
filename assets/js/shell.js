@@ -20,6 +20,7 @@ const links = [
 export async function mountShell(active = "") {
   const host = document.querySelector("#sidebar");
   if (!host) return null;
+  window.__clouvenMobileDockCleanup?.();
   const session = await getSession();
   if (!document.querySelector("#developer-avatar-shimmer-styles")) {
     const style = document.createElement("style");
@@ -276,6 +277,7 @@ export async function mountShell(active = "") {
   document.body.appendChild(backdrop);
   menu?.setAttribute("aria-label", "Buka menu navigasi");
   menu?.setAttribute("aria-controls", "sidebar");
+  if (menu && mobile.matches && !menu.classList.contains("mobile-profile-trigger")) menu.style.visibility = "hidden";
 
   function setMobileOpen(open, restoreFocus = true) {
     open = open && mobile.matches;
@@ -288,7 +290,76 @@ export async function mountShell(active = "") {
     if (open) host.querySelector(".sidebar-close")?.focus();
     else if (restoreFocus && mobile.matches) menu?.focus();
   }
-  menu?.addEventListener("click", () => setMobileOpen(true));
+  // On mobile, the top-right control opens the account menu instead of the sidebar.
+  const mobileTopbar = menu?.closest(".mobile-topbar");
+  const mobileProfileMenuId = "mobileProfileMenu";
+  const notificationHostForHeader = host.querySelector("#notificationHost");
+  if (mobileTopbar && notificationHostForHeader) {
+    mobileTopbar.insertBefore(notificationHostForHeader, menu || null);
+    notificationHostForHeader.classList.add("mobile-header-notifications");
+  }
+  const avatarPhoto = session.profile?.photo || session.user?.user_metadata?.avatar_url || "";
+  const avatarName = session.profile?.name || session.user?.user_metadata?.name || "Guest";
+  const avatarMarkup = avatarPhoto
+    ? '<img src="' + escapeHTML(avatarPhoto) + '" alt="" class="mobile-profile-avatar-image">'
+    : '<span class="mobile-profile-avatar-initials">' + escapeHTML(initials(avatarName)) + '</span>';
+  if (menu && mobileTopbar) {
+    menu.innerHTML = '<span class="mobile-profile-avatar' + (session.role === "developer" ? " developer-shimmer-avatar" : "") + '">' + avatarMarkup + '</span>';
+    menu.classList.add("mobile-profile-trigger");
+    menu.style.visibility = "";
+    menu.setAttribute("aria-label", "Buka menu profil");
+    menu.setAttribute("aria-controls", mobileProfileMenuId);
+    menu.setAttribute("aria-expanded", "false");
+    const managementLink = session.user && can(session.role, "manage_class")
+      ? '<a class="mobile-profile-menu-item" href="' + (can(session.role, "admin") ? "/admin/" : "/kelola/") + '"><i class="ti ti-user-shield" aria-hidden="true"></i><span>' + (can(session.role, "admin") ? "Admin Panel" : "Kelola Kelas") + '</span></a>'
+      : "";
+    const profileMenu = document.createElement("section");
+    profileMenu.id = mobileProfileMenuId;
+    profileMenu.className = "mobile-profile-menu";
+    profileMenu.hidden = true;
+    profileMenu.setAttribute("aria-label", "Menu akun");
+    profileMenu.innerHTML =
+      '<div class="mobile-profile-menu-heading"><span>' + escapeHTML(avatarName) + '</span><small>' + escapeHTML(ROLE_LABEL[session.role] || "Guest") + '</small></div>' +
+      managementLink +
+      '<a class="mobile-profile-menu-item" href="' + (session.user ? "/profile/" : "/login/") + '"><i class="ti ti-user-circle" aria-hidden="true"></i><span>' + (session.user ? "Profil" : "Login") + '</span></a>' +
+      '<button class="mobile-profile-menu-item" type="button" data-theme-toggle aria-label="Ganti mode tampilan"><i class="ti ti-moon" data-theme-icon aria-hidden="true"></i><span data-theme-label>Mode gelap/terang</span></button>' +
+      (session.user ? '<button class="mobile-profile-menu-item" type="button" data-mobile-profile-logout><i class="ti ti-logout-2" aria-hidden="true"></i><span>Logout</span></button>' : "");
+    mobileTopbar.appendChild(profileMenu);
+    menu.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const opening = profileMenu.hidden;
+      profileMenu.hidden = !opening;
+      menu.setAttribute("aria-expanded", String(opening));
+    });
+    profileMenu.addEventListener("click", async (event) => {
+      const logoutButton = event.target.closest("[data-mobile-profile-logout]");
+      if (!logoutButton) return;
+      logoutButton.disabled = true;
+      try {
+        await logout();
+        location.href = "/login/";
+      } catch (error) {
+        console.error("Logout gagal:", error);
+        alert("Logout gagal. Coba lagi.");
+        logoutButton.disabled = false;
+      }
+    });
+    document.addEventListener("click", (event) => {
+      if (!profileMenu.hidden && !profileMenu.contains(event.target) && !menu.contains(event.target)) {
+        profileMenu.hidden = true;
+        menu.setAttribute("aria-expanded", "false");
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !profileMenu.hidden) {
+        profileMenu.hidden = true;
+        menu.setAttribute("aria-expanded", "false");
+        menu.focus({ preventScroll: true });
+      }
+    });
+  } else {
+    menu?.addEventListener("click", () => setMobileOpen(true));
+  }
   host
     .querySelector(".sidebar-close")
     ?.addEventListener("click", () => setMobileOpen(false));
@@ -328,5 +399,246 @@ export async function mountShell(active = "") {
     else if (!mobile.matches && menuHadFocus) collapseButton?.focus();
   });
   setMobileOpen(false, false);
+
+  // Mobile header follows the dock: hide on downward scroll and reveal on upward scroll.
+  let lastHeaderScrollY = window.scrollY;
+  let headerScrollFrame = 0;
+  const updateMobileHeaderOnScroll = () => {
+    if (headerScrollFrame) return;
+    headerScrollFrame = requestAnimationFrame(() => {
+      headerScrollFrame = 0;
+      if (!mobile.matches) {
+        mobileTopbar?.classList.remove("is-header-hidden");
+        lastHeaderScrollY = window.scrollY;
+        return;
+      }
+      const y = Math.max(0, window.scrollY);
+      const delta = y - lastHeaderScrollY;
+      if (y < 24 || delta < -4) mobileTopbar?.classList.remove("is-header-hidden");
+      else if (delta > 5 && y > 80) mobileTopbar?.classList.add("is-header-hidden");
+      lastHeaderScrollY = y;
+    });
+  };
+  window.addEventListener("scroll", updateMobileHeaderOnScroll, { passive: true });
+  mobile.addEventListener("change", () => {
+    lastHeaderScrollY = window.scrollY;
+    mobileTopbar?.classList.remove("is-header-hidden");
+  });
+
+  // Mobile floating dock: keep the existing desktop sidebar and permission logic intact.
+  const dock = document.createElement("div");
+  dock.className = "mobile-dock";
+  const protectedDockKeys = new Set(["tasks", "calendar", "storage"]);
+  const dockHref = (key, href) =>
+    protectedDockKeys.has(key) && !session.user
+      ? "/login/?next=" + encodeURIComponent(href)
+      : href;
+  const dockLink = (key, href, icon, label) =>
+    '<a class="mobile-dock-item' + (active === key ? " is-active" : "") + '" href="' +
+    dockHref(key, href) + '" aria-label="' + label + '" title="' + label + '"' +
+    (active === key ? ' aria-current="page"' : "") + '><i class="ti ti-' + icon +
+    '" aria-hidden="true"></i></a>';
+  const auxiliaryLinks = [
+    ["calendar", "/kalender/", "calendar-event", "Kalender"],
+    ["tools", "/tools/", "tools", "Tools"],
+    ["members", "/anggota/", "users", "Anggota"],
+  ];
+  const auxiliaryMarkup = auxiliaryLinks.map(([key, href, icon, label]) =>
+    '<a class="mobile-dock-panel-link' + (active === key ? " is-active" : "") +
+    '" href="' + dockHref(key, href) + '"' +
+    (active === key ? ' aria-current="page"' : "") + '><i class="ti ti-' + icon +
+    '" aria-hidden="true"></i><span>' + label + '</span></a>'
+  ).join("");
+  const managementMarkup = session.user && can(session.role, "manage_class")
+    ? '<a class="mobile-dock-panel-link" href="' +
+      (can(session.role, "admin") ? "/admin/" : "/kelola/") +
+      '"><i class="ti ti-user-shield" aria-hidden="true"></i><span>' +
+      (can(session.role, "admin") ? "Admin Panel" : "Kelola Kelas") + '</span></a>'
+    : "";
+  dock.innerHTML = [
+    '<section class="mobile-dock-panel" id="mobileDockPanel" aria-label="Menu lainnya" hidden>',
+      '<div class="mobile-dock-panel-heading"><strong>Menu lainnya</strong></div>',
+      '<nav class="mobile-dock-panel-links" aria-label="Menu tambahan">',
+        auxiliaryMarkup,
+        
+      '</nav>',
+ 
+    '</section>',
+    '<div class="mobile-dock-shell">',
+      '<nav class="mobile-dock-nav" aria-label="Navigasi utama">',
+        dockLink("home", "/", "home", "Home"),
+        dockLink("schedule", "/jadwal/", "calendar-week", "Jadwal"),
+        dockLink("tasks", "/tugas/", "clipboard-list", "Tugas"),
+        dockLink("storage", "/penyimpanan/", "brand-google-drive", "Storage"),
+        '<button class="mobile-dock-item mobile-dock-more' + (["calendar", "tools", "members", "admin", "manage"].includes(active) ? " is-active" : "") + '" type="button" data-dock-more aria-controls="mobileDockPanel" aria-expanded="false" aria-label="Buka kategori" title="Buka kategori"><i class="ti ti-category-plus" data-category-icon aria-hidden="true"></i></button>',
+      '</nav>',
+      '<button class="mobile-dock-peek" type="button" data-dock-peek aria-label="Tampilkan navigasi" title="Tampilkan navigasi" aria-expanded="false" hidden><span aria-hidden="true"></span></button>',
+    '</div>',
+  ].join("");
+  document.body.appendChild(dock);
+
+  const dockPanel = dock.querySelector("#mobileDockPanel");
+  const dockNav = dock.querySelector(".mobile-dock-nav");
+  const dockMore = dock.querySelector("[data-dock-more]");
+  const dockPeek = dock.querySelector("[data-dock-peek]");
+  const notificationHost = host.querySelector("#notificationHost");
+  const notificationSlot = null;
+  let dockPanelOpen = false;
+  let dockCompact = false;
+  let lastDockScrollY = window.scrollY;
+  let dockIdleTimer = 0;
+  let dockScrollFrame = 0;
+  const dockAbort = new AbortController();
+  const dockOptions = { signal: dockAbort.signal };
+
+  function setDockCompact(compact) {
+    if (compact && dockPanelOpen) return;
+    dockCompact = compact;
+    dock.classList.toggle("is-compact", compact);
+    dockNav.inert = compact;
+    dockNav.setAttribute("aria-hidden", String(compact));
+    dockPeek.hidden = !compact;
+    dockPeek.setAttribute("aria-expanded", String(!compact));
+  }
+  function swapCategoryIcon(open) {
+    const icon = dockMore.querySelector("[data-category-icon]");
+    if (!icon) return;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !icon.animate) {
+      icon.className = "ti ti-category-" + (open ? "minus" : "plus");
+      return;
+    }
+    icon.animate([
+      { transform: "rotate(0deg) scale(1)", opacity: 1 },
+      { transform: "rotate(90deg) scale(.72)", opacity: .15 }
+    ], { duration: 150, easing: "cubic-bezier(.4, 0, .2, 1)", fill: "forwards" }).finished.then(() => {
+      icon.className = "ti ti-category-" + (open ? "minus" : "plus");
+      icon.animate([
+        { transform: "rotate(-90deg) scale(.72)", opacity: .15 },
+        { transform: "rotate(0deg) scale(1)", opacity: 1 }
+      ], { duration: 180, easing: "cubic-bezier(.2, .8, .2, 1)" });
+    }).catch(() => {});
+  }
+  function closeDockPanel(restoreFocus = false) {
+    if (!dockPanelOpen) return;
+    dockPanelOpen = false;
+    dockMore.setAttribute("aria-expanded", "false");
+    dockMore.setAttribute("aria-label", "Buka kategori");
+    dockMore.title = "Buka kategori";
+    dockMore.classList.remove("is-active-panel");
+    swapCategoryIcon(false);
+    dockPanel.classList.remove("is-opening");
+    dockPanel.classList.add("is-closing");
+    const finishClose = () => {
+      dockPanel.hidden = true;
+      dockPanel.classList.remove("is-closing");
+      dockPanel.removeEventListener("animationend", finishClose);
+    };
+    dockPanel.addEventListener("animationend", finishClose);
+    window.setTimeout(finishClose, 260);
+    if (restoreFocus && mobile.matches) dockMore.focus({ preventScroll: true });
+  }
+  function openDockPanel() {
+    setDockCompact(false);
+    dockPanelOpen = true;
+    dockPanel.hidden = false;
+    dockMore.setAttribute("aria-expanded", "true");
+    dockMore.setAttribute("aria-label", "Tutup kategori");
+    dockMore.title = "Tutup kategori";
+    dockMore.classList.add("is-active-panel");
+    dockPanel.classList.remove("is-closing");
+    dockPanel.classList.remove("is-opening");
+    void dockPanel.offsetWidth;
+    dockPanel.classList.add("is-opening");
+    swapCategoryIcon(true);
+    dockMore.focus({ preventScroll: true });
+  }
+  function syncDockVisibility() {
+    const mobileOpen = mobile.matches && host.classList.contains("is-mobile-open");
+    dock.hidden = !mobile.matches;
+    dock.inert = !mobile.matches || mobileOpen;
+    dock.setAttribute("aria-hidden", String(!mobile.matches || mobileOpen));
+    if (!mobile.matches && notificationHost && notificationHost.parentElement !== host) {
+      host.appendChild(notificationHost);
+      notificationHost.classList.remove("mobile-header-notifications");
+    } else if (mobile.matches && notificationHost && mobileTopbar && notificationHost.parentElement !== mobileTopbar) {
+      mobileTopbar.insertBefore(notificationHost, menu || null);
+      notificationHost.classList.add("mobile-header-notifications");
+    }
+    if (!mobile.matches || mobileOpen) {
+      closeDockPanel(false);
+      setDockCompact(false);
+    }
+  }
+  dockMore.addEventListener("click", () => {
+    if (dockPanelOpen) closeDockPanel(true);
+    else openDockPanel();
+  }, dockOptions);
+  dockPeek.addEventListener("click", () => {
+    clearTimeout(dockIdleTimer);
+    setDockCompact(false);
+    dockMore.focus({ preventScroll: true });
+  }, dockOptions);
+  
+  dock.addEventListener("click", async event => {
+    const logoutButton = event.target.closest("[data-dock-logout]");
+    if (!logoutButton) return;
+    logoutButton.disabled = true;
+    try {
+      await logout();
+      location.href = "/login/";
+    } catch (error) {
+      console.error("Logout gagal:", error);
+      alert("Logout gagal. Coba lagi.");
+      logoutButton.disabled = false;
+    }
+  }, dockOptions);
+  document.addEventListener("click", event => {
+    if (dockPanelOpen && !dock.contains(event.target)) closeDockPanel(false);
+  }, dockOptions);
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && dockPanelOpen) {
+      event.preventDefault();
+      closeDockPanel(true);
+    }
+  }, dockOptions);
+  menu?.addEventListener("click", () => {
+    closeDockPanel(false);
+    syncDockVisibility();
+  }, dockOptions);
+  const onDockScroll = () => {
+    if (!mobile.matches || host.classList.contains("is-mobile-open")) return;
+    const currentY = window.scrollY;
+    if (dockPanelOpen && Math.abs(currentY - lastDockScrollY) > 1) {
+      closeDockPanel(false);
+      setDockCompact(true);
+      lastDockScrollY = currentY;
+      return;
+    }
+    const delta = currentY - lastDockScrollY;
+    lastDockScrollY = currentY;
+    // Once the user scrolls, the dock stays minimized until the capsule is tapped.
+    if (currentY > 48 && delta > 2) setDockCompact(true);
+  };
+  window.addEventListener("scroll", onDockScroll, { passive: true, signal: dockAbort.signal });
+  mobile.addEventListener("change", () => {
+    lastDockScrollY = window.scrollY;
+    syncDockVisibility();
+  }, dockOptions);
+  // Observe the existing off-canvas menu state so the dock becomes interactive again
+  // after it closes via Escape, backdrop, or the close button.
+  const dockVisibilityObserver = new MutationObserver(syncDockVisibility);
+  dockVisibilityObserver.observe(host, { attributes: true, attributeFilter: ["class"] });
+  // The existing notification center is moved, not remounted, so its listeners and live channel stay unique.
+  syncDockVisibility();
+  window.__clouvenMobileDockCleanup = () => {
+    clearTimeout(dockIdleTimer);
+    if (dockScrollFrame) cancelAnimationFrame(dockScrollFrame);
+    dockVisibilityObserver.disconnect();
+    dockAbort.abort();
+    dock.remove();
+    if (notificationHost && notificationHost.parentElement !== host) host.appendChild(notificationHost);
+  };
+
   return session;
 }
