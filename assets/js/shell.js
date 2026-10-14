@@ -277,6 +277,7 @@ export async function mountShell(active = "") {
   document.body.appendChild(backdrop);
   menu?.setAttribute("aria-label", "Buka menu navigasi");
   menu?.setAttribute("aria-controls", "sidebar");
+  if (menu && mobile.matches && !menu.classList.contains("mobile-profile-trigger")) menu.style.visibility = "hidden";
 
   function setMobileOpen(open, restoreFocus = true) {
     open = open && mobile.matches;
@@ -305,6 +306,7 @@ export async function mountShell(active = "") {
   if (menu && mobileTopbar) {
     menu.innerHTML = '<span class="mobile-profile-avatar' + (session.role === "developer" ? " developer-shimmer-avatar" : "") + '">' + avatarMarkup + '</span>';
     menu.classList.add("mobile-profile-trigger");
+    menu.style.visibility = "";
     menu.setAttribute("aria-label", "Buka menu profil");
     menu.setAttribute("aria-controls", mobileProfileMenuId);
     menu.setAttribute("aria-expanded", "false");
@@ -493,7 +495,7 @@ export async function mountShell(active = "") {
         dockLink("schedule", "/jadwal/", "calendar-week", "Jadwal"),
         dockLink("tasks", "/tugas/", "clipboard-list", "Tugas"),
         dockLink("storage", "/penyimpanan/", "brand-google-drive", "Storage"),
-        '<button class="mobile-dock-item mobile-dock-more' + (["calendar", "tools", "members", "admin", "manage"].includes(active) ? " is-active" : "") + '" type="button" data-dock-more aria-controls="mobileDockPanel" aria-expanded="false" aria-label="Lainnya" title="Lainnya"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>',
+        '<button class="mobile-dock-item mobile-dock-more' + (["calendar", "tools", "members", "admin", "manage"].includes(active) ? " is-active" : "") + '" type="button" data-dock-more aria-controls="mobileDockPanel" aria-expanded="false" aria-label="Buka kategori" title="Buka kategori"><i class="ti ti-category-plus" data-category-icon aria-hidden="true"></i></button>',
       '</nav>',
       '<button class="mobile-dock-peek" type="button" data-dock-peek aria-label="Tampilkan navigasi" title="Tampilkan navigasi" aria-expanded="false" hidden><span aria-hidden="true"></span></button>',
     '</div>',
@@ -528,7 +530,16 @@ export async function mountShell(active = "") {
     dockPanelOpen = false;
     dockPanel.hidden = true;
     dockMore.setAttribute("aria-expanded", "false");
+    dockMore.setAttribute("aria-label", "Buka kategori");
+    dockMore.title = "Buka kategori";
     dockMore.classList.remove("is-active-panel");
+    const categoryIcon = dockMore.querySelector("[data-category-icon]");
+    if (categoryIcon) {
+      categoryIcon.classList.remove("category-icon-swap");
+      void categoryIcon.offsetWidth;
+      categoryIcon.classList.add("category-icon-swap");
+      categoryIcon.className = "ti ti-category-plus category-icon-swap";
+    }
     if (restoreFocus && mobile.matches) dockMore.focus({ preventScroll: true });
   }
   function openDockPanel() {
@@ -536,7 +547,15 @@ export async function mountShell(active = "") {
     dockPanelOpen = true;
     dockPanel.hidden = false;
     dockMore.setAttribute("aria-expanded", "true");
+    dockMore.setAttribute("aria-label", "Tutup kategori");
+    dockMore.title = "Tutup kategori";
     dockMore.classList.add("is-active-panel");
+    const categoryIcon = dockMore.querySelector("[data-category-icon]");
+    if (categoryIcon) {
+      categoryIcon.classList.remove("category-icon-swap");
+      void categoryIcon.offsetWidth;
+      categoryIcon.className = "ti ti-category-minus category-icon-swap";
+    }
     dockPanel.querySelector(".mobile-dock-panel-close")?.focus({ preventScroll: true });
   }
   function syncDockVisibility() {
@@ -597,12 +616,8 @@ export async function mountShell(active = "") {
     const currentY = window.scrollY;
     const delta = currentY - lastDockScrollY;
     lastDockScrollY = currentY;
-    if (delta > 2 && currentY > 48) setDockCompact(true);
-    else if (delta < -3) setDockCompact(false);
-    clearTimeout(dockIdleTimer);
-    dockIdleTimer = window.setTimeout(() => {
-      if (!dockPanelOpen) setDockCompact(false);
-    }, 1000);
+    // Once the user scrolls, the dock stays minimized until the capsule is tapped.
+    if (currentY > 48 && delta > 2) setDockCompact(true);
   };
   window.addEventListener("scroll", onDockScroll, { passive: true, signal: dockAbort.signal });
   mobile.addEventListener("change", () => {
