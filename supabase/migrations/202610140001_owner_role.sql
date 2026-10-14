@@ -140,7 +140,7 @@ $function$;
 
 drop trigger if exists members_guard_owner_role_changes on public.members;
 create trigger members_guard_owner_role_changes
-before insert or update of role or delete on public.members
+before insert or update or delete on public.members
 for each row execute function public.guard_owner_role_changes();
 
 create or replace function public.transfer_owner(target_user_id uuid)
@@ -201,6 +201,170 @@ $function$;
 revoke all on function public.transfer_owner(uuid) from public, anon;
 grant execute on function public.transfer_owner(uuid) to authenticated;
 revoke all on function public.guard_owner_role_changes() from public, anon, authenticated;
+
+create or replace function public.guard_name_customization()
+returns trigger language plpgsql security definer set search_path='' as $
+begin
+  if tg_op='INSERT' then
+    if new.name_style <> 'default' or new.name_color_1 <> '#7DD3FC' or
+       new.name_color_2 <> '#A78BFA' or new.name_color_3 is not null then
+      raise exception 'Buat profil default sebelum memilih display name.' using errcode='42501';
+    end if;
+  elsif row(new.name_style,new.name_color_1,new.name_color_2,new.name_color_3)
+    is distinct from row(old.name_style,old.name_color_1,old.name_color_2,old.name_color_3) then
+    if auth.uid() is null or auth.uid() <> old.id or new.id <> old.id or
+       old.role not in ('developer','owner') or new.role not in ('developer','owner') then
+      raise exception 'Fitur ini hanya tersedia untuk Developer dan Owner.' using errcode='42501';
+    end if;
+  end if;
+  return new;
+end;
+$;
+revoke all on function public.guard_name_customization() from public, anon, authenticated;
+
+create or replace function public.set_my_name_customization(settings jsonb)
+returns jsonb language plpgsql security definer set search_path='' as $
+declare actor public.members; saved public.members;
+begin
+  if auth.uid() is null then raise exception 'Silakan login.' using errcode='42501'; end if;
+  -- Row lock makes saving atomic with concurrent role updates/demotion.
+  select * into actor from public.members where id=auth.uid() for update;
+  if actor.id is null or actor.role not in ('developer','owner') then
+    raise exception 'Fitur ini hanya tersedia untuk Developer dan Owner.' using errcode='42501';
+  end if;
+  if settings is null or jsonb_typeof(settings) <> 'object' then
+    raise exception 'Pengaturan tidak valid.' using errcode='22023';
+  end if;
+  if not (settings ?& array['name_style','name_color_1','name_color_2','name_color_3']) or
+     exists(select 1 from jsonb_object_keys(settings) k where k not in ('name_style','name_color_1','name_color_2','name_color_3')) or
+     jsonb_typeof(settings->'name_style') is distinct from 'string' or
+     (settings->>'name_style') not in ('default','solid','gradient','flow','neon','prism','shimmer') or
+     jsonb_typeof(settings->'name_color_1') is distinct from 'string' or
+     jsonb_typeof(settings->'name_color_2') is distinct from 'string' or
+     (settings->>'name_color_1') !~ '^#[0-9A-Fa-f]{6}
+create or replace view public.public_developer_name_profiles as
+select id, name, role, name_style, name_color_1, name_color_2, name_color_3
+  from public.members
+ where role in ('developer', 'owner');
+grant select on public.public_developer_name_profiles to anon, authenticated;
+
+-- Let both privileged roles manage their own avatar while keeping this policy narrow.
+drop policy if exists "Developers can update own member photo" on public.members;
+create policy "Privileged users can update own member photo"
+  on public.members
+  for update
+  to authenticated
+  using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
+  with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
+
+commit;
+ or length(settings->>'name_color_1')<>7 or
+     (settings->>'name_color_2') !~ '^#[0-9A-Fa-f]{6}
+create or replace view public.public_developer_name_profiles as
+select id, name, role, name_style, name_color_1, name_color_2, name_color_3
+  from public.members
+ where role in ('developer', 'owner');
+grant select on public.public_developer_name_profiles to anon, authenticated;
+
+-- Let both privileged roles manage their own avatar while keeping this policy narrow.
+drop policy if exists "Developers can update own member photo" on public.members;
+create policy "Privileged users can update own member photo"
+  on public.members
+  for update
+  to authenticated
+  using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
+  with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
+
+commit;
+ or length(settings->>'name_color_2')<>7 or
+     (jsonb_typeof(settings->'name_color_3') <> 'null' and (
+       jsonb_typeof(settings->'name_color_3') is distinct from 'string' or
+       (settings->>'name_color_3') !~ '^#[0-9A-Fa-f]{6}
+create or replace view public.public_developer_name_profiles as
+select id, name, role, name_style, name_color_1, name_color_2, name_color_3
+  from public.members
+ where role in ('developer', 'owner');
+grant select on public.public_developer_name_profiles to anon, authenticated;
+
+-- Let both privileged roles manage their own avatar while keeping this policy narrow.
+drop policy if exists "Developers can update own member photo" on public.members;
+create policy "Privileged users can update own member photo"
+  on public.members
+  for update
+  to authenticated
+  using (id = auth.uid() and public.current_app_role() in ('developer','owner'))
+  with check (id = auth.uid() and public.current_app_role() in ('developer','owner'));
+
+commit;
+ or length(settings->>'name_color_3')<>7)) then
+    raise exception 'Style atau warna tidak valid.' using errcode='22023';
+  end if;
+  update public.members set
+    name_style=settings->>'name_style', name_color_1=upper(settings->>'name_color_1'),
+    name_color_2=upper(settings->>'name_color_2'), name_color_3=upper(settings->>'name_color_3'),
+    updated_at=now(), updated_by=actor.id
+  where id=actor.id returning * into saved;
+  return jsonb_build_object('id',saved.id,'name',saved.name,'role',saved.role,
+    'name_style',saved.name_style,'name_color_1',saved.name_color_1,
+    'name_color_2',saved.name_color_2,'name_color_3',saved.name_color_3);
+end;
+$;
+revoke all on function public.set_my_name_customization(jsonb) from public, anon, service_role;
+grant execute on function public.set_my_name_customization(jsonb) to authenticated;
+
+create or replace function public.generate_productivity_reminders() returns integer language plpgsql security definer set search_path = '' as $
+declare added integer := 0; n integer; now_jakarta timestamp := now() at time zone 'Asia/Jakarta';
+begin
+ -- The unique (user_id,dedupe_key) constraint makes retries harmless. Date-only tasks end at 23:59 Jakarta time.
+ with due_tasks as (
+  select t.*, coalesce(t.due_at,((t.due + time '23:59:59') at time zone 'Asia/Jakarta')) as deadline
+  from public.tasks t where t.status='open' and t.due is not null and t.due between now_jakarta::date and now_jakarta::date + 2
+ ), thresholds as (select * from (values (1440,'1 hari'),(180,'3 jam'),(30,'30 menit')) v(minutes,label))
+ insert into public.notifications(user_id,type,title,message,related_id,target_url,dedupe_key)
+ select m.id,'assignment_due','Deadline tugas: '||left(t.title,140),'Tenggat '||h.label||' lagi.',t.id,'/tugas/?task='||t.id,
+        'task:due:'||t.id||':'||t.deadline||':'||h.minutes
+ from due_tasks t cross join thresholds h join public.members m on m.role in ('student','class_officer','teacher','developer','owner')
+ left join public.task_progress p on p.task_id=t.id and p.user_id=m.id
+ left join public.notification_preferences pref on pref.user_id=m.id
+ where coalesce(pref.assignment_reminders,true) and not coalesce(p.done,false)
+   and t.deadline > now() and t.deadline - make_interval(mins=>h.minutes) <= now()
+   and t.deadline - make_interval(mins=>h.minutes) > now() - interval '20 minutes'
+ on conflict do nothing;
+ get diagnostics n = row_count; added := added+n;
+ insert into public.notifications(user_id,type,title,message,related_id,target_url,dedupe_key)
+ select m.id,'calendar_reminder','Pengingat: '||left(e.title,140),'Kegiatan segera dimulai.',e.id::text,'/kalender/?event='||e.id,
+        'event:reminder:'||e.id||':'||e.start_at||':'||e.notification_offset
+ from public.calendar_events e join public.members m on m.role in ('student','class_officer','teacher','developer','owner')
+ left join public.notification_preferences pref on pref.user_id=m.id
+ where e.notification_enabled and coalesce(pref.calendar_reminders,true)
+   and e.start_at < now() + interval '1 day'
+   and e.start_at > now() - interval '20 minutes' and e.start_at - make_interval(mins=>e.notification_offset) <= now()
+   and e.start_at - make_interval(mins=>e.notification_offset) > now() - interval '20 minutes'
+ on conflict do nothing;
+ get diagnostics n = row_count; return added+n;
+end; $;
+
+create or replace function public.productivity_broadcast() returns trigger language plpgsql security definer set search_path = '' as $
+begin
+ if tg_table_name = 'tasks' then
+  if tg_op = 'INSERT' then
+   insert into public.notifications(user_id,type,title,message,related_id,target_url,dedupe_key)
+   select m.id,'assignment_new','Tugas baru: '||left(new.title,140),left(new.subject,600),new.id,'/tugas/?task='||new.id,'task:new:'||new.id
+   from public.members m where m.role in ('student','class_officer','teacher','developer','owner') on conflict do nothing;
+  end if;
+ elsif tg_table_name = 'calendar_events' then
+  if tg_op = 'INSERT' then
+   insert into public.notifications(user_id,type,title,message,related_id,target_url,dedupe_key)
+   select m.id,'calendar_new','Kegiatan baru: '||left(new.title,140),left(new.location,600),new.id::text,'/kalender/?event='||new.id,'event:new:'||new.id
+   from public.members m where m.role in ('student','class_officer','teacher','developer','owner') on conflict do nothing;
+  end if;
+ elsif tg_table_name = 'schedules' and new.lessons is distinct from old.lessons then
+  insert into public.notifications(user_id,type,title,message,related_id,target_url,dedupe_key)
+   select m.id,'schedule_change','Jadwal pelajaran berubah','Jadwal '||case new.day when 'monday' then 'Senin' when 'tuesday' then 'Selasa' when 'wednesday' then 'Rabu' when 'thursday' then 'Kamis' else 'Jumat' end||' telah diperbarui.',new.day,'/jadwal/','schedule:'||new.day||':'||to_char(now() at time zone 'Asia/Jakarta','YYYY-MM-DD')
+  from public.members m where m.role in ('student','class_officer','teacher','developer','owner') on conflict do nothing;
+ end if;
+ return new;
+end; $;
 
 -- Compatibility fallback for public pages that synchronize privileged display names without login.
 create or replace view public.public_developer_name_profiles as
