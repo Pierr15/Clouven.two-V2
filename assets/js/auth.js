@@ -8,6 +8,7 @@ export const ROLE_RANK = {
   class_officer: 2,
   teacher: 3,
   developer: 4,
+  owner: 5,
 };
 
 export const ROLE_LABEL = {
@@ -16,6 +17,7 @@ export const ROLE_LABEL = {
   class_officer: "Class Officer",
   teacher: "Teacher",
   developer: "Developer",
+  owner: "Owner",
 };
 
 export function hasRole(role, minimum) {
