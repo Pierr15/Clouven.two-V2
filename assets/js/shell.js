@@ -398,6 +398,31 @@ export async function mountShell(active = "") {
   });
   setMobileOpen(false, false);
 
+  // Mobile header follows the dock: hide on downward scroll and reveal on upward scroll.
+  let lastHeaderScrollY = window.scrollY;
+  let headerScrollFrame = 0;
+  const updateMobileHeaderOnScroll = () => {
+    if (headerScrollFrame) return;
+    headerScrollFrame = requestAnimationFrame(() => {
+      headerScrollFrame = 0;
+      if (!mobile.matches) {
+        mobileTopbar?.classList.remove("is-header-hidden");
+        lastHeaderScrollY = window.scrollY;
+        return;
+      }
+      const y = Math.max(0, window.scrollY);
+      const delta = y - lastHeaderScrollY;
+      if (y < 24 || delta < -4) mobileTopbar?.classList.remove("is-header-hidden");
+      else if (delta > 5 && y > 80) mobileTopbar?.classList.add("is-header-hidden");
+      lastHeaderScrollY = y;
+    });
+  };
+  window.addEventListener("scroll", updateMobileHeaderOnScroll, { passive: true });
+  mobile.addEventListener("change", () => {
+    lastHeaderScrollY = window.scrollY;
+    mobileTopbar?.classList.remove("is-header-hidden");
+  });
+
   // Mobile floating dock: keep the existing desktop sidebar and permission logic intact.
   const dock = document.createElement("div");
   dock.className = "mobile-dock";
