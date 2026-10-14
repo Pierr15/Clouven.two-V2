@@ -426,6 +426,7 @@ export async function mountShell(active = "") {
     dockPanel.hidden = false;
     dockMore.setAttribute("aria-expanded", "true");
     dockMore.classList.add("is-active-panel");
+    dockPanel.querySelector(".mobile-dock-panel-close")?.focus({ preventScroll: true });
   }
   function syncDockVisibility() {
     const mobileOpen = mobile.matches && host.classList.contains("is-mobile-open");
@@ -495,11 +496,16 @@ export async function mountShell(active = "") {
     lastDockScrollY = window.scrollY;
     syncDockVisibility();
   }, dockOptions);
+  // Observe the existing off-canvas menu state so the dock becomes interactive again
+  // after it closes via Escape, backdrop, or the close button.
+  const dockVisibilityObserver = new MutationObserver(syncDockVisibility);
+  dockVisibilityObserver.observe(host, { attributes: true, attributeFilter: ["class"] });
   // The existing notification center is moved, not remounted, so its listeners and live channel stay unique.
   syncDockVisibility();
   window.__clouvenMobileDockCleanup = () => {
     clearTimeout(dockIdleTimer);
     if (dockScrollFrame) cancelAnimationFrame(dockScrollFrame);
+    dockVisibilityObserver.disconnect();
     dockAbort.abort();
     dock.remove();
     if (notificationHost && notificationHost.parentElement !== host) host.appendChild(notificationHost);
