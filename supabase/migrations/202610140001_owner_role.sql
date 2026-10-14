@@ -157,7 +157,7 @@ grant execute on function public.transfer_owner(uuid) to authenticated;
 revoke all on function public.guard_owner_role_changes() from public, anon, authenticated;
 
 create or replace function public.guard_name_customization()
-returns trigger language plpgsql security definer set search_path='' as $
+returns trigger language plpgsql security definer set search_path='' as $$
 begin
   if tg_op='INSERT' then
     if new.name_style <> 'default' or new.name_color_1 <> '#7DD3FC' or
@@ -173,11 +173,11 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 revoke all on function public.guard_name_customization() from public, anon, authenticated;
 
 create or replace function public.set_my_name_customization(settings jsonb)
-returns jsonb language plpgsql security definer set search_path='' as $
+returns jsonb language plpgsql security definer set search_path='' as $$
 declare actor public.members; saved public.members;
 begin
   if auth.uid() is null then raise exception 'Silakan login.' using errcode='42501'; end if;
@@ -263,11 +263,11 @@ commit;
     'name_style',saved.name_style,'name_color_1',saved.name_color_1,
     'name_color_2',saved.name_color_2,'name_color_3',saved.name_color_3);
 end;
-$;
+$$;
 revoke all on function public.set_my_name_customization(jsonb) from public, anon, service_role;
 grant execute on function public.set_my_name_customization(jsonb) to authenticated;
 
-create or replace function public.generate_productivity_reminders() returns integer language plpgsql security definer set search_path = '' as $
+create or replace function public.generate_productivity_reminders() returns integer language plpgsql security definer set search_path = '' as $$
 declare added integer := 0; n integer; now_jakarta timestamp := now() at time zone 'Asia/Jakarta';
 begin
  -- The unique (user_id,dedupe_key) constraint makes retries harmless. Date-only tasks end at 23:59 Jakarta time.
@@ -299,7 +299,7 @@ begin
  get diagnostics n = row_count; return added+n;
 end; $;
 
-create or replace function public.productivity_broadcast() returns trigger language plpgsql security definer set search_path = '' as $
+create or replace function public.productivity_broadcast() returns trigger language plpgsql security definer set search_path = '' as $$
 begin
  if tg_table_name = 'tasks' then
   if tg_op = 'INSERT' then
