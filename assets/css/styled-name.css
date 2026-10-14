@@ -157,16 +157,16 @@
   margin-inline-start: .28em;
   padding: .22em;
   vertical-align: -.34em;
-  border: 1px solid rgba(191, 224, 255, .72);
+  border: 0;
   border-radius: .42em;
   color: #fff;
   -webkit-text-fill-color: #fff;
   font-size: 1em;
   line-height: 1;
-  background: linear-gradient(135deg, #16b8ff 0%, #1768f5 38%, #4f46e5 70%, #8b5cf6 100%);
-  background-size: 240% 240%;
-  animation: owner-terminal-gradient 5s ease-in-out infinite, owner-terminal-glow 3s ease-in-out infinite;
-  box-shadow: 0 0 .18em rgba(56, 189, 248, .78), 0 .22em .7em rgba(37, 99, 235, .3), inset 0 1px 0 rgba(255,255,255,.38);
+  background: transparent;
+  background-size: auto;
+  animation: none;
+  box-shadow: none;
   text-shadow: 0 1px 2px rgba(10, 25, 70, .3);
   -webkit-text-stroke: 0;
 }
