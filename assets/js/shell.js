@@ -20,6 +20,7 @@ const links = [
 export async function mountShell(active = "") {
   const host = document.querySelector("#sidebar");
   if (!host) return null;
+  window.__clouvenMobileDockCleanup?.();
   const session = await getSession();
   if (!document.querySelector("#developer-avatar-shimmer-styles")) {
     const style = document.createElement("style");
@@ -330,7 +331,6 @@ export async function mountShell(active = "") {
   setMobileOpen(false, false);
 
   // Mobile floating dock: keep the existing desktop sidebar and permission logic intact.
-  window.__clouvenMobileDockCleanup?.();
   const dock = document.createElement("div");
   dock.className = "mobile-dock";
   const protectedDockKeys = new Set(["tasks", "calendar", "storage"]);
