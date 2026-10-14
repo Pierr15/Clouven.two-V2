@@ -329,6 +329,29 @@ export async function mountShell(active = "") {
       profileMenu.hidden = !opening;
       menu.setAttribute("aria-expanded", String(opening));
     });
+    let replayingMobileThemeToggle = false;
+    profileMenu.addEventListener("click", (event) => {
+      const themeButton = event.target.closest("[data-theme-toggle]");
+      if (!themeButton || replayingMobileThemeToggle) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const avatarRect = menu.getBoundingClientRect();
+      const root = document.documentElement;
+      root.style.setProperty("--mobile-theme-origin-x", (avatarRect.left + avatarRect.width / 2) + "px");
+      root.style.setProperty("--mobile-theme-origin-y", (avatarRect.top + avatarRect.height / 2) + "px");
+      const toggleTheme = () => {
+        replayingMobileThemeToggle = true;
+        themeButton.click();
+        replayingMobileThemeToggle = false;
+      };
+      if (mobile.matches && document.startViewTransition && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        document.startViewTransition(toggleTheme);
+      } else {
+        toggleTheme();
+      }
+      profileMenu.hidden = true;
+      menu.setAttribute("aria-expanded", "false");
+    }, true);
     profileMenu.addEventListener("click", async (event) => {
       const logoutButton = event.target.closest("[data-mobile-profile-logout]");
       if (!logoutButton) return;
