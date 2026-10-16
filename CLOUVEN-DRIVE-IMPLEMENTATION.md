@@ -2,11 +2,12 @@
 
 ## Current slice: UI foundation only
 
-This branch adds a separate authenticated Clouven Drive page and navigation entry. It does not replace or modify the existing `/penyimpanan/` experience.
+This branch adds a separate authenticated Clouven Drive page and a shortcut from the existing `/penyimpanan/` page. It does not replace or modify the legacy Storage experience.
 
 ### Included
 - New `/clouven-drive/` page with responsive layout.
 - Dedicated CSS and page module using the existing Supabase session gate and sidebar shell.
+- Compact shortcut from Storage; upload-capable roles see it beside `Unggah file`, while other signed-in roles retain it in the page header.
 - Explicit foundation notice, unavailable quota/count states, and disabled file-operation controls.
 - Local preview route registration.
 - No sample files, mock quota, or fake-success actions.
