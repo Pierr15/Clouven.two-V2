@@ -120,7 +120,7 @@ async function listVisibleDriveItemsWith(db, resolveAccess, actor, { parentId = 
     items: visible.slice(offset, offset + pageSize),
     page,
     pageSize,
-    hasMore: offset + pageSize < visible.length || (truncated && (normalizedQuery ? candidates.length === MAX_CANDIDATES : true)),
+    hasMore: offset + pageSize < visible.length,
     truncated,
   };
 }
