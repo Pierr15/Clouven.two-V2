@@ -22,7 +22,7 @@ export function evaluateDriveItemAccess({ actor, item, ancestors = [], managers 
   const hasGrant = grants.some(row => row.user_id === actor.uid && ["viewer", "editor"].includes(row.access_level));
   const inheritedManager = ancestors.some(parent => parent.owner_id === actor.uid) || managesFolder;
   const visible = staff || ownsItem || hasGrant || inheritedManager;
-  const canEdit = staff || ownsItem || managesFolder || grants.some(row => row.user_id === actor.uid && row.access_level === "editor");
+  const canEdit = staff || ownsItem || inheritedManager || grants.some(row => row.user_id === actor.uid && row.access_level === "editor");
   return {
     visible,
     canEdit: visible && canEdit,
@@ -50,13 +50,6 @@ export async function resolveDriveItemAccess(actor, itemId, { require = "read" }
   failIfError(itemError);
   if (!item) throw notFound();
   if (item.status !== "active" && require !== "trash") throw notFound();
-
-  const [managerResult, grantResult] = await Promise.all([
-    adminSupabase.from("drive_folder_managers").select("folder_id,user_id").eq("folder_id", item.id),
-    adminSupabase.from("drive_item_grants").select("item_id,user_id,access_level").eq("item_id", item.id),
-  ]);
-  failIfError(managerResult.error);
-  failIfError(grantResult.error);
 
   const ancestors = [];
   const seen = new Set([item.id]);
