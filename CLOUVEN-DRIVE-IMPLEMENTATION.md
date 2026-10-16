@@ -39,7 +39,7 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 1. Review the read-only API contract and correct any issues found during local integration testing.
 2. Review the metadata migration against the current Supabase schema and deployment conventions. Do not apply it automatically.
 3. Add integration tests for IDOR, inherited folder access, inaccessible parent folders, folder cycles, and partial database failures.
-4. Implement folder creation with operation-journal idempotency and verified Google Drive metadata.
+4. Integration-test the new folder endpoint against a disposable Supabase project and Google Drive test folder before applying the migration or enabling the UI.
 5. Implement upload/download, rename/move, Trash/restore, quota, and explicit external sharing only after the shared authorization layer is integration-tested.
 
 
