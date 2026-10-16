@@ -102,6 +102,14 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - Both routes are registered in the local preview server. Existing `/api/drive/*` paths are untouched.
 - Endpoints depend on the review-only metadata schema. No live Drive operation is enabled by this slice.
 
+## Read-only API isolation test status
+
+- Extracted the metadata access service into `api/_lib/clouvenDriveService.js`, which accepts an injected PostgREST-compatible client. The production wrapper still binds it to the existing server-only Supabase admin client.
+- Added `tests/clouven-drive-api-integration.mjs` with a fake metadata client to exercise list ACL filtering, private-name search, nested private folder denial, pagination validation, and rejection of search pagination.
+- Added `npm run test:clouven-drive-api` as the local test command.
+- The service reports `hasMore` only when additional authorized rows are present in the scanned candidate window. When the candidate scan reaches its cap, `truncated: true` signals that more rows may exist outside that bounded scan; this is intentionally not presented as a guaranteed next page.
+- These are isolated service-level tests, not tests against a live Supabase project. They have been added to the branch but have not been executed in this connector-only environment.
+
 ## Unit test environment isolation
 
 - Extracted pure policy functions to `api/_lib/clouvenDrivePolicy.js`. This module has no Supabase import, so `tests/clouven-drive-access.mjs` should run without loading `.env.local` or supplying database credentials.
