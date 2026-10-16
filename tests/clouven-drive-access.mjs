@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { evaluateDriveItemAccess } from "../api/_lib/clouvenDriveAccess.js";
+import { evaluateDriveItemAccess } from "../api/_lib/clouvenDrivePolicy.js";
 
 const actor = { uid: "student-a", role: "student" };
 const ownItem = { id: "item-1", owner_id: "student-a" };
