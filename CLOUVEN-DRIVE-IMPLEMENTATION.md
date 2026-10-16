@@ -95,7 +95,14 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - The read-only endpoints depend on the new metadata schema, which is still review-only and not applied. No live Drive operation is enabled by this slice.
 - The test file was added to the branch but has not been executed in this connector-only environment.
 
-## Read-only endpoint status\n\n- Added `GET /api/clouven-drive/items` for bounded listing, optional folder scope, and name search. Every candidate is checked against server-side ownership and ACL metadata before serialization. Raw table counts are never returned. Search scans are capped and marked `truncated`.\n- Added `GET /api/clouven-drive/overview`. Counts are explicitly marked `partial` when the bounded visible-item sample may be incomplete; quota stays `null` until verified via a trusted Google Drive integration.\n- Both routes are registered in the local preview server. Existing `/api/drive/*` paths are untouched.\n- Endpoints depend on the review-only metadata migration. No migration, production database, or deployment was touched.\n\n## Unit test environment isolation
+## Read-only endpoint status
+
+- Added `GET /api/clouven-drive/items` for bounded listing, optional folder scope, and name search. Every candidate is checked against server-side ownership and ACL metadata before serialization. Raw table counts are never returned. Search scans are capped and marked `truncated`.
+- Added `GET /api/clouven-drive/overview`. Counts are marked `partial` when the bounded visible-item sample may be incomplete; quota stays `null` until verified through a trusted Google Drive integration.
+- Both routes are registered in the local preview server. Existing `/api/drive/*` paths are untouched.
+- Endpoints depend on the review-only metadata schema. No live Drive operation is enabled by this slice.
+
+## Unit test environment isolation
 
 - Extracted pure policy functions to `api/_lib/clouvenDrivePolicy.js`. This module has no Supabase import, so `tests/clouven-drive-access.mjs` should run without loading `.env.local` or supplying database credentials.
 - The database-backed helper `api/_lib/clouvenDriveAccess.js` now imports that pure policy module and retains the Supabase lookup logic for future endpoints.
