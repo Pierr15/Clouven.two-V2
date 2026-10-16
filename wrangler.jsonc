@@ -1,14 +1,24 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "clouven-two",
+  "name": "clouven-two-v2",
   "main": "worker.js",
   "compatibility_date": "2026-10-13",
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": true,
-    "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
-  }
+    "run_worker_first": true
+  },
+   "vars": {
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_41bkBRphPsoAuuUVeZl_Qw_K5FiH-oZ",
+    "SUPABASE_URL": "https://dtizydctrugvihnivosg.supabase.co"
+   },
+     "observability": {
+       "logs": {
+         "enabled": false,
+         "invocation_logs": true
+       }
+     },
+   "html_handling": "auto-trailing-slash",
+   "not_found_handling": "404-page"
 }
