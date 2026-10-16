@@ -1,6 +1,7 @@
 import { adminSupabase } from "./supabaseAdmin.js";
 
-const STAFF_ROLES = new Set(["class_officer", "teacher", "developer", "owner"]);
+import { evaluateDriveItemAccess, isDriveStaff } from "./clouvenDrivePolicy.js";
+
 const MAX_PARENT_DEPTH = 32;
 
 function forbidden(message = "Kamu tidak memiliki akses ke item Clouven Drive.") {
@@ -12,23 +13,6 @@ function notFound() {
 }
 function failIfError(error) {
   if (error) throw Object.assign(new Error("Metadata Clouven Drive belum dapat dibaca."), { status: 503 });
-}
-
-export function evaluateDriveItemAccess({ actor, item, ancestors = [], managers = [], grants = [] }) {
-  if (!actor?.uid || !actor?.role || !item) return { visible: false, canEdit: false, canDelete: false, reason: "missing_context" };
-  const staff = STAFF_ROLES.has(actor.role);
-  const ownsItem = item.owner_id === actor.uid;
-  const managesFolder = managers.some(row => row.user_id === actor.uid);
-  const hasGrant = grants.some(row => row.user_id === actor.uid && ["viewer", "editor"].includes(row.access_level));
-  const inheritedManager = ancestors.some(parent => parent.owner_id === actor.uid) || managesFolder;
-  const visible = staff || ownsItem || hasGrant || inheritedManager;
-  const canEdit = staff || ownsItem || inheritedManager || grants.some(row => row.user_id === actor.uid && row.access_level === "editor");
-  return {
-    visible,
-    canEdit: visible && canEdit,
-    canDelete: visible && (staff || ownsItem),
-    reason: !visible ? "not_authorized" : "authorized",
-  };
 }
 
 /**
@@ -89,12 +73,9 @@ export async function resolveDriveItemAccess(actor, itemId, { require = "read" }
   if (!access.visible) throw notFound();
   if (require === "edit" && !access.canEdit) throw forbidden();
   if (require === "delete" && !access.canDelete) throw forbidden("Kamu hanya dapat menghapus item milikmu sendiri. Pengelola kelas dapat menghapus item anggota lain.");
-  if (require === "manager" && !(STAFF_ROLES.has(actor.role) || item.owner_id === actor.uid || (inheritedManagers.data || []).some(row => row.folder_id === item.id))) {
+  if (require === "manager" && !(isDriveStaff(actor.role) || item.owner_id === actor.uid || (inheritedManagers.data || []).some(row => row.folder_id === item.id))) {
     throw forbidden("Hanya pemilik folder atau pengelola kelas yang dapat mengatur pengelola folder.");
   }
   return { item, ancestors, access };
 }
 
-export function isDriveStaff(role) {
-  return STAFF_ROLES.has(role);
-}
