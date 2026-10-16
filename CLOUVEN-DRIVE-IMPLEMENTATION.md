@@ -1,6 +1,6 @@
 # Clouven Drive implementation notes
 
-## Current slice: UI foundation only
+## Current slice: UI foundation plus authorization foundation
 
 This branch adds a separate authenticated Clouven Drive page and a shortcut from the existing `/penyimpanan/` page. It does not replace or modify the legacy Storage experience.
 
@@ -18,7 +18,7 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - Server-side list/search/create/upload/download/rename/move/trash/restore APIs.
 - Google Drive external sharing confirmation and permission reconciliation.
 - Trash synchronization and partial-operation recovery.
-- Automated tests for authorization and cross-service failure handling.
+- Automated tests for cross-service failure handling and database-backed integration paths.
 
 ## Agreed product rules
 - Keep `/penyimpanan/` intact.
@@ -34,9 +34,10 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 ## Next implementation phase
 1. Audit all existing migrations, member role policies, and the deployed Vercel/local handler paths.
 2. Design and review the metadata migration and RLS boundaries before applying it anywhere.
-3. Add a shared server-side authorization service for per-item and inherited folder permissions.
-4. Implement listing, folders, resumable upload, download/preview, rename/move, Trash/restore, quota, and explicit external sharing.
-5. Add tests for IDOR, inheritance, folder cycles, partial failures, and Drive/Supabase reconciliation.
+3. Add a shared server-side authorization service for per-item and inherited folder permissions. Initial implementation now exists in `api/_lib/clouvenDriveAccess.js`, with pure policy tests in `tests/clouven-drive-access.mjs`.
+4. Validate the access helper and test command in a local checkout before wiring it into endpoints.
+5. Implement listing, folders, resumable upload, download/preview, rename/move, Trash/restore, quota, and explicit external sharing.
+6. Add integration tests for IDOR, inheritance, folder cycles, partial failures, and Drive/Supabase reconciliation.
 
 
 ## API budget: maximum 12 endpoints
@@ -82,3 +83,11 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - The existing server auth helper resolves the authenticated Supabase user and reads their role from `public.members`. New handlers should reuse this server-side identity verification, but must add item/folder ACL checks rather than rely on role rank alone.
 - Added `supabase/migrations/202610160001_clouven_drive_metadata.sql` to this PR as a **review-only migration**. It defines separate item metadata, folder managers, explicit item grants, and an operation journal; enables RLS and revokes direct browser access. It has **not** been applied to Supabase.
 - This schema is a foundation, not a claim that Drive APIs are ready. Before wiring endpoints, review the migration against deployment conventions and test constraints/inheritance, then implement a shared authorization service and idempotent Drive operations. Never run this migration automatically from application startup.
+
+
+## Authorization foundation status
+
+- Added `api/_lib/clouvenDriveAccess.js` as a server-side per-item authorization helper. It resolves the signed-in actor's metadata from the existing verified request flow, loads ownership and ACL data from the separate `drive_*` tables, walks the parent chain with a depth/cycle guard, and returns 404 for inaccessible items to reduce item-existence leaks.
+- Added `evaluateDriveItemAccess` as a pure policy evaluator and `tests/clouven-drive-access.mjs` for owner, private-item, viewer grant, editor grant, class-officer, and inherited folder-owner cases. Run it locally with `npm run test:clouven-drive-access`.
+- The helper depends on the new metadata schema, which is still review-only and not applied. No endpoint invokes it yet; no live Drive operation is enabled by this slice.
+- The test file was added to the branch but has not been executed in this connector-only environment.
