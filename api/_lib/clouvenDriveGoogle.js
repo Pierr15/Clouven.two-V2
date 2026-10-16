@@ -1,5 +1,3 @@
-import { getDriveAccessToken } from "./drive.js";
-
 const FOLDER_MIME = "application/vnd.google-apps.folder";
 
 function driveError(response, data, fallback) {
