@@ -16,11 +16,11 @@ function notFound() {
   return apiError(404, "Item tidak ditemukan.");
 }
 
-export async function resolveDriveItemAccess(actor, itemId, { require: required = "read" } = {}) {
+async function resolveDriveItemAccessWith(db, actor, itemId, { require: required = "read" } = {}) {
   if (!actor?.uid || !actor?.role) throw apiError(401, "Unauthorized");
   if (typeof itemId !== "string" || !UUID_PATTERN.test(itemId)) throw apiError(400, "ID item tidak valid.");
 
-  const { data: item, error: itemError } = await adminSupabase
+  const { data: item, error: itemError } = await db
     .from("drive_items").select(ITEM_FIELDS).eq("id", itemId).maybeSingle();
   failIfError(itemError);
   if (!item || (item.status !== "active" && required !== "trash")) throw notFound();
@@ -33,7 +33,7 @@ export async function resolveDriveItemAccess(actor, itemId, { require: required 
       throw apiError(409, "Struktur folder tidak valid atau terlalu dalam.");
     }
     seen.add(parentId);
-    const { data: parent, error } = await adminSupabase.from("drive_items")
+    const { data: parent, error } = await db.from("drive_items")
       .select("id,parent_id,item_type,owner_id,status").eq("id", parentId).maybeSingle();
     failIfError(error);
     if (!parent || parent.item_type !== "folder" || parent.status !== "active") throw notFound();
@@ -43,9 +43,9 @@ export async function resolveDriveItemAccess(actor, itemId, { require: required 
 
   const folderIds = [item.id, ...ancestors.map(parent => parent.id)];
   const [managerResult, grantResult] = await Promise.all([
-    adminSupabase.from("drive_folder_managers").select("folder_id,user_id")
+    db.from("drive_folder_managers").select("folder_id,user_id")
       .in("folder_id", folderIds).eq("user_id", actor.uid),
-    adminSupabase.from("drive_item_grants").select("item_id,user_id,access_level")
+    db.from("drive_item_grants").select("item_id,user_id,access_level")
       .eq("item_id", item.id).eq("user_id", actor.uid),
   ]);
   failIfError(managerResult.error);
@@ -68,7 +68,7 @@ export async function resolveDriveItemAccess(actor, itemId, { require: required 
  * the per-item policy before serialization. Read up to a fixed candidate window so
  * pagination is applied to visible rows, never to unfiltered private rows.
  */
-export async function listVisibleDriveItems(actor, { parentId = null, query = "", page = 1, pageSize = 25 } = {}) {
+async function listVisibleDriveItemsWith(db, resolveAccess, actor, { parentId = null, query = "", page = 1, pageSize = 25 } = {}) {
   if (!actor?.uid || !actor?.role) throw apiError(401, "Unauthorized");
   if (parentId !== null && (typeof parentId !== "string" || !UUID_PATTERN.test(parentId))) {
     throw apiError(400, "ID folder tidak valid.");
@@ -80,11 +80,11 @@ export async function listVisibleDriveItems(actor, { parentId = null, query = ""
   if (normalizedQuery && page > 1) throw apiError(400, "Pagination pencarian belum didukung; gunakan halaman pertama.");
 
   if (parentId) {
-    const { item } = await resolveDriveItemAccess(actor, parentId);
+    const { item } = await resolveAccess(actor, parentId);
     if (item.item_type !== "folder") throw apiError(400, "Lokasi yang dipilih bukan folder.");
   }
 
-  let request = adminSupabase.from("drive_items")
+  let request = db.from("drive_items")
     .select(ITEM_FIELDS)
     .eq("status", "active")
     .order("item_type", { ascending: true })
@@ -105,7 +105,7 @@ export async function listVisibleDriveItems(actor, { parentId = null, query = ""
   const visible = [];
   for (const item of candidates) {
     try {
-      const { access } = await resolveDriveItemAccess(actor, item.id);
+      const { access } = await resolveAccess(actor, item.id);
       if (access.visible) visible.push({
         ...item,
         permissions: { canEdit: access.canEdit, canDelete: access.canDelete, canManage: access.canManage },
@@ -126,9 +126,24 @@ export async function listVisibleDriveItems(actor, { parentId = null, query = ""
   };
 }
 
-export async function getVisibleDriveOverview(actor) {
-  const { items, hasMore, truncated } = await listVisibleDriveItems(actor, { page: 1, pageSize: 50 });
-  const counts = { files: 0, folders: 0 };
-  for (const item of items) counts[item.item_type === "folder" ? "folders" : "files"] += 1;
-  return { counts, partial: hasMore || truncated, quota: null };
+
+
+/** Factory enables deterministic integration-style tests with a fake PostgREST client. */
+export function createDriveAccessService(db) {
+  const resolveAccess = (actor, itemId, options) => resolveDriveItemAccessWith(db, actor, itemId, options);
+  return {
+    resolveDriveItemAccess: resolveAccess,
+    listVisibleDriveItems: (actor, options) => listVisibleDriveItemsWith(db, resolveAccess, actor, options),
+    getVisibleDriveOverview: async (actor) => {
+      const { items, hasMore, truncated } = await listVisibleDriveItemsWith(db, resolveAccess, actor, { page: 1, pageSize: 50 });
+      const counts = { files: 0, folders: 0 };
+      for (const item of items) counts[item.item_type === "folder" ? "folders" : "files"] += 1;
+      return { counts, partial: hasMore || truncated, quota: null };
+    },
+  };
 }
+
+const defaultService = createDriveAccessService(adminSupabase);
+export const resolveDriveItemAccess = defaultService.resolveDriveItemAccess;
+export const listVisibleDriveItems = defaultService.listVisibleDriveItems;
+export const getVisibleDriveOverview = defaultService.getVisibleDriveOverview;
