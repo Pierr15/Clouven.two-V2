@@ -72,3 +72,12 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - **External sharing is opt-in.** Show the exact target/access scope and require confirmation before modifying Google Drive permissions.
 - Do not apply database migrations, change environment secrets, or deploy without explicit authorization.
 - Add automated tests for unauthorized access, inheritance, staff overrides, folder cycles, resumable upload failures, and partial Drive/Supabase failures before enabling the controls in the UI.
+
+
+## Initial repository audit and schema foundation
+
+- The existing `public.resources` table is the legacy class-material registry, keyed by Google Drive file ID and category/subject. Its current authenticated read policy is broad for the existing class-resource feature, so it must **not** be repurposed as Clouven Drive's per-user ACL model.
+- Existing Drive handlers currently gate upload at `class_officer` and use `resources` for the old materials/tasks flow. Keep these handlers and `/penyimpanan/` behavior unchanged during the new feature rollout.
+- The existing server auth helper resolves the authenticated Supabase user and reads their role from `public.members`. New handlers should reuse this server-side identity verification, but must add item/folder ACL checks rather than rely on role rank alone.
+- Added `supabase/migrations/202610160001_clouven_drive_metadata.sql` to this PR as a **review-only migration**. It defines separate item metadata, folder managers, explicit item grants, and an operation journal; enables RLS and revokes direct browser access. It has **not** been applied to Supabase.
+- This schema is a foundation, not a claim that Drive APIs are ready. Before wiring endpoints, review the migration against deployment conventions and test constraints/inheritance, then implement a shared authorization service and idempotent Drive operations. Never run this migration automatically from application startup.
