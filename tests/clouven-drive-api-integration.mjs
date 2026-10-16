@@ -33,11 +33,13 @@ function client(rows) {
 const folderId = "11111111-1111-4111-8111-111111111111";
 const fileId = "22222222-2222-4222-8222-222222222222";
 const otherId = "33333333-3333-4333-8333-333333333333";
+const nestedId = "44444444-4444-4444-8444-444444444444";
 const data = {
   drive_items: [
     { id: folderId, parent_id: null, item_type: "folder", name: "Folder A", owner_id: "alice", status: "active" },
     { id: fileId, parent_id: null, item_type: "file", name: "Notes", owner_id: "alice", status: "active" },
-    { id: otherId, parent_id: null, item_type: "file", name: "Private notes", owner_id: "bob", status: "active" }
+    { id: otherId, parent_id: null, item_type: "folder", name: "Private folder", owner_id: "bob", status: "active" },
+    { id: nestedId, parent_id: otherId, item_type: "file", name: "Nested private notes", owner_id: "bob", status: "active" }
   ],
   drive_folder_managers: [],
   drive_item_grants: []
@@ -49,6 +51,8 @@ const list = await service.listVisibleDriveItems(actor);
 assert.deepEqual(list.items.map(x => x.id), [folderId, fileId]);
 assert.equal(JSON.stringify(list).includes("Private notes"), false);
 assert.equal((await service.listVisibleDriveItems(actor, { query: "Private" })).items.length, 0);
+await assert.rejects(() => service.listVisibleDriveItems(actor, { parentId: otherId }), e => e.status === 404);
+assert.equal((await service.listVisibleDriveItems(actor, { parentId: folderId })).items.length, 0);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { page: 11 }), e => e.status === 400);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { query: "Notes", page: 2 }), e => e.status === 400);
-console.log("Clouven Drive API isolation tests passed (4 assertions).");
+console.log("Clouven Drive API isolation tests passed (6 assertions).");
