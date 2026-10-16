@@ -19,7 +19,7 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 
 ### Not implemented yet
 - Database-backed integration tests against the actual Supabase schema.
-- Folder creation, upload/download, rename/move, Trash/restore, quota lookup, and explicit external sharing.
+- Upload/download, rename/move, Trash/restore, quota lookup, and explicit external sharing.
 - Google Drive external sharing confirmation and permission reconciliation.
 - Trash synchronization and partial-operation recovery.
 - Automated tests for cross-service failure handling and database-backed integration paths.
@@ -114,3 +114,12 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 
 - Extracted pure policy functions to `api/_lib/clouvenDrivePolicy.js`. This module has no Supabase import, so `tests/clouven-drive-access.mjs` should run without loading `.env.local` or supplying database credentials.
 - The database-backed helper `api/_lib/clouvenDriveAccess.js` now imports that pure policy module and retains the Supabase lookup logic for future endpoints.
+
+## Folder creation API foundation
+
+- Added `POST /api/clouven-drive/folders` and registered it in the local preview server. The endpoint requires a verified member session, a UUID `Idempotency-Key`, a valid folder name, and server-side parent-folder authorization when a parent is specified.
+- The endpoint reserves a `drive_operations` journal row and a pending `drive_items` metadata row before creating the Google Drive folder. It stores the operation UUID in Google Drive `appProperties` so retries can locate a folder created before a prior request failed.
+- Successful operations only return after Drive metadata is verified and the Supabase item and journal are updated. Partial failures are marked for reconciliation; retries with the same key attempt to recover the Drive folder rather than intentionally creating another one.
+- Added `api/_lib/clouvenDriveGoogle.js` and `tests/clouven-drive-folder-google.mjs` to isolate and test the Google Drive idempotency helper.
+- Run `npm run test:clouven-drive-folder` locally for the helper test. It does not call Google services because it stubs `fetch`.
+- This endpoint depends on the review-only metadata migration and Google Drive environment variables. It has not been tested against a live Supabase database or Google Drive account. Do not enable the UI or apply the migration until that validation is complete.
