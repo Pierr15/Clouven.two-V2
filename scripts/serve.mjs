@@ -22,6 +22,7 @@ const apiRoutes = new Map([
   ['/api/drive/download', {module: '../server/api-handlers/drive/download.js'}],
   ['/api/drive/manage', {module: '../server/api-handlers/drive/manage.js', json: true}],
   ['/api/clouven-drive/items', {module: '../server/api-handlers/clouven-drive/items.js'}],
+  ['/api/clouven-drive/folders', {module: '../server/api-handlers/clouven-drive/folders.js', json: true}],
   ['/api/clouven-drive/overview', {module: '../server/api-handlers/clouven-drive/overview.js'}],
   ['/api/public/developer-name', {module: '../server/api-handlers/public/developer-name.js'}],
   ['/api/public/member-photos', {module: '../server/api-handlers/public/member-photos.js'}],
