@@ -2,6 +2,7 @@ import { adminSupabase } from "./supabaseAdmin.js";
 import { evaluateDriveItemAccess } from "./clouvenDrivePolicy.js";
 
 const MAX_PARENT_DEPTH = 32;
+const MAX_CANDIDATES = 500;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const ITEM_FIELDS = "id,drive_file_id,parent_id,item_type,name,mime_type,size_bytes,owner_id,created_by,status,trashed_at,created_at,updated_at";
 
@@ -62,13 +63,18 @@ export async function resolveDriveItemAccess(actor, itemId, { require: required 
   return { item, ancestors, access };
 }
 
+/**
+ * Service-role metadata queries are not ACL queries. Filter every candidate through
+ * the per-item policy before serialization. Read up to a fixed candidate window so
+ * pagination is applied to visible rows, never to unfiltered private rows.
+ */
 export async function listVisibleDriveItems(actor, { parentId = null, query = "", page = 1, pageSize = 25 } = {}) {
   if (!actor?.uid || !actor?.role) throw apiError(401, "Unauthorized");
   if (parentId !== null && (typeof parentId !== "string" || !UUID_PATTERN.test(parentId))) {
     throw apiError(400, "ID folder tidak valid.");
   }
   const normalizedQuery = String(query || "").trim().slice(0, 100);
-  if (!Number.isInteger(page) || page < 1 || page > 100 || !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 50) {
+  if (!Number.isInteger(page) || page < 1 || page > 10 || !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 50) {
     throw apiError(400, "Parameter pagination tidak valid.");
   }
   if (normalizedQuery && page > 1) throw apiError(400, "Pagination pencarian belum didukung; gunakan halaman pertama.");
@@ -78,23 +84,24 @@ export async function listVisibleDriveItems(actor, { parentId = null, query = ""
     if (item.item_type !== "folder") throw apiError(400, "Lokasi yang dipilih bukan folder.");
   }
 
-  const candidateLimit = normalizedQuery ? 500 : page * pageSize + 1;
   let request = adminSupabase.from("drive_items")
-    .select(ITEM_FIELDS, { count: "exact" })
+    .select(ITEM_FIELDS)
     .eq("status", "active")
     .order("item_type", { ascending: true })
     .order("name", { ascending: true })
     .order("id", { ascending: true })
-    .range(0, candidateLimit - 1);
+    .range(0, MAX_CANDIDATES);
   request = parentId ? request.eq("parent_id", parentId) : request.is("parent_id", null);
   if (normalizedQuery) {
     const escaped = normalizedQuery.replace(/[\\%_]/g, "\\$&");
     request = request.ilike("name", `%${escaped}%`);
   }
 
-  const { data, error, count } = await request;
+  const { data, error } = await request;
   failIfError(error);
-  const candidates = data || [];
+  const rows = data || [];
+  const truncated = rows.length > MAX_CANDIDATES;
+  const candidates = rows.slice(0, MAX_CANDIDATES);
   const visible = [];
   for (const item of candidates) {
     try {
@@ -114,8 +121,8 @@ export async function listVisibleDriveItems(actor, { parentId = null, query = ""
     items: visible.slice(offset, offset + pageSize),
     page,
     pageSize,
-    hasMore: normalizedQuery ? candidates.length === candidateLimit : visible.length > offset + pageSize || (candidates.length === candidateLimit && (count === null || count > candidateLimit)),
-    truncated: Boolean(normalizedQuery && candidates.length === candidateLimit),
+    hasMore: offset + pageSize < visible.length || (truncated && (normalizedQuery ? candidates.length === MAX_CANDIDATES : true)),
+    truncated,
   };
 }
 
