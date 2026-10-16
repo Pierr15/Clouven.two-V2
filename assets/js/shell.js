@@ -14,7 +14,6 @@ const links = [
   ["tasks", "/tugas/", "clipboard-list", "Tasks"],
   ["tools", "/tools/", "tools", "Tools"],
   ["storage", "/penyimpanan/", "brand-google-drive", "Storage"],
-  ["drive", "/clouven-drive/", "folders", "Clouven Drive"],
   ["members", "/anggota/", "users", "Members"],
 ];
 
@@ -43,7 +42,7 @@ export async function mountShell(active = "") {
     collapsed = localStorage.getItem("clouven-sidebar-collapsed") === "1";
   } catch {}
   document.body.classList.toggle("sidebar-collapsed", collapsed);
-  const protectedKeys = new Set(["tasks", "calendar", "storage", "drive"]);
+  const protectedKeys = new Set(["tasks", "calendar", "storage"]);
   host.className = `sidebar${collapsed ? " is-collapsed" : ""}`;
   document.documentElement.classList.remove("sidebar-precollapsed");
   host.innerHTML = `
