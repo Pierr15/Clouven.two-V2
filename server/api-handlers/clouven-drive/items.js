@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     const actor = await verifyRequest(req, "student");
     const page = req.query?.page === undefined ? 1 : Number(req.query.page);
     const pageSize = req.query?.limit === undefined ? 25 : Number(req.query.limit);
-    if (!Number.isInteger(page) || page < 1 || page > 100) return res.status(400).json({ error: "Parameter page harus berupa bilangan 1–100." });
+    if (!Number.isInteger(page) || page < 1 || page > 10) return res.status(400).json({ error: "Parameter page harus berupa bilangan 1–10." });
     if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 50) return res.status(400).json({ error: "Parameter limit harus berupa bilangan 1–50." });
     const query = typeof req.query?.q === "string" ? req.query.q : "";
     if (query.length > 100) return res.status(400).json({ error: "Pencarian maksimal 100 karakter." });
