@@ -1,24 +1,26 @@
-const STAFF_ROLES = new Set(["class_officer", "teacher", "developer", "owner"]);
+const STAFF_ROLES = new Set(["class_officer", "teacher", "developer"]);
 
-/**
- * Pure authorization policy. Keep this module free of database/client imports
- * so unit tests can run without environment secrets or a live Supabase project.
- */
+/** Separate access from the elevated Owner account role. */
 export function evaluateDriveItemAccess({ actor, item, ancestors = [], managers = [], grants = [] }) {
   if (!actor?.uid || !actor?.role || !item) {
-    return { visible: false, canEdit: false, canDelete: false, reason: "missing_context" };
+    return { visible: false, canEdit: false, canDelete: false, canManage: false, reason: "missing_context" };
   }
   const staff = STAFF_ROLES.has(actor.role);
   const ownsItem = item.owner_id === actor.uid;
-  const managesFolder = managers.some(row => row.user_id === actor.uid);
-  const hasGrant = grants.some(row => row.user_id === actor.uid && ["viewer", "editor"].includes(row.access_level));
-  const inheritedManager = ancestors.some(parent => parent.owner_id === actor.uid) || managesFolder;
-  const visible = staff || ownsItem || hasGrant || inheritedManager;
-  const canEdit = staff || ownsItem || inheritedManager || grants.some(row => row.user_id === actor.uid && row.access_level === "editor");
+  const directlyManagesFolder = item.item_type === "folder" &&
+    managers.some(row => row.user_id === actor.uid && row.folder_id === item.id);
+  const inheritedManager = managers.some(row => row.user_id === actor.uid) ||
+    ancestors.some(parent => parent.owner_id === actor.uid);
+  const grant = grants.find(row => row.user_id === actor.uid && ["viewer", "editor"].includes(row.access_level));
+  const visible = staff || ownsItem || Boolean(grant) || inheritedManager;
+  const canEdit = staff || ownsItem || inheritedManager || grant?.access_level === "editor";
+  const canDelete = staff || ownsItem;
+  const canManage = staff || ownsItem || directlyManagesFolder;
   return {
     visible,
     canEdit: visible && canEdit,
-    canDelete: visible && (staff || ownsItem),
+    canDelete: visible && canDelete,
+    canManage: visible && canManage,
     reason: !visible ? "not_authorized" : "authorized",
   };
 }
