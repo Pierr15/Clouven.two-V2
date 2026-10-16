@@ -91,3 +91,8 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - Added `evaluateDriveItemAccess` as a pure policy evaluator and `tests/clouven-drive-access.mjs` for owner, private-item, viewer grant, editor grant, class-officer, and inherited folder-owner cases. Run it locally with `npm run test:clouven-drive-access`.
 - The helper depends on the new metadata schema, which is still review-only and not applied. No endpoint invokes it yet; no live Drive operation is enabled by this slice.
 - The test file was added to the branch but has not been executed in this connector-only environment.
+
+## Unit test environment isolation
+
+- Extracted pure policy functions to `api/_lib/clouvenDrivePolicy.js`. This module has no Supabase import, so `tests/clouven-drive-access.mjs` should run without loading `.env.local` or supplying database credentials.
+- The database-backed helper `api/_lib/clouvenDriveAccess.js` now imports that pure policy module and retains the Supabase lookup logic for future endpoints.
