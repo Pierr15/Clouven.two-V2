@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { adminSupabase, verifyRequest } from "../../../api/_lib/supabaseAdmin.js";
 import { resolveDriveItemAccess } from "../../../api/_lib/clouvenDriveAccess.js";
 import { getDriveAccessToken } from "../../../api/_lib/drive.js";
@@ -48,6 +47,7 @@ export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
   let operation = null;
   let item = null;
+  let operationCreatedHere = false;
   let token = null;
   try {
     const actor = await verifyRequest(req, "student");
@@ -121,6 +121,7 @@ export default async function handler(req, res) {
       dbError(operationInsertError);
     }
     operation = createdOperation;
+    operationCreatedHere = true;
     if (!operation) throw apiError(503, "Jurnal operasi tidak dapat dibuat.", "DRIVE_JOURNAL_FAILED");
 
     const { data: createdItem, error: itemInsertError } = await adminSupabase.from("drive_items")
@@ -160,7 +161,7 @@ export default async function handler(req, res) {
     const finalized = await finishOperation(operation, item, driveFolder);
     return res.status(201).json({ ok: true, item: finalized, replayed: false });
   } catch (error) {
-    if (operation?.id && operation.state !== "succeeded") {
+    if (operationCreatedHere && operation?.id && operation.state !== "succeeded") {
       const state = item ? "needs_reconciliation" : "failed";
       await adminSupabase.from("drive_operations").update({
         state,
