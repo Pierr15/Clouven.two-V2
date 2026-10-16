@@ -1,6 +1,6 @@
 # Clouven Drive implementation notes
 
-## Current slice: UI foundation plus authorization foundation
+## Current slice: UI foundation, authorization, and read-only API
 
 This branch adds a separate authenticated Clouven Drive page and a shortcut from the existing `/penyimpanan/` page. It does not replace or modify the legacy Storage experience.
 
@@ -15,7 +15,7 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 ### Not implemented yet
 - Drive item metadata and ownership model.
 - Folder manager assignments and explicit item permissions.
-- Server-side list/search/create/upload/download/rename/move/trash/restore APIs.
+- Read-only server-side list/search/overview endpoints; create/upload/download/rename/move/trash/restore remain disabled.
 - Google Drive external sharing confirmation and permission reconciliation.
 - Trash synchronization and partial-operation recovery.
 - Automated tests for cross-service failure handling and database-backed integration paths.
@@ -92,7 +92,7 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - The helper depends on the new metadata schema, which is still review-only and not applied. No endpoint invokes it yet; no live Drive operation is enabled by this slice.
 - The test file was added to the branch but has not been executed in this connector-only environment.
 
-## Unit test environment isolation
+## Read-only endpoint status\n\n- Added `GET /api/clouven-drive/items` for bounded listing, optional folder scope, and name search. Every candidate is checked against server-side ownership and ACL metadata before serialization. Raw table counts are never returned. Search scans are capped and marked `truncated`.\n- Added `GET /api/clouven-drive/overview`. Counts are explicitly marked `partial` when the bounded visible-item sample may be incomplete; quota stays `null` until verified via a trusted Google Drive integration.\n- Both routes are registered in the local preview server. Existing `/api/drive/*` paths are untouched.\n- Endpoints depend on the review-only metadata migration. No migration, production database, or deployment was touched.\n\n## Unit test environment isolation
 
 - Extracted pure policy functions to `api/_lib/clouvenDrivePolicy.js`. This module has no Supabase import, so `tests/clouven-drive-access.mjs` should run without loading `.env.local` or supplying database credentials.
 - The database-backed helper `api/_lib/clouvenDriveAccess.js` now imports that pure policy module and retains the Supabase lookup logic for future endpoints.
