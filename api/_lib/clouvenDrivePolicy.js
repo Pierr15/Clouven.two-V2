@@ -15,7 +15,7 @@ export function evaluateDriveItemAccess({ actor, item, ancestors = [], managers 
   const visible = staff || ownsItem || Boolean(grant) || inheritedManager;
   const canEdit = staff || ownsItem || inheritedManager || grant?.access_level === "editor";
   const canDelete = staff || ownsItem;
-  const canManage = staff || ownsItem || directlyManagesFolder;
+  const canManage = staff || directlyManagesFolder || (item.item_type === "folder" && ownsItem);
   return {
     visible,
     canEdit: visible && canEdit,
