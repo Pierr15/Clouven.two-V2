@@ -74,3 +74,49 @@
 @media (prefers-reduced-motion: reduce) {
   .drive-page *, .drive-page *::before, .drive-page *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+
+/* Dark-mode tuning: keep the Drive surface aligned with the site's dark palette. */
+[data-theme="dark"] .drive-foundation-notice {
+  background: linear-gradient(110deg, rgba(181,200,173,.13), rgba(231,238,232,.045));
+  border-color: rgba(181,200,173,.19);
+}
+[data-theme="dark"] .drive-stage-pill {
+  background: rgba(181,200,173,.12);
+  color: #c7dfcb;
+}
+[data-theme="dark"] .drive-stat-card {
+  background: #121c17;
+  box-shadow: 0 8px 28px rgba(0,0,0,.12);
+}
+[data-theme="dark"] .drive-stat-track { background: rgba(231,238,232,.1); }
+[data-theme="dark"] .drive-search {
+  background: #152219;
+  border-color: var(--line);
+  color: var(--ink-soft);
+}
+[data-theme="dark"] .drive-search input {
+  background: transparent;
+  color: var(--ink);
+}
+[data-theme="dark"] .drive-search input::placeholder { color: #899e90; }
+[data-theme="dark"] .drive-view-switch { background: rgba(0,0,0,.08); }
+[data-theme="dark"] .drive-view-switch button.is-active {
+  background: #bdd8c3;
+  color: #14241a;
+}
+[data-theme="dark"] .drive-art-back {
+  background: #263a2c;
+  border-color: rgba(181,200,173,.18);
+  color: #bdd8c3;
+}
+[data-theme="dark"] .drive-art-front {
+  background: #3b3024;
+  border-color: rgba(255,220,174,.15);
+  color: #f0b47b;
+}
+[data-theme="dark"] .drive-empty-footnote {
+  background: rgba(181,200,173,.1);
+  color: #c7dfcb;
+}
+[data-theme="dark"] .drive-security-note > i { color: #bdd8c3; }
