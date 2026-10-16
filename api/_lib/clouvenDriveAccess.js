@@ -1,81 +1,127 @@
 import { adminSupabase } from "./supabaseAdmin.js";
-
-import { evaluateDriveItemAccess, isDriveStaff } from "./clouvenDrivePolicy.js";
+import { evaluateDriveItemAccess } from "./clouvenDrivePolicy.js";
 
 const MAX_PARENT_DEPTH = 32;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const ITEM_FIELDS = "id,drive_file_id,parent_id,item_type,name,mime_type,size_bytes,owner_id,created_by,status,trashed_at,created_at,updated_at";
 
-function forbidden(message = "Kamu tidak memiliki akses ke item Clouven Drive.") {
-  return Object.assign(new Error(message), { status: 403 });
-}
-function notFound() {
-  // Do not reveal whether an inaccessible item exists.
-  return Object.assign(new Error("Item tidak ditemukan."), { status: 404 });
+function apiError(status, message) {
+  return Object.assign(new Error(message), { status });
 }
 function failIfError(error) {
-  if (error) throw Object.assign(new Error("Metadata Clouven Drive belum dapat dibaca."), { status: 503 });
+  if (error) throw apiError(503, "Metadata Clouven Drive belum dapat dibaca.");
+}
+function notFound() {
+  return apiError(404, "Item tidak ditemukan.");
 }
 
-/**
- * Resolve an item and its folder chain using server-side metadata, then check
- * ownership, folder-manager inheritance and explicit grants before any Drive API call.
- * Never pass owner/role/access flags from the browser into this function.
- */
-export async function resolveDriveItemAccess(actor, itemId, { require = "read" } = {}) {
-  if (!actor?.uid || !actor?.role) throw Object.assign(new Error("Unauthorized"), { status: 401 });
-  if (typeof itemId !== "string" || !/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(itemId)) {
-    throw Object.assign(new Error("ID item tidak valid."), { status: 400 });
-  }
+export async function resolveDriveItemAccess(actor, itemId, { require: required = "read" } = {}) {
+  if (!actor?.uid || !actor?.role) throw apiError(401, "Unauthorized");
+  if (typeof itemId !== "string" || !UUID_PATTERN.test(itemId)) throw apiError(400, "ID item tidak valid.");
 
   const { data: item, error: itemError } = await adminSupabase
-    .from("drive_items")
-    .select("id,drive_file_id,parent_id,item_type,name,mime_type,size_bytes,owner_id,created_by,status,trashed_at")
-    .eq("id", itemId)
-    .maybeSingle();
+    .from("drive_items").select(ITEM_FIELDS).eq("id", itemId).maybeSingle();
   failIfError(itemError);
-  if (!item) throw notFound();
-  if (item.status !== "active" && require !== "trash") throw notFound();
+  if (!item || (item.status !== "active" && required !== "trash")) throw notFound();
 
   const ancestors = [];
   const seen = new Set([item.id]);
   let parentId = item.parent_id;
   while (parentId) {
     if (seen.has(parentId) || ancestors.length >= MAX_PARENT_DEPTH) {
-      throw Object.assign(new Error("Struktur folder tidak valid atau terlalu dalam."), { status: 409 });
+      throw apiError(409, "Struktur folder tidak valid atau terlalu dalam.");
     }
     seen.add(parentId);
-    const { data: parent, error } = await adminSupabase
-      .from("drive_items")
-      .select("id,parent_id,item_type,owner_id,status")
-      .eq("id", parentId)
-      .maybeSingle();
+    const { data: parent, error } = await adminSupabase.from("drive_items")
+      .select("id,parent_id,item_type,owner_id,status").eq("id", parentId).maybeSingle();
     failIfError(error);
     if (!parent || parent.item_type !== "folder" || parent.status !== "active") throw notFound();
     ancestors.push(parent);
     parentId = parent.parent_id;
   }
 
-  // Manager permissions on ancestor folders are inherited by descendants.
   const folderIds = [item.id, ...ancestors.map(parent => parent.id)];
-  const [inheritedManagers, inheritedGrants] = await Promise.all([
-    adminSupabase.from("drive_folder_managers").select("folder_id,user_id").in("folder_id", folderIds).eq("user_id", actor.uid),
-    adminSupabase.from("drive_item_grants").select("item_id,user_id,access_level").eq("item_id", item.id).eq("user_id", actor.uid),
+  const [managerResult, grantResult] = await Promise.all([
+    adminSupabase.from("drive_folder_managers").select("folder_id,user_id")
+      .in("folder_id", folderIds).eq("user_id", actor.uid),
+    adminSupabase.from("drive_item_grants").select("item_id,user_id,access_level")
+      .eq("item_id", item.id).eq("user_id", actor.uid),
   ]);
-  failIfError(inheritedManagers.error);
-  failIfError(inheritedGrants.error);
+  failIfError(managerResult.error);
+  failIfError(grantResult.error);
 
   const access = evaluateDriveItemAccess({
-    actor,
-    item,
-    ancestors,
-    managers: inheritedManagers.data || [],
-    grants: inheritedGrants.data || [],
+    actor, item, ancestors,
+    managers: managerResult.data || [],
+    grants: grantResult.data || [],
   });
   if (!access.visible) throw notFound();
-  if (require === "edit" && !access.canEdit) throw forbidden();
-  if (require === "delete" && !access.canDelete) throw forbidden("Kamu hanya dapat menghapus item milikmu sendiri. Pengelola kelas dapat menghapus item anggota lain.");
-  if (require === "manager" && !(isDriveStaff(actor.role) || item.owner_id === actor.uid || (inheritedManagers.data || []).some(row => row.folder_id === item.id))) {
-    throw forbidden("Hanya pemilik folder atau pengelola kelas yang dapat mengatur pengelola folder.");
-  }
+  if (required === "edit" && !access.canEdit) throw apiError(403, "Kamu tidak memiliki izin untuk mengubah item ini.");
+  if (required === "delete" && !access.canDelete) throw apiError(403, "Kamu hanya dapat menghapus item milikmu sendiri atau sebagai pengelola kelas.");
+  if (required === "manager" && !access.canManage) throw apiError(403, "Hanya pemilik folder, pengelola folder, atau pengelola kelas yang dapat mengatur pengelola folder.");
   return { item, ancestors, access };
 }
 
+export async function listVisibleDriveItems(actor, { parentId = null, query = "", page = 1, pageSize = 25 } = {}) {
+  if (!actor?.uid || !actor?.role) throw apiError(401, "Unauthorized");
+  if (parentId !== null && (typeof parentId !== "string" || !UUID_PATTERN.test(parentId))) {
+    throw apiError(400, "ID folder tidak valid.");
+  }
+  const normalizedQuery = String(query || "").trim().slice(0, 100);
+  if (!Number.isInteger(page) || page < 1 || page > 100 || !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 50) {
+    throw apiError(400, "Parameter pagination tidak valid.");
+  }
+  if (normalizedQuery && page > 1) throw apiError(400, "Pagination pencarian belum didukung; gunakan halaman pertama.");
+
+  if (parentId) {
+    const { item } = await resolveDriveItemAccess(actor, parentId);
+    if (item.item_type !== "folder") throw apiError(400, "Lokasi yang dipilih bukan folder.");
+  }
+
+  const candidateLimit = normalizedQuery ? 500 : page * pageSize + 1;
+  let request = adminSupabase.from("drive_items")
+    .select(ITEM_FIELDS, { count: "exact" })
+    .eq("status", "active")
+    .order("item_type", { ascending: true })
+    .order("name", { ascending: true })
+    .order("id", { ascending: true })
+    .range(0, candidateLimit - 1);
+  request = parentId ? request.eq("parent_id", parentId) : request.is("parent_id", null);
+  if (normalizedQuery) {
+    const escaped = normalizedQuery.replace(/[\\%_]/g, "\\$&");
+    request = request.ilike("name", `%${escaped}%`);
+  }
+
+  const { data, error, count } = await request;
+  failIfError(error);
+  const candidates = data || [];
+  const visible = [];
+  for (const item of candidates) {
+    try {
+      const { access } = await resolveDriveItemAccess(actor, item.id);
+      if (access.visible) visible.push({
+        ...item,
+        permissions: { canEdit: access.canEdit, canDelete: access.canDelete, canManage: access.canManage },
+      });
+    } catch (error) {
+      if (error.status === 404 || error.status === 403) continue;
+      throw error;
+    }
+  }
+
+  const offset = (page - 1) * pageSize;
+  return {
+    items: visible.slice(offset, offset + pageSize),
+    page,
+    pageSize,
+    hasMore: normalizedQuery ? candidates.length === candidateLimit : visible.length > offset + pageSize || (candidates.length === candidateLimit && (count === null || count > candidateLimit)),
+    truncated: Boolean(normalizedQuery && candidates.length === candidateLimit),
+  };
+}
+
+export async function getVisibleDriveOverview(actor) {
+  const { items, hasMore, truncated } = await listVisibleDriveItems(actor, { page: 1, pageSize: 50 });
+  const counts = { files: 0, folders: 0 };
+  for (const item of items) counts[item.item_type === "folder" ? "folders" : "files"] += 1;
+  return { counts, partial: hasMore || truncated, quota: null };
+}
