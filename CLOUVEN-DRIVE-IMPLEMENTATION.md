@@ -12,10 +12,14 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - Local preview route registration.
 - No sample files, mock quota, or fake-success actions.
 
+### Implemented in this branch
+- Review-only metadata migration defining Drive item ownership, folder managers, explicit grants, and an operation journal.
+- Pure authorization policy with tests for ownership, grants, staff access, and inherited folder ownership.
+- Read-only server-side list/search and overview endpoints with bounded scans and server-side ACL filtering.
+
 ### Not implemented yet
-- Drive item metadata and ownership model.
-- Folder manager assignments and explicit item permissions.
-- Read-only server-side list/search/overview endpoints; create/upload/download/rename/move/trash/restore remain disabled.
+- Database-backed integration tests against the actual Supabase schema.
+- Folder creation, upload/download, rename/move, Trash/restore, quota lookup, and explicit external sharing.
 - Google Drive external sharing confirmation and permission reconciliation.
 - Trash synchronization and partial-operation recovery.
 - Automated tests for cross-service failure handling and database-backed integration paths.
@@ -32,12 +36,11 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - Do not apply a database migration or deploy as part of this UI slice.
 
 ## Next implementation phase
-1. Audit all existing migrations, member role policies, and the deployed Vercel/local handler paths.
-2. Design and review the metadata migration and RLS boundaries before applying it anywhere.
-3. Add a shared server-side authorization service for per-item and inherited folder permissions. Initial implementation now exists in `api/_lib/clouvenDriveAccess.js`, with pure policy tests in `tests/clouven-drive-access.mjs`.
-4. Validate the access helper and test command in a local checkout before wiring it into endpoints.
-5. Implement listing, folders, resumable upload, download/preview, rename/move, Trash/restore, quota, and explicit external sharing.
-6. Add integration tests for IDOR, inheritance, folder cycles, partial failures, and Drive/Supabase reconciliation.
+1. Review the read-only API contract and correct any issues found during local integration testing.
+2. Review the metadata migration against the current Supabase schema and deployment conventions. Do not apply it automatically.
+3. Add integration tests for IDOR, inherited folder access, inaccessible parent folders, folder cycles, and partial database failures.
+4. Implement folder creation with operation-journal idempotency and verified Google Drive metadata.
+5. Implement upload/download, rename/move, Trash/restore, quota, and explicit external sharing only after the shared authorization layer is integration-tested.
 
 
 ## API budget: maximum 12 endpoints
