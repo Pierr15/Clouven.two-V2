@@ -120,3 +120,27 @@
   color: #c7dfcb;
 }
 [data-theme="dark"] .drive-security-note > i { color: #bdd8c3; }
+
+/* Metadata-backed list UI. All item labels are assigned with textContent. */
+.drive-item-list { display: grid; gap: 8px; width: 100%; margin-top: 12px; }
+.drive-list-heading { align-self: flex-start; margin: 8px 0 4px; color: var(--ink); font-size: 15px; }
+.drive-item-row { display: flex; align-items: center; gap: 13px; width: 100%; min-width: 0; padding: 13px 14px; border: 1px solid var(--line); border-radius: 13px; background: var(--paper); text-align: left; }
+.drive-item-icon { display: grid; flex: 0 0 40px; width: 40px; height: 40px; place-items: center; border-radius: 12px; background: rgba(40,75,61,.08); color: var(--green); font-size: 21px; }
+.drive-item-details { flex: 1; min-width: 0; }
+.drive-item-name { display: block; max-width: 100%; padding: 0; border: 0; background: transparent; color: var(--ink); font: inherit; font-size: 13px; font-weight: 700; overflow-wrap: anywhere; text-align: left; }
+button.drive-item-name, .drive-item-open { cursor: pointer; }
+button.drive-item-name:hover { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+.drive-item-details p { margin: 5px 0 0; color: var(--ink-soft); font-size: 11px; }
+.drive-item-open { display: grid; flex: 0 0 34px; width: 34px; height: 34px; place-items: center; border: 1px solid var(--line); border-radius: 10px; background: transparent; color: var(--ink-soft); }
+.drive-item-open:hover { background: var(--green); color: #fff; }
+.drive-item-open:focus-visible, .drive-item-name:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.drive-empty-state[aria-busy="true"] { opacity: .7; }
+@media (max-width: 640px) {
+  .drive-foundation-notice { flex-wrap: wrap; }
+  .drive-stage-pill { margin-left: 0; }
+  .drive-workspace-head { flex-direction: column; }
+  .drive-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .drive-search { width: 100%; }
+  .drive-item-row { gap: 10px; padding: 11px; }
+  .drive-item-icon { flex-basis: 34px; width: 34px; height: 34px; }
+}
