@@ -40,7 +40,7 @@ export function readRawBodyWithLimit(req, limit = MAX_DRIVE_UPLOAD_BYTES) {
       size += buffer.length;
       if (size > limit) {
         fail(Object.assign(new Error("Ukuran file maksimal 3 MiB."), { status: 413, code: "FILE_TOO_LARGE" }));
-        req.pause?.();
+        req.resume?.();
         return;
       }
       chunks.push(buffer);
