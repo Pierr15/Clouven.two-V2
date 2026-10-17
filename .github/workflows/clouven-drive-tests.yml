@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "api/_lib/clouvenDrive*.js"
+      - "api/_lib/clouvenDriveUpload.js"
       - "server/api-handlers/clouven-drive/**"
       - "assets/js/pages/clouven-drive.js"
       - "assets/css/clouven-drive.css"
@@ -59,3 +60,5 @@ jobs:
         run: npm run test:clouven-drive-folder
       - name: Test folder handler guards
         run: npm run test:clouven-drive-folder-handler
+      - name: Test upload validation and body limit
+        run: npm run test:clouven-drive-upload
