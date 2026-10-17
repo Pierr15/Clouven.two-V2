@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/assets/css/clouven-drive.css?v=dark-tuning-2" />
     <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script type="module" src="/assets/js/pages/clouven-drive.js?v=foundation-1"></script>
+    <script type="module" src="/assets/js/pages/clouven-drive.js?v=metadata-ui-1"></script>
     <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script>
     <link rel="stylesheet" href="/assets/css/loading.css?v=startup-transition-3" />
   </head>
@@ -40,10 +40,10 @@
         <section class="drive-foundation-notice" role="status" aria-live="polite">
           <span class="drive-notice-icon"><i class="ti ti-shield-lock" aria-hidden="true"></i></span>
           <div>
-            <strong>Fondasi antarmuka sedang disiapkan</strong>
-            <p>Daftar file, upload, izin, kuota, dan Sampah belum dihubungkan ke API Clouven Drive. Kontrol yang belum aktif sengaja dinonaktifkan agar tidak memberi kesan bahwa operasi file sudah berjalan.</p>
+            <strong>Fondasi metadata terhubung sebagian</strong>
+            <p>Daftar dan pencarian menggunakan metadata dengan pemeriksaan akses server. Upload, unduh, operasi file, Sampah, dan berbagi tetap nonaktif sampai alur amannya tersedia.</p>
           </div>
-          <span class="drive-stage-pill">Tahap 1 · UI</span>
+          <span class="drive-stage-pill">Metadata · bertahap</span>
         </section>
 
         <section class="drive-overview" aria-label="Ringkasan penyimpanan">
@@ -55,7 +55,7 @@
           </article>
           <article class="drive-stat-card">
             <div class="drive-stat-heading"><span class="drive-stat-icon drive-stat-icon-sage"><i class="ti ti-files" aria-hidden="true"></i></span><span>Isi Clouven Drive</span></div>
-            <strong class="drive-stat-value">Belum dihitung</strong>
+            <strong class="drive-stat-value">Memuat…</strong>
             <p>Jumlah file dan folder akan dihitung dari item yang dapat diakses.</p>
             <div class="drive-stat-meta"><span><i class="ti ti-file" aria-hidden="true"></i> File</span><span><i class="ti ti-folder" aria-hidden="true"></i> Folder</span></div>
           </article>
@@ -77,9 +77,9 @@
           <div class="drive-toolbar">
             <label class="drive-search" for="driveSearch">
               <i class="ti ti-search" aria-hidden="true"></i>
-              <input id="driveSearch" type="search" placeholder="Cari nama file atau folder…" autocomplete="off" disabled aria-describedby="driveSearchHelp" />
+              <input id="driveSearch" type="search" placeholder="Cari nama file atau folder…" autocomplete="off" aria-describedby="driveSearchHelp" />
             </label>
-            <span id="driveSearchHelp" class="drive-toolbar-hint">Pencarian aktif setelah metadata terhubung.</span>
+            <span id="driveSearchHelp" class="drive-toolbar-hint">Pencarian berdasarkan item yang dapat kamu akses.</span>
             <div class="drive-view-switch" aria-label="Tampilan daftar">
               <button type="button" class="is-active" aria-pressed="true" disabled aria-label="Tampilan daftar"><i class="ti ti-list" aria-hidden="true"></i></button>
               <button type="button" aria-pressed="false" disabled aria-label="Tampilan grid"><i class="ti ti-layout-grid" aria-hidden="true"></i></button>
@@ -88,7 +88,7 @@
 
           <nav class="drive-breadcrumbs" aria-label="Lokasi folder">
             <span class="drive-breadcrumb-current"><i class="ti ti-cloud" aria-hidden="true"></i> Drive saya</span>
-            <span class="drive-breadcrumb-note">Lokasi akan tersedia setelah API aktif</span>
+            <span class="drive-breadcrumb-note">Memuat lokasi…</span>
           </nav>
 
           <div class="drive-empty-state">
@@ -98,9 +98,9 @@
               <span class="drive-art-spark drive-art-spark-one"></span>
               <span class="drive-art-spark drive-art-spark-two"></span>
             </div>
-            <h3>Ruang file sedang disiapkan</h3>
-            <p>Belum ada daftar file yang dimuat. Setelah lapisan metadata dan pemeriksaan izin siap, file akan muncul di sini sesuai akses akunmu.</p>
-            <span class="drive-empty-footnote"><i class="ti ti-lock" aria-hidden="true"></i> Tidak ada data file contoh atau operasi palsu.</span>
+            <h3>Memuat isi Drive…</h3>
+            <p>Daftar file dan folder akan ditampilkan sesuai izin akunmu.</p>
+            <span class="drive-empty-footnote"><i class="ti ti-lock" aria-hidden="true"></i> Hasil berasal dari API metadata, bukan data contoh.</span>
           </div>
         </section>
 
