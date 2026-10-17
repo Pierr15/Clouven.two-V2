@@ -64,3 +64,27 @@ This is a source-level review of the current branch. It is not a claim that loca
 - No merge was performed.
 - Legacy `/penyimpanan/` and `/api/drive/*` routes were not edited.
 - No claim is made that the Drive feature is production-ready.
+
+## Follow-up: confirmed implementation decisions and CI observation (2026-10-17)
+
+Product decisions supplied for the next implementation slice:
+
+- **Storage identity:** Google Drive is owned/controlled by the service and accessed only by the server. Browser code must not receive Google OAuth credentials. The existing server helper currently uses a server-side OAuth refresh token; deployment must confirm that this credential belongs to the intended service-owned Drive identity and that the configured root folder is owned/shared appropriately.
+- **Test database:** use a separate Supabase development project. No project credentials were supplied through this conversation, and no live schema validation or mutation was attempted. Do not request or commit secrets in repository files.
+- **Initial upload cap:** 3 MiB maximum per file. Enforce the limit server-side on the raw byte count, not only in the browser. Any future upload flow must reserve an operation journal entry, verify the destination ACL, verify the uploaded Drive object, and reconcile partial Drive/Supabase failures before returning success.
+
+### Verified automation result
+
+GitHub Actions run [#39021143974](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39021143974) for commit `78c7d141ac0839e06c93099ee885a42ba4a35f5f` completed with conclusion **success**. The job's recorded completed steps include dependency installation and all four configured suites: ACL/policy, API isolation, Google Drive folder helper, and folder-handler guards. This verifies those suites at that commit only; it does not verify changes made after that commit, live Supabase schema compatibility, Google Drive credentials, upload, mutations, sharing, or browser behavior.
+
+### Stage 7–12 status after decision review
+
+- **Stage 7 (upload/sync):** still not implemented. The 3 MiB cap is now a requirement, not an implemented/verified feature. A safe implementation needs a raw-byte upload route with a strict server-side size guard and journal-backed reconciliation; base64 JSON uploads are intentionally not used because they inflate payload size and complicate request-size enforcement.
+- **Stage 8 (file operations):** rename/move/trash/restore/permanent delete remain unimplemented.
+- **Stage 9 (sharing/ACL mutation):** read-time policy exists, but explicit grant/manager mutation and Google Drive permission reconciliation remain unimplemented.
+- **Stage 10 (UI):** read-only endpoints exist, but the Drive UI remains intentionally non-operational for file mutations until those APIs and integration tests exist.
+- **Stage 11 (tests):** the four existing suites passed in the recorded CI run above. Additional handler tests, upload/mutation failure tests, disposable Supabase validation, and browser tests remain required.
+- **Stage 12 (readiness):** review remains **NOT READY**. No production migration, deployment, or PR merge was performed.
+
+No Supabase development credentials or Google Drive test identity were available to validate cross-service behavior during this continuation. Continue with isolated code/tests and keep the controls disabled until those paths have evidence.
+
