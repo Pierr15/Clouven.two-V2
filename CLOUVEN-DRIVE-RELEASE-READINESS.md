@@ -105,3 +105,10 @@ No Supabase development credentials or Google Drive test identity were available
 - Added `tests/clouven-drive-upload.mjs` for valid metadata, invalid names/types/sizes, the exact 3 MiB cap, and raw-body overflow handling; wired it into the Drive CI workflow.
 - **This is only a tested-intent test addition until CI confirms it.** The helper is not yet wired to an HTTP upload endpoint or the operation journal, and the test has not been executed in this environment. Therefore stage 7 remains **not implemented end-to-end**; do not enable the UI upload control.
 - This change does not use base64, alter legacy `/api/drive/*` routes, call Google Drive, or touch any database.
+
+
+### Upload guard CI feedback (2026-10-17)
+
+- The first PR CI run for the new upload validation suite, [run #39025602701](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39025602701), **failed** in the new test: a path-like filename (`../secret`) was not rejected by the initial validator. The five pre-existing checks and page JavaScript syntax check passed in that run.
+- Updated the validator to reject both slash and backslash path separators. This is a targeted fix based on the observed failure, not a claim that the rerun passes.
+- A successful CI run for the fix has not yet been observed. Stage 7 remains incomplete because no HTTP handler, Drive upload, metadata journal/reconciliation, or download flow has been connected to these primitives.
