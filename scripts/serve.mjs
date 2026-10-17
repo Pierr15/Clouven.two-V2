@@ -14,13 +14,16 @@ for (const filename of ['.env.local', '.env']) {
   Object.assign(process.env, supplied);
 }
 const port = Number(process.env.PORT || 3000);
-const routes = new Set(['', 'jadwal', 'kalender', 'tugas', 'tools', 'tools/spinning-wheel', 'penyimpanan', 'anggota', 'profile', 'login', 'admin', 'admin/login', 'kelola']);
+const routes = new Set(['', 'jadwal', 'kalender', 'tugas', 'tools', 'tools/spinning-wheel', 'penyimpanan', 'clouven-drive', 'anggota', 'profile', 'login', 'admin', 'admin/login', 'kelola']);
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp' };
 const apiRoutes = new Map([
   ['/api/notifications/run', {module: '../server/api-handlers/notifications/run.js'}],
   ['/api/drive/upload', {module: '../server/api-handlers/drive/upload.js', raw: true}],
   ['/api/drive/download', {module: '../server/api-handlers/drive/download.js'}],
   ['/api/drive/manage', {module: '../server/api-handlers/drive/manage.js', json: true}],
+  ['/api/clouven-drive/items', {module: '../server/api-handlers/clouven-drive/items.js'}],
+  ['/api/clouven-drive/folders', {module: '../server/api-handlers/clouven-drive/folders.js', json: true}],
+  ['/api/clouven-drive/overview', {module: '../server/api-handlers/clouven-drive/overview.js'}],
   ['/api/public/developer-name', {module: '../server/api-handlers/public/developer-name.js'}],
   ['/api/public/member-photos', {module: '../server/api-handlers/public/member-photos.js'}],
   ['/api/admin/create-user', {module: '../server/api-handlers/admin/create-user.js', json: true}],

@@ -23,7 +23,12 @@ export async function verifyRequest(req, minimum = "student") {
     .select("id,name,username,role,class_role")
     .eq("id", data.user.id)
     .maybeSingle();
-  if (profileError) throw profileError;
+  if (profileError) {
+    throw Object.assign(
+      new Error("Profil anggota tidak dapat diverifikasi saat ini."),
+      { status: 503, code: "PROFILE_LOOKUP_UNAVAILABLE" },
+    );
+  }
   if (!profile) throw Object.assign(new Error("Akun tidak terdaftar sebagai anggota kelas."), {status:403});
   const role = profile.role;
   if ((ranks[role] ?? 0) < (ranks[minimum] ?? 0)) {
