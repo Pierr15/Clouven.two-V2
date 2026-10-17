@@ -112,3 +112,11 @@ No Supabase development credentials or Google Drive test identity were available
 - The first PR CI run for the new upload validation suite, [run #39025602701](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39025602701), **failed** in the new test: a path-like filename (`../secret`) was not rejected by the initial validator. The five pre-existing checks and page JavaScript syntax check passed in that run.
 - Updated the validator to reject both slash and backslash path separators. This is a targeted fix based on the observed failure, not a claim that the rerun passes.
 - The follow-up PR CI run [#39025661069](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39025661069) completed with **success** for commit `12243091e7958f408cffc170b8bc3399c747ec33`. The upload validation/body-limit suite and all four pre-existing suites passed, as did the Drive page JavaScript syntax check. This verifies deterministic tests only, not live upload integration. Stage 7 remains incomplete because no HTTP handler, Drive upload, metadata journal/reconciliation, or download flow has been connected to these primitives.
+
+
+## Follow-up: Google Drive mutation helper primitives (2026-10-17)
+
+- Added isolated Google Drive helper functions for rename, move (explicit old/new parent), and reversible Trash/restore state. Inputs are validated and upstream errors are normalized; permanent deletion is deliberately not exposed.
+- Added deterministic mocked tests for PATCH payloads, parent replacement, and invalid inputs, wired into the Drive CI workflow.
+- These primitives do **not** enforce Clouven metadata ACLs or operation journaling. They must only be called by a handler that checks actor/source/destination access and reconciles metadata after the Drive mutation.
+- Stage 8 remains **not implemented end-to-end** until metadata-backed handlers, operation journal/recovery, ACL/IDOR tests, and cross-service failure handling exist. No endpoint was added and no legacy route was modified.
