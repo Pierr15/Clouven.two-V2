@@ -14,7 +14,7 @@ source = source
 
 const actor = { uid: "student-a", role: "student" };
 const stub = {
-  adminSupabase: { from() { throw new Error("Database must not be reached in this test"); } },
+  adminSupabase: { from() { return { select() { return this; }, eq() { return this; }, async maybeSingle() { return { data: null, error: { code: "SIMULATED_DB_OUTAGE" } }; } }; } },
   verifyRequest: async () => actor,
   resolveDriveItemAccess: async () => ({
     item: { id: "11111111-1111-4111-8111-111111111111", item_type: "folder", drive_file_id: "drive-parent" },
@@ -74,4 +74,14 @@ const key = "11111111-1111-4111-8111-111111111111";
   assert.equal(res.body.code, "PARENT_NOT_EDITABLE");
   assert.equal(res.headers["Cache-Control"], "private, no-store");
 }
-console.log("Clouven Drive folder handler guard tests passed (4 scenarios).");
+{
+  const res = response();
+  await handler({
+    method: "POST",
+    headers: { "idempotency-key": key },
+    body: { name: "Folder aman" },
+  }, res);
+  assert.equal(res.statusCode, 503, "metadata lookup failures must fail closed");
+  assert.equal(res.body.code, "DRIVE_METADATA_UNAVAILABLE");
+}
+console.log("Clouven Drive folder handler guard tests passed (5 scenarios).");
