@@ -29,7 +29,7 @@ function dbError(error) {
 async function getOperation(operationKey) {
   const { data, error } = await adminSupabase
     .from("drive_operations")
-    .select("id,operation_key,actor_id,item_id,operation_type,state")
+    .select("id,operation_key,actor_id,item_id,operation_type,state,request_data")
     .eq("operation_key", operationKey)
     .maybeSingle();
   dbError(error);
@@ -164,6 +164,14 @@ export default async function handler(req, res) {
           "IDEMPOTENCY_KEY_CONFLICT",
         );
       }
+      const storedRequest = operation.request_data || {};
+      if (storedRequest.name !== name || (storedRequest.parent_id ?? null) !== parentId) {
+        throw apiError(
+          409,
+          "Idempotency-Key sudah digunakan dengan isi permintaan yang berbeda.",
+          "IDEMPOTENCY_PAYLOAD_CONFLICT",
+        );
+      }
       if (operation.state === "succeeded" && operation.item_id) {
         const { data: existingItem, error } = await adminSupabase
           .from("drive_items")
@@ -172,6 +180,10 @@ export default async function handler(req, res) {
           .maybeSingle();
         dbError(error);
         if (existingItem?.status === "active" && existingItem.drive_file_id) {
+          const currentAccess = await resolveDriveItemAccess(actor, existingItem.id);
+          if (!currentAccess.access.canEdit) {
+            throw apiError(404, "Item tidak ditemukan.", "DRIVE_ITEM_NOT_FOUND");
+          }
           return res
             .status(200)
             .json({ ok: true, item: existingItem, replayed: true });
@@ -229,7 +241,7 @@ export default async function handler(req, res) {
           state: "pending",
           request_data: { name, parent_id: parentId },
         })
-        .select("id,operation_key,actor_id,item_id,operation_type,state")
+        .select("id,operation_key,actor_id,item_id,operation_type,state,request_data")
         .maybeSingle();
     if (operationInsertError) {
       if (operationInsertError.code === "23505")
