@@ -1,0 +1,53 @@
+name: Clouven Drive tests
+
+on:
+  pull_request:
+    paths:
+      - "api/_lib/clouvenDrive*.js"
+      - "server/api-handlers/clouven-drive/**"
+      - "tests/clouven-drive-*.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/clouven-drive-tests.yml"
+  push:
+    branches:
+      - main
+      - feat/clouven-drive-foundation
+    paths:
+      - "api/_lib/clouvenDrive*.js"
+      - "server/api-handlers/clouven-drive/**"
+      - "tests/clouven-drive-*.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/clouven-drive-tests.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clouven-drive-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drive-tests:
+    name: Drive unit and isolation tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Test ACL and policy
+        run: npm run test:clouven-drive-access
+      - name: Test API isolation
+        run: npm run test:clouven-drive-api
+      - name: Test Google Drive folder helper
+        run: npm run test:clouven-drive-folder
+      - name: Test folder handler guards
+        run: npm run test:clouven-drive-folder-handler
