@@ -3,8 +3,13 @@ import { createDriveFolderForOperation, findFolderByOperationKey } from "../api/
 
 const calls = [];
 let existing = null;
+let failNextRequest = false;
 globalThis.fetch = async (url, options = {}) => {
   calls.push({ url: String(url), method: options.method || "GET", body: options.body ? JSON.parse(options.body) : null });
+  if (failNextRequest) {
+    failNextRequest = false;
+    return Response.json({ error: { message: "simulated outage", status: "UNAVAILABLE" } }, { status: 503 });
+  }
   if ((options.method || "GET") === "GET") {
     return Response.json({ files: existing ? [existing] : [] });
   }
