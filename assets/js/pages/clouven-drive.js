@@ -147,7 +147,21 @@ async function loadItems() {
     breadcrumb.replaceChildren();
     const icon = node("i", "ti ti-cloud");
     icon.setAttribute("aria-hidden", "true");
-    breadcrumb.append(icon, document.createTextNode(parentId ? "Folder terpilih" : "Drive saya"));
+    if (parentId) {
+      const home = node("button", "drive-breadcrumb-home", "Drive saya");
+      home.type = "button";
+      home.addEventListener("click", () => {
+        parentId = null;
+        if (search) search.value = "";
+        loadItems();
+      });
+      const separator = node("i", "ti ti-chevron-right");
+      separator.setAttribute("aria-hidden", "true");
+      const current = node("span", "drive-breadcrumb-current-label", "Folder terpilih");
+      breadcrumb.append(icon, home, separator, current);
+    } else {
+      breadcrumb.append(icon, document.createTextNode("Drive saya"));
+    }
   }
   if (breadcrumbNote) breadcrumbNote.textContent = parentId ? "Isi folder yang dipilih" : "Lokasi utama";
   try {
