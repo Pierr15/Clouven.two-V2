@@ -41,4 +41,16 @@ assert.equal(calls.filter(call => call.method === "POST").length, 1,
   "repeating the same operation key must reuse the Drive folder instead of creating a duplicate");
 
 assert.equal((await findFolderByOperationKey(token, operationKey)).id, first.id);
-console.log("Clouven Drive folder Google helper tests passed (4 assertions).");
+
+failNextRequest = true;
+await assert.rejects(
+  () => findFolderByOperationKey(token, "22222222-2222-4222-8222-222222222222"),
+  error => {
+    assert.equal(error.status, 502);
+    assert.equal(error.code, "UNAVAILABLE");
+    assert.equal(error.message, "Tidak dapat memeriksa folder operasi di Google Drive.");
+    return true;
+  },
+);
+
+console.log("Clouven Drive folder Google helper tests passed (7 assertions).");
