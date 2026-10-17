@@ -97,3 +97,11 @@ No Supabase development credentials or Google Drive test identity were available
 - This UI change does **not** validate real browser behavior, live Supabase schema compatibility, Google Drive credentials, or cross-service recovery. Do not infer those from a Vercel preview status.
 - The latest observed successful Drive unit/isolation workflow was run #7 at commit `dbad3d4e26b3da2ca358cb5983bf6c41bc5c901f`, before the workflow was expanded with the JavaScript syntax check. The new workflow definition and its later commit have not yet been confirmed by a completed run, so the syntax-check step and latest branch state remain unverified by CI at this point.
 
+
+
+## Follow-up: bounded upload primitives (2026-10-17)
+
+- Added `api/_lib/clouvenDriveUpload.js` with a shared 3 MiB byte cap, filename/MIME/size validation, and a raw request-body reader that rejects oversized streams with HTTP 413 before retaining the excess chunk.
+- Added `tests/clouven-drive-upload.mjs` for valid metadata, invalid names/types/sizes, the exact 3 MiB cap, and raw-body overflow handling; wired it into the Drive CI workflow.
+- **This is only a tested-intent test addition until CI confirms it.** The helper is not yet wired to an HTTP upload endpoint or the operation journal, and the test has not been executed in this environment. Therefore stage 7 remains **not implemented end-to-end**; do not enable the UI upload control.
+- This change does not use base64, alter legacy `/api/drive/*` routes, call Google Drive, or touch any database.
