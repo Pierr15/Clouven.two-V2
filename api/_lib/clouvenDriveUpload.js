@@ -6,7 +6,7 @@ export function validateDriveUpload({ name, mimeType, sizeBytes }) {
     throw Object.assign(new Error("Nama file wajib berupa teks."), { status: 400, code: "INVALID_FILE_NAME" });
   }
   const normalizedName = name.trim().replace(/\s+/g, " ");
-  if (!normalizedName || normalizedName.length > 240 || CONTROL_CHARACTERS.test(normalizedName) || normalizedName === "." || normalizedName === "..") {
+  if (!normalizedName || normalizedName.length > 240 || CONTROL_CHARACTERS.test(normalizedName) || /[\\/]/.test(normalizedName) || normalizedName === "." || normalizedName === "..") {
     throw Object.assign(new Error("Nama file wajib diisi dan maksimal 240 karakter."), { status: 400, code: "INVALID_FILE_NAME" });
   }
   if (typeof mimeType !== "string" || !mimeType.trim() || mimeType.length > 160 || CONTROL_CHARACTERS.test(mimeType)) {
