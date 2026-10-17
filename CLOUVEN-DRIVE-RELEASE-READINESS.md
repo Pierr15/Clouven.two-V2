@@ -120,3 +120,13 @@ No Supabase development credentials or Google Drive test identity were available
 - Added deterministic mocked tests for PATCH payloads, parent replacement, and invalid inputs, wired into the Drive CI workflow.
 - These primitives do **not** enforce Clouven metadata ACLs or operation journaling. They must only be called by a handler that checks actor/source/destination access and reconciles metadata after the Drive mutation.
 - Stage 8 remains **not implemented end-to-end** until metadata-backed handlers, operation journal/recovery, ACL/IDOR tests, and cross-service failure handling exist. No endpoint was added and no legacy route was modified.
+
+
+## Stage 7 continuation: Google multipart upload primitive (2026-10-17)
+
+- Added `uploadDriveFileForOperation` to `api/_lib/clouvenDriveGoogle.js`. It performs a small-file multipart upload (up to 3 MiB), stores the idempotency key in Drive `appProperties`, checks the returned ID/name/MIME/size/operation key, and includes a lookup helper for retry reconciliation.
+- Added `tests/clouven-drive-google-upload.mjs` and wired it into the Drive CI workflow. The test mocks the Google API, checks the multipart body contains the original bytes and operation key, and checks the 3 MiB boundary guard.
+- **This helper is not an HTTP upload endpoint and is not wired to the Supabase journal or ACL checks.** It must not be called by the browser or exposed without a handler that authenticates the actor, verifies destination-folder edit permission, reserves/validates a `drive_operations` row, validates raw request bytes, reconciles partial failures, and commits metadata only after Drive returns verified metadata.
+- Current environment prerequisites confirmed by the project owner: a Supabase account exists but a separate development project has not been created; Google Drive exists but server authentication is not configured; migration status is unknown. No credentials were requested or committed.
+- Next safe sequence: create a separate Supabase development project; inspect and apply the migration only there after reviewing its SQL; create a dedicated server-owned Google Drive identity and test root folder; store credentials only in the development/preview environment secret store; then implement and test the HTTP handler against those isolated services. Production migration/deployment and PR merge remain prohibited for this continuation.
+- The new CI run is pending verification until GitHub Actions reports a completed result. This addition alone does not complete Stage 7.
