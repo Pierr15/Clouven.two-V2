@@ -12,7 +12,8 @@
     "test:profile-photo": "node tests/profile-photo-access.mjs",
     "test:clouven-drive-access": "node tests/clouven-drive-access.mjs",
     "test:clouven-drive-api": "node tests/clouven-drive-api-integration.mjs",
-    "test:clouven-drive-folder": "node tests/clouven-drive-folder-google.mjs"
+    "test:clouven-drive-folder": "node tests/clouven-drive-folder-google.mjs",
+    "test:clouven-drive-folder-handler": "node tests/clouven-drive-folder-handler.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
