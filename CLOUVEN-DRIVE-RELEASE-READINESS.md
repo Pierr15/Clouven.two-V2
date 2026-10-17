@@ -49,6 +49,14 @@ This is a source-level review of the current branch. It is not a claim that loca
 7. Add browser regression coverage for listing, nested navigation, empty/error/loading states, and disabled controls.
 8. Confirm the CI result for application tests. The observed GitHub checks for this review commit are Vercel Preview Comments (success) and Supabase Preview (skipped because the branch is not associated with a Supabase Branch); neither is a test run.
 
+
+## Follow-up work after the initial review
+
+- Added `.github/workflows/clouven-drive-tests.yml` to run the existing ACL, metadata isolation, Google Drive folder helper, and folder-handler guard suites on matching pull-request/push changes. The workflow uses Node.js 22, `npm ci`, read-only repository permissions, and a 10-minute job timeout.
+- This workflow has been committed but its result has **not yet been observed**. A workflow definition is not evidence that the tests pass.
+- Steps 7–10 remain intentionally blocked from being marked complete: there is still no safe, end-to-end Clouven metadata-backed upload/session-completion flow, file mutation API, explicit sharing/manager mutation API, or connected UI actions. Existing legacy upload/download handlers use a separate storage/authorization model and must not be wired into the new metadata UI as a shortcut.
+- The new workflow is regression-test automation only. It does not validate the migration against a disposable Supabase database, exercise real Google Drive credentials, or run browser tests.
+
 ## Guardrails honored
 
 - No database migration was applied.
