@@ -144,3 +144,9 @@ button.drive-item-name:hover { color: var(--green); text-decoration: underline; 
   .drive-item-row { gap: 10px; padding: 11px; }
   .drive-item-icon { flex-basis: 34px; width: 34px; height: 34px; }
 }
+
+.drive-breadcrumb-home { padding: 0; border: 0; background: transparent; color: var(--green); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.drive-breadcrumb-home:hover { text-decoration: underline; text-underline-offset: 3px; }
+.drive-breadcrumb-home:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 4px; }
+.drive-breadcrumb-current-label { color: var(--ink); font-size: 12px; font-weight: 700; }
+.drive-breadcrumbs .ti-chevron-right { color: var(--ink-soft); font-size: 14px; }
