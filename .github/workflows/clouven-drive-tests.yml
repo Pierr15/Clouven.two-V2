@@ -19,6 +19,9 @@ on:
     paths:
       - "api/_lib/clouvenDrive*.js"
       - "server/api-handlers/clouven-drive/**"
+      - "assets/js/pages/clouven-drive.js"
+      - "assets/css/clouven-drive.css"
+      - "clouven-drive/index.html"
       - "tests/clouven-drive-*.mjs"
       - "package.json"
       - "package-lock.json"
