@@ -62,3 +62,5 @@ jobs:
         run: npm run test:clouven-drive-folder-handler
       - name: Test upload validation and body limit
         run: npm run test:clouven-drive-upload
+      - name: Test Google Drive mutation helper guards
+        run: npm run test:clouven-drive-mutations
