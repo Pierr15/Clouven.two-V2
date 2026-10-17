@@ -64,3 +64,5 @@ jobs:
         run: npm run test:clouven-drive-upload
       - name: Test Google Drive mutation helper guards
         run: npm run test:clouven-drive-mutations
+      - name: Test Google Drive multipart upload helper
+        run: npm run test:clouven-drive-google-upload
