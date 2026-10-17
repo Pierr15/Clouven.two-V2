@@ -88,3 +88,12 @@ GitHub Actions run [#39021143974](https://github.com/Pierr15/Clouven.two-V2/acti
 
 No Supabase development credentials or Google Drive test identity were available to validate cross-service behavior during this continuation. Continue with isolated code/tests and keep the controls disabled until those paths have evidence.
 
+## Implementation continuation: metadata browser UI (2026-10-17)
+
+- Connected the Clouven Drive page to the existing authenticated `GET /api/clouven-drive/items` and `GET /api/clouven-drive/overview` endpoints. The UI uses URL parameters for folder navigation and search, aborts superseded list requests, displays loading/error/empty states, and writes item names using DOM text nodes rather than interpolating metadata into HTML.
+- Enabled folder creation through the existing `POST /api/clouven-drive/folders` endpoint with a server-validated name, the selected metadata parent ID, an authentication header, and a fresh UUID idempotency key. The server remains authoritative for role and parent-folder ACL checks. Folder creation is not described as successful until the endpoint returns success.
+- Upload, download, rename/move/trash/restore, and sharing controls remain unavailable. The 3 MiB upload decision has not been represented as an implemented upload feature.
+- Added responsive styles for the metadata list and expanded the Drive CI path filters to include the page JS, CSS, and HTML. CI now runs `node --check assets/js/pages/clouven-drive.js` before the four existing suites.
+- This UI change does **not** validate real browser behavior, live Supabase schema compatibility, Google Drive credentials, or cross-service recovery. Do not infer those from a Vercel preview status.
+- The latest observed successful Drive unit/isolation workflow was run #7 at commit `dbad3d4e26b3da2ca358cb5983bf6c41bc5c901f`, before the workflow was expanded with the JavaScript syntax check. The new workflow definition and its later commit have not yet been confirmed by a completed run, so the syntax-check step and latest branch state remain unverified by CI at this point.
+
