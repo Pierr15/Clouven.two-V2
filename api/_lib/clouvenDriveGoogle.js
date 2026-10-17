@@ -1,7 +1,7 @@
 const FOLDER_MIME = "application/vnd.google-apps.folder";
 
 function driveError(response, data, fallback) {
-  const error = Object.assign(new Error(data?.error?.message || fallback), {
+  const error = Object.assign(new Error(fallback), {
     status: response.status >= 500 ? 502 : 400,
     code: data?.error?.status || "GOOGLE_DRIVE_REQUEST_FAILED",
   });
