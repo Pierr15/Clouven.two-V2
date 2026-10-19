@@ -166,6 +166,8 @@ The following commands were executed in this workspace and exited successfully:
 
 `node --check` passed for the router, all new handlers, the page module, and the preview server. These results are deterministic mocked/isolated tests, not live-service proof.
 
+Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and the `items`, `overview`, `download`, `files`, `trash`, `permissions`, and `share` routes each returned HTTP 401 without a session. This verifies local route registration and fail-closed authentication, not authenticated or live-service behavior.
+
 ### Remaining production blockers
 
 1. Apply `202610160001_clouven_drive_metadata.sql` to the dedicated Supabase development project, inspect constraints/policies, then exercise the endpoints against it.
