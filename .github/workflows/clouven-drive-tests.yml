@@ -9,7 +9,9 @@ on:
       - "assets/js/pages/clouven-drive.js"
       - "assets/css/clouven-drive.css"
       - "clouven-drive/index.html"
+      - "supabase/migrations/**"
       - "tests/clouven-drive-*.mjs"
+      - "tests/supabase-migration-layout.mjs"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/clouven-drive-tests.yml"
@@ -23,7 +25,9 @@ on:
       - "assets/js/pages/clouven-drive.js"
       - "assets/css/clouven-drive.css"
       - "clouven-drive/index.html"
+      - "supabase/migrations/**"
       - "tests/clouven-drive-*.mjs"
+      - "tests/supabase-migration-layout.mjs"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/clouven-drive-tests.yml"
@@ -50,6 +54,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Validate Supabase migration layout
+        run: npm run test:supabase-migration-layout
       - name: Check Drive page JavaScript syntax
         run: node --check assets/js/pages/clouven-drive.js
       - name: Test ACL and policy
