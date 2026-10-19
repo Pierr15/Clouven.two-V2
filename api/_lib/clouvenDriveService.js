@@ -58,7 +58,7 @@ async function resolveDriveItemAccessWith(db, actor, itemId, { require: required
   if (!access.visible) throw notFound();
   if (required === "edit" && !access.canEdit) throw apiError(403, "Kamu tidak memiliki izin untuk mengubah item ini.");
   if (required === "delete" && !access.canDelete) throw apiError(403, "Kamu hanya dapat menghapus item milikmu sendiri atau sebagai pengelola kelas.");
-  if (required === "manager" && !access.canManage) throw apiError(403, "Hanya pemilik folder, pengelola folder, atau pengelola kelas yang dapat mengatur pengelola folder.");
+  if (required === "manager" && !access.canManage) throw apiError(403, "Hanya pemilik item, pengelola folder, atau pengelola kelas yang dapat mengatur akses.");
   return { item, ancestors, access };
 }
 
