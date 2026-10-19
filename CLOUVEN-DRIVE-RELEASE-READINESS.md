@@ -141,7 +141,7 @@ The feature set from Stages 7-10 is now implemented in code on `feat/clouven-dri
 | 8. File/folder operations | **Implemented; deterministic tests pass locally** | Rename, move with cycle rejection, Trash, restore, and confirmed permanent delete. Non-empty folders must be emptied before permanent deletion. |
 | 9. Sharing and ACL management | **Implemented; deterministic tests pass locally** | Internal viewer/editor grants, folder managers, folder-grant inheritance to descendants, and confirmed external reader/writer permissions with idempotent grant/revoke. |
 | 10. UI integration | **Implemented; syntax-checked only** | Upload, download, rename, move picker, Trash view/restore/purge, and share dialogs are wired. No browser run was possible because Playwright is not installed here. |
-| 11. Integration/regression tests | **Partial** | All 14 Drive suites plus the migration-layout suite passed locally on 2026-10-19. Live Supabase/Google Drive and browser tests remain outstanding; the current CI run has not been observed. |
+| 11. Integration/regression tests | **CI verified; browser run pending** | All 14 Drive suites plus the migration-layout suite passed locally and in GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) for commit `f063f34`. Live Supabase/Google Drive tests and a browser run remain outstanding. |
 | 12. Readiness review | **Review complete; release blocked** | Production migration, deployment, and PR merge still require explicit approval and live validation. |
 
 ### Locally observed test results (2026-10-19)
@@ -168,13 +168,14 @@ The following commands were executed in this workspace and exited successfully:
 
 Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and the `items`, `overview`, `download`, `files`, `trash`, `permissions`, and `share` routes each returned HTTP 401 without a session. This verifies local route registration and fail-closed authentication, not authenticated or live-service behavior.
 
+GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) completed with `success` for commit `f063f34` on 2026-10-19. All workflow steps passed: dependency install, migration layout, page syntax, ACL/policy, API isolation, Google folder/mutation/upload helpers, and the upload, download, item, Trash, permissions, and external-share handlers.
+
 ### Remaining production blockers
 
 1. Apply `202610160001_clouven_drive_metadata.sql` to the dedicated Supabase development project, inspect constraints/policies, then exercise the endpoints against it.
 2. Confirm the server-side Google credential belongs to the intended service-owned Drive identity and run upload/download/move/Trash/share flows against a disposable test folder.
-3. Observe the expanded Drive CI workflow succeed for the commit containing these changes.
-4. Run browser regression coverage for the new controls once Playwright is available.
-5. Obtain explicit approval before applying the migration to production or deploying.
+3. Run browser regression coverage for the new controls once Playwright is available.
+4. Obtain explicit approval before applying the migration to production or deploying.
 
 ### Guardrails still honored
 
