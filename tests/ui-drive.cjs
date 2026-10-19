@@ -435,6 +435,13 @@ async function createPage(browser, base, options = {}) {
     const { page } = await createPage(browser, base, { items: [folder, file], viewport: { width: 360, height: 800 } });
     await page.locator(".drive-item-row").first().waitFor();
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    assert.equal(await page.locator(".drive-item-name").first().evaluate(element => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getClientRects().length;
+    }), 1, "short folder names must not break mid-word");
+    const actionHeights = await page.locator("#driveList .drive-icon-button").evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height));
+    assert.ok(actionHeights.length > 0 && actionHeights.every(height => height >= 44), "mobile action targets must be at least 44px");
     await page.screenshot({ path: path.join(out, "drive-mobile.png"), fullPage: true });
     await page.close();
   });

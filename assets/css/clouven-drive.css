@@ -141,8 +141,20 @@ button.drive-item-name:hover { color: var(--green); text-decoration: underline; 
   .drive-workspace-head { flex-direction: column; }
   .drive-toolbar { align-items: stretch; flex-wrap: wrap; }
   .drive-search { width: 100%; }
-  .drive-item-row { gap: 10px; padding: 11px; }
-  .drive-item-icon { flex-basis: 34px; width: 34px; height: 34px; }
+  .drive-item-row {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "itemIcon itemDetails itemOpen"
+      "itemActions itemActions itemActions";
+    align-items: center;
+    gap: 8px 10px;
+    padding: 12px;
+  }
+  .drive-item-icon { grid-area: itemIcon; flex-basis: 34px; width: 34px; height: 34px; }
+  .drive-item-details { grid-area: itemDetails; }
+  .drive-item-open { grid-area: itemOpen; flex-basis: 44px; width: 44px; height: 44px; }
+  .drive-item-actions { grid-area: itemActions; margin-left: 0; }
 }
 
 .drive-breadcrumb-home { padding: 0; border: 0; background: transparent; color: var(--green); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
@@ -182,8 +194,11 @@ button.drive-item-name:hover { color: var(--green); text-decoration: underline; 
 .drive-share-dialog .drive-action-button { min-height: 36px; padding: 6px 12px; font-size: 12px; }
 
 @media (max-width: 640px) {
-  .drive-item-actions { flex-wrap: nowrap; }
-  .drive-icon-button { flex-basis: 31px; width: 31px; height: 31px; font-size: 15px; }
+  .drive-item-actions { flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+  .drive-icon-button { flex-basis: 44px; width: 44px; height: 44px; font-size: 18px; }
+  .drive-share-row .drive-icon-button { flex-basis: 44px; width: 44px; height: 44px; font-size: 17px; }
+  .drive-share-dialog .drive-action-button { min-height: 44px; }
+  .drive-share-form select, .drive-share-form input[type="email"] { min-height: 44px; }
   .drive-share-form select { max-width: none; width: 100%; }
   .drive-share-form input[type="email"] { min-width: 0; width: 100%; }
 }
