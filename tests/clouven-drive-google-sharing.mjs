@@ -38,7 +38,7 @@ assert.deepEqual(await deleteDriveFile({ token: "t", driveFileId: "file_12345" }
 // External permissions send the expected payload and verify the response.
 next = ({ url, options }) => {
   assert.match(url, /\/files\/file_12345\/permissions/);
-  assert.match(url, /sendNotificationEmail=false/);
+  assert.match(url, /sendNotificationEmail=true/);
   const body = JSON.parse(options.body);
   return Response.json({ id: "permission-1", type: "user", role: body.role, emailAddress: body.emailAddress });
 };

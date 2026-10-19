@@ -144,7 +144,7 @@ export async function createDrivePermission({ token, driveFileId, email, role })
   if (!["reader", "writer"].includes(role)) {
     throw Object.assign(new Error("Peran berbagi tidak valid."), { status: 400, code: "INVALID_SHARE_ROLE" });
   }
-  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}/permissions?supportsAllDrives=true&sendNotificationEmail=false&fields=id,type,role,emailAddress,displayName`, {
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}/permissions?supportsAllDrives=true&sendNotificationEmail=true&fields=id,type,role,emailAddress,displayName`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({ type: "user", role, emailAddress: email }),
