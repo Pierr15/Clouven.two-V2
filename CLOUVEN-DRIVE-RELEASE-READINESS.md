@@ -140,8 +140,8 @@ The feature set from Stages 7-10 is now implemented in code on `feat/clouven-dri
 | 7. Upload and download | **Implemented; deterministic tests pass locally** | Raw `POST /files` with a 3 MiB server cap, journal reservation, Drive `appProperties` reconciliation, and metadata activation. Authenticated `GET /download` streams bytes server-side. |
 | 8. File/folder operations | **Implemented; deterministic tests pass locally** | Rename, move with cycle rejection, Trash, restore, and confirmed permanent delete. Non-empty folders must be emptied before permanent deletion. |
 | 9. Sharing and ACL management | **Implemented; deterministic tests pass locally** | Internal viewer/editor grants, folder managers, folder-grant inheritance to descendants, and confirmed external reader/writer permissions with idempotent grant/revoke. |
-| 10. UI integration | **Implemented; syntax-checked only** | Upload, download, rename, move picker, Trash view/restore/purge, and share dialogs are wired. No browser run was possible because Playwright is not installed here. |
-| 11. Integration/regression tests | **CI verified; browser run pending** | All 14 Drive suites plus the migration-layout suite passed locally and in GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) for commit `f063f34`. Live Supabase/Google Drive tests and a browser run remain outstanding. |
+| 10. UI integration | **Implemented; browser regression passed locally** | Upload, download, rename, move picker, Trash view/restore/purge, and share dialogs are wired. Six Playwright checks passed against mocked APIs on Edge; the test is committed as `tests/ui-drive.cjs`. It is not part of CI because the runner does not provision Playwright/Edge. |
+| 11. Integration/regression tests | **CI verified; browser run passed locally** | All 14 Drive suites plus the migration-layout suite passed locally and in GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) for commit `f063f34`. Live Supabase/Google Drive tests remain outstanding. |
 | 12. Readiness review | **Review complete; release blocked** | Production migration, deployment, and PR merge still require explicit approval and live validation. |
 
 ### Locally observed test results (2026-10-19)
@@ -170,12 +170,13 @@ Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and
 
 GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) completed with `success` for commit `f063f34` on 2026-10-19. All workflow steps passed: dependency install, migration layout, page syntax, ACL/policy, API isolation, Google folder/mutation/upload helpers, and the upload, download, item, Trash, permissions, and external-share handlers.
 
+Browser regression was executed locally on the same date with Playwright driving Edge against mocked APIs. Six checks passed: listing/quota/folder navigation, empty/error/retry/loading/search and XSS-safe names, rename/create/move/upload/download plus the 3 MiB client cap, internal and confirmed external sharing, Trash restore/purge with teacher restrictions, and mobile overflow. The test lives at `tests/ui-drive.cjs`; Playwright and Edge are not provisioned in CI, so it is not a CI step.
+
 ### Remaining production blockers
 
 1. Apply `202610160001_clouven_drive_metadata.sql` to the dedicated Supabase development project, inspect constraints/policies, then exercise the endpoints against it.
 2. Confirm the server-side Google credential belongs to the intended service-owned Drive identity and run upload/download/move/Trash/share flows against a disposable test folder.
-3. Run browser regression coverage for the new controls once Playwright is available.
-4. Obtain explicit approval before applying the migration to production or deploying.
+3. Obtain explicit approval before applying the migration to production or deploying.
 
 ### Guardrails still honored
 

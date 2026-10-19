@@ -39,9 +39,8 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 ## Remaining validation before release
 1. Apply the migration only to the dedicated Supabase development project and inspect the resulting schema/constraints.
 2. Point preview credentials at the service-owned Google Drive identity and test folder; exercise upload, download, move, Trash, restore, permanent delete, and permission grant/revoke.
-3. Observe the full Drive CI workflow succeed for this commit.
-4. Run browser regression coverage for the new upload, move, Trash, and share dialogs once Playwright is available.
-5. Only then apply the migration to production and deploy.
+3. Keep the Drive CI workflow green for the final code commit; it has already succeeded for `f063f34`.
+4. Only then apply the migration to production and deploy.
 
 
 ## API routing on the Vercel Hobby function budget
@@ -157,3 +156,5 @@ All commands below were run in this workspace and exited successfully on 2026-10
 Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and the `items`, `overview`, `download`, `files`, `trash`, `permissions`, and `share` routes each returned HTTP 401 without a session. This proves route registration and fail-closed authentication only; no authenticated/live data request was made.
 
 GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) completed with `success` for commit `f063f34`; every workflow step passed.
+
+Playwright browser regression (`tests/ui-drive.cjs`, Edge channel, mocked APIs) passed six checks on 2026-10-19: listing/quota/navigation, empty/error/retry/loading/search/XSS, rename/create/move/upload/download and the 3 MiB client cap, internal and confirmed external sharing, Trash restore/purge and teacher restrictions, and mobile overflow. Results and a mobile screenshot were written under `ui-test-results/` (gitignored).
