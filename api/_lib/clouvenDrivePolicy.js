@@ -1,6 +1,9 @@
-const STAFF_ROLES = new Set(["class_officer", "teacher", "developer"]);
-
-/** Separate access from the elevated Owner account role. */
+/**
+ * Staff-level Drive access: can open, create, edit, and delete every member's
+ * Drive items, regardless of who owns them. Owner is included so the elevated
+ * account can access and manage folder/file in each member's Drive.
+ */
+const STAFF_ROLES = new Set(["class_officer", "teacher", "developer", "owner"]);
 export function evaluateDriveItemAccess({ actor, item, ancestors = [], managers = [], grants = [] }) {
   if (!actor?.uid || !actor?.role || !item) {
     return { visible: false, canEdit: false, canDelete: false, canManage: false, reason: "missing_context" };

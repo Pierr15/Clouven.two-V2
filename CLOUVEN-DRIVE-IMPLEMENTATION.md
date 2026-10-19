@@ -29,7 +29,7 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - Keep `/penyimpanan/` intact.
 - Each item has an individual owner; shared folders may have additional managers.
 - Signed-in members can create/upload items subject to access to the destination folder.
-- Owners may rename, move, and delete their own items. Class Officer, Teacher, and Developer may manage other members' items.
+- Owners may rename, move, and delete their own items. Owner, Class Officer, Teacher, and Developer may access and manage other members' items (view, create, edit, delete).
 - File visibility is limited to owners, folder managers, staff, and explicitly authorized users.
 - External sharing is an explicit action by the item owner or staff and must have confirmation.
 - Google Drive is authoritative for physical file and Trash state. Supabase metadata records Clouven ownership and permissions.

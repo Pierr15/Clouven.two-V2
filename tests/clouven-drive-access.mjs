@@ -41,7 +41,12 @@ assert.deepEqual(evaluateDriveItemAccess({
 assert.deepEqual(evaluateDriveItemAccess({
   actor: { uid: "owner-role", role: "owner" }, item: anotherFile,
 }), {
-  visible: false, canEdit: false, canDelete: false, canManage: false, reason: "not_authorized",
+  visible: true, canEdit: true, canDelete: true, canManage: true, reason: "authorized",
+});
+assert.deepEqual(evaluateDriveItemAccess({
+  actor: { uid: "teacher-role", role: "teacher" }, item: anotherFile,
+}), {
+  visible: true, canEdit: true, canDelete: true, canManage: true, reason: "authorized",
 });
 assert.deepEqual(evaluateDriveItemAccess({
   actor: student, item: { id: "folder-1", item_type: "folder", owner_id: "student-b" },
@@ -49,4 +54,4 @@ assert.deepEqual(evaluateDriveItemAccess({
 }), {
   visible: true, canEdit: true, canDelete: false, canManage: true, reason: "authorized",
 });
-console.log("Clouven Drive access policy tests passed (9 assertions).");
+console.log("Clouven Drive access policy tests passed (10 assertions).");

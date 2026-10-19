@@ -37,3 +37,5 @@ Tambahan Revisi 12: semua anggota (Student, Class Officer, Teacher, Developer) b
 Hak ubah biodata tidak mencakup mengganti username atau menaikkan role sendiri. Reset password akun lain berada di Admin; ganti password sendiri berada di Profile.
 Ubah file mencakup nama, mata pelajaran, dan kategori. Hapus file memindahkannya ke Sampah Google Drive.
 Role diputuskan ulang pada setiap request API/RLS. Tampilan yang sudah terbuka mengikuti role baru setelah halaman dimuat ulang.
+
+Tambahan Clouven Drive: Owner dan Teacher dapat mengakses, membuat, mengedit, dan menghapus folder serta file di Drive setiap anggota. Class Officer dan Developer tetap memiliki hak staff yang sama; Student tetap terbatas pada item miliknya sendiri, item yang diwariskan folder miliknya, atau bagian yang diberikan padanya.
