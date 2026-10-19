@@ -43,7 +43,7 @@ globalThis.fetch=async(url,options={})=>{
  const id=u.pathname.split("/").pop();
  return Response.json(id==="class-file-123"?{id,name:"Materi.pdf",mimeType:"application/pdf",parents:[outside?"outside-root":"subject-folder"],trashed}:{id,mimeType:"application/vnd.google-apps.folder",parents:outside?[]:["class-root"]});
 };
-const endpoints=Object.fromEntries(await Promise.all([["self","profile/update"],["edit","admin/update-user"],["delete","admin/delete-user"],["reset","admin/reset-password"],["file","drive/manage"],["download","drive/download"],["create","admin/create-user"]].map(async([key,p])=>[key,(await import("../api/"+p+".js")).default])));
+const endpoints=Object.fromEntries(await Promise.all([["self","profile/update"],["edit","admin/update-user"],["delete","admin/delete-user"],["reset","admin/reset-password"],["file","drive/manage"],["download","drive/download"],["create","admin/create-user"]].map(async([key,p])=>[key,(await import("../server/api-handlers/"+p+".js")).default])));
 async function request(key,role,body={},method="POST"){
  let status=200,result;const res={status(code){status=code;return this;},json(v){result=v;return this;},setHeader(){},send(v){result=v;return this;}};
  await endpoints[key]({method,headers:role==="guest"?{}:{authorization:"Bearer "+role},body,query:{id:"class-file-123"}},res);return {status,result};
