@@ -141,7 +141,7 @@ The feature set from Stages 7-10 is now implemented in code on `feat/clouven-dri
 | 8. File/folder operations | **Implemented; deterministic tests pass locally** | Rename, move with cycle rejection, Trash, restore, and confirmed permanent delete. Non-empty folders must be emptied before permanent deletion. |
 | 9. Sharing and ACL management | **Implemented; deterministic tests pass locally** | Internal viewer/editor grants, folder managers, folder-grant inheritance to descendants, and confirmed external reader/writer permissions with idempotent grant/revoke. |
 | 10. UI integration | **Implemented; browser regression passed locally** | Upload, download, rename, move picker, Trash view/restore/purge, and share dialogs are wired. Six Playwright checks passed against mocked APIs on Edge; the test is committed as `tests/ui-drive.cjs`. It is not part of CI because the runner does not provision Playwright/Edge. |
-| 11. Integration/regression tests | **CI verified; browser run passed locally** | All 14 Drive suites plus the migration-layout suite passed locally and in GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) for commit `f063f34`. Live Supabase/Google Drive tests remain outstanding. |
+| 11. Integration/regression tests | **CI verified; browser run passed locally** | All 14 Drive suites plus the migration-layout suite passed locally and in GitHub Actions run [39247422518](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39247422518) for commit `59e9f29`. Live Supabase/Google Drive tests remain outstanding. |
 | 12. Readiness review | **Review complete; release blocked** | Production migration, deployment, and PR merge still require explicit approval and live validation. |
 
 ### Locally observed test results (2026-10-19)
@@ -168,7 +168,7 @@ The following commands were executed in this workspace and exited successfully:
 
 Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and the `items`, `overview`, `download`, `files`, `trash`, `permissions`, and `share` routes each returned HTTP 401 without a session. This verifies local route registration and fail-closed authentication, not authenticated or live-service behavior.
 
-GitHub Actions run [39245813605](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39245813605) completed with `success` for commit `f063f34` on 2026-10-19. All workflow steps passed: dependency install, migration layout, page syntax, ACL/policy, API isolation, Google folder/mutation/upload helpers, and the upload, download, item, Trash, permissions, and external-share handlers.
+GitHub Actions run [39247422518](https://github.com/Pierr15/Clouven.two-V2/actions/runs/39247422518) completed with `success` for commit `59e9f29` on 2026-10-19. All workflow steps passed: dependency install, migration layout, page syntax, ACL/policy, API isolation, Google folder/mutation/upload helpers, and the upload, download, item, Trash, permissions, and external-share handlers.
 
 Browser regression was executed locally on the same date with Playwright driving Edge against mocked APIs. Six checks passed: listing/quota/folder navigation, empty/error/retry/loading/search and XSS-safe names, rename/create/move/upload/download plus the 3 MiB client cap, internal and confirmed external sharing, Trash restore/purge with teacher restrictions, and mobile overflow. The test lives at `tests/ui-drive.cjs`; Playwright and Edge are not provisioned in CI, so it is not a CI step.
 
