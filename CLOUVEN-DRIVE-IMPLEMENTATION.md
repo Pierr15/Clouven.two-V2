@@ -16,10 +16,11 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - Review-only metadata migration defining Drive item ownership, folder managers, explicit grants, and an operation journal.
 - Pure authorization policy with tests for ownership, grants, staff access, and inherited folder ownership.
 - Read-only server-side list/search and overview endpoints with bounded scans and server-side ACL filtering.
+- Overview quota reading from Google Drive `about.get` (`storageQuota`) via the existing refresh-token, cached for 5 minutes and falling back to `null` when Google is unreachable.
 
 ### Not implemented yet
 - Database-backed integration tests against the actual Supabase schema.
-- Upload/download, rename/move, Trash/restore, quota lookup, and explicit external sharing.
+- Upload/download, rename/move, Trash/restore, and explicit external sharing.
 - Google Drive external sharing confirmation and permission reconciliation.
 - Trash synchronization and partial-operation recovery.
 - Automated tests for cross-service failure handling and database-backed integration paths.
@@ -98,7 +99,7 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 ## Read-only endpoint status
 
 - Added `GET /api/clouven-drive/items` for bounded listing, optional folder scope, and name search. Every candidate is checked against server-side ownership and ACL metadata before serialization. Raw table counts are never returned. Search scans are capped and marked `truncated`.
-- Added `GET /api/clouven-drive/overview`. Counts are marked `partial` when the bounded visible-item sample may be incomplete; quota stays `null` until verified through a trusted Google Drive integration.
+- Added `GET /api/clouven-drive/overview`. Counts are marked `partial` when the bounded visible-item sample may be incomplete; quota is read from Google Drive `about.get` (`storageQuota`) with the existing service refresh-token, cached for 5 minutes, and falls back to `null` (rendered as "Belum tersedia") when Google is unreachable.
 - Both routes are registered in the local preview server. Existing `/api/drive/*` paths are untouched.
 - Endpoints depend on the review-only metadata schema. No live Drive operation is enabled by this slice.
 

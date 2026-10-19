@@ -16,6 +16,7 @@ const breadcrumb = document.querySelector(".drive-breadcrumb-current");
 const breadcrumbNote = document.querySelector(".drive-breadcrumb-note");
 const statValues = document.querySelectorAll(".drive-stat-value");
 const statDescriptions = document.querySelectorAll(".drive-stat-card p");
+const quotaBar = document.querySelector(".drive-stat-track span");
 let parentId = null;
 let searchTimer = null;
 let activeController = null;
@@ -114,6 +115,38 @@ function renderItems(items, query, truncated) {
   if (truncated) list.append(node("p", "drive-toolbar-hint", "Daftar dibatasi untuk menjaga respons tetap ringan."));
 }
 
+function formatBytes(bytes) {
+  const value = Number(bytes) || 0;
+  if (value <= 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const step = Math.min(Math.floor(Math.log(value) / Math.log(1024)), units.length - 1);
+  const scaled = value / 1024 ** step;
+  const digits = step === 0 ? 0 : scaled >= 10 ? 1 : 2;
+  return scaled.toLocaleString("id-ID", { maximumFractionDigits: digits }) + " " + units[step];
+}
+
+function renderOverviewQuota(quota) {
+  const usage = Number(quota?.usage) || 0;
+  const limit = Number(quota?.limit) || 0;
+  if (limit > 0) {
+    const percent = Math.min(100, (usage / limit) * 100);
+    const percentLabel = Math.round(percent);
+    if (statValues[0]) statValues[0].textContent = `${formatBytes(usage)} dari ${formatBytes(limit)}`;
+    if (statDescriptions[0]) statDescriptions[0].textContent = percentLabel < 1
+      ? "Terpakai di bawah 1% dari kuota akun Google."
+      : `Terpakai sekitar ${percentLabel}% dari kuota akun Google.`;
+    if (quotaBar) quotaBar.style.width = percent + "%";
+  } else if (usage > 0) {
+    if (statValues[0]) statValues[0].textContent = `${formatBytes(usage)} terpakai`;
+    if (statDescriptions[0]) statDescriptions[0].textContent = "Kuota akun Google tidak membatasi penyimpanan.";
+    if (quotaBar) quotaBar.style.width = "0%";
+  } else {
+    if (statValues[0]) statValues[0].textContent = "Belum tersedia";
+    if (statDescriptions[0]) statDescriptions[0].textContent = "Kuota Google Drive belum dapat dibaca saat ini.";
+    if (quotaBar) quotaBar.style.width = "0%";
+  }
+}
+
 async function loadOverview() {
   try {
     const response = await fetch("/api/clouven-drive/overview", {
@@ -123,13 +156,14 @@ async function loadOverview() {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error("Ringkasan belum tersedia.");
     const counts = data.counts || {};
-    if (statValues[0]) statValues[0].textContent = "Belum tersedia";
-    if (statDescriptions[0]) statDescriptions[0].textContent = "Kuota Google Drive belum disediakan oleh API.";
+    renderOverviewQuota(data.quota);
     if (statValues[1]) statValues[1].textContent = (Number(counts.files) || 0) + " file · " + (Number(counts.folders) || 0) + " folder";
     if (statDescriptions[1]) statDescriptions[1].textContent = data.partial
       ? "Ringkasan parsial dari item yang dapat diakses."
       : "Jumlah item yang dapat diakses akunmu.";
   } catch {
+    if (statValues[0]) statValues[0].textContent = "Belum tersedia";
+    if (statDescriptions[0]) statDescriptions[0].textContent = "Kuota Google Drive belum dapat dibaca saat ini.";
     if (statValues[1]) statValues[1].textContent = "Belum tersedia";
     if (statDescriptions[1]) statDescriptions[1].textContent = "Ringkasan metadata tidak dapat dimuat saat ini.";
   }

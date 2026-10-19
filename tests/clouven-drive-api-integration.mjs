@@ -60,4 +60,25 @@ assert.equal((await service.listVisibleDriveItems(actor, { parentId: folderId })
 await assert.rejects(() => service.resolveDriveItemAccess(actor, cycleA), e => e.status === 409);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { page: 11 }), e => e.status === 400);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { query: "Notes", page: 2 }), e => e.status === 400);
-console.log("Clouven Drive API isolation tests passed (7 assertions).");
+
+const overview = await service.getVisibleDriveOverview(actor);
+assert.equal(overview.counts.files, 1);
+assert.equal(overview.counts.folders, 1);
+assert.equal(overview.quota, null);
+
+let quotaCalls = 0;
+const quotaService = createDriveAccessService(client(data), {
+  getQuota: () => {
+    quotaCalls += 1;
+    return { usage: 1073741824, limit: 16106127360 };
+  },
+});
+const quotaOverview = await quotaService.getVisibleDriveOverview(actor);
+assert.deepEqual(quotaOverview.quota, { usage: 1073741824, limit: 16106127360 });
+assert.equal(quotaCalls, 1);
+
+const failingQuotaService = createDriveAccessService(client(data), {
+  getQuota: () => { throw new Error("Google down"); },
+});
+assert.equal((await failingQuotaService.getVisibleDriveOverview(actor)).quota, null);
+console.log("Clouven Drive API isolation tests passed (14 assertions).");

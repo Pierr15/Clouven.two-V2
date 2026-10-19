@@ -128,7 +128,7 @@ async function listVisibleDriveItemsWith(db, resolveAccess, actor, { parentId = 
 
 
 /** Factory enables deterministic integration-style tests with a fake PostgREST client. */
-export function createDriveAccessService(db) {
+export function createDriveAccessService(db, { getQuota } = {}) {
   const resolveAccess = (actor, itemId, options) => resolveDriveItemAccessWith(db, actor, itemId, options);
   return {
     resolveDriveItemAccess: resolveAccess,
@@ -137,7 +137,16 @@ export function createDriveAccessService(db) {
       const { items, hasMore, truncated } = await listVisibleDriveItemsWith(db, resolveAccess, actor, { page: 1, pageSize: 50 });
       const counts = { files: 0, folders: 0 };
       for (const item of items) counts[item.item_type === "folder" ? "folders" : "files"] += 1;
-      return { counts, partial: hasMore || truncated, quota: null };
+      // Kuota bersifat pelengkap: kegagalan Google tidak boleh menggagalkan ringkasan metadata.
+      let quota = null;
+      if (getQuota) {
+        try {
+          quota = await getQuota();
+        } catch {
+          quota = null;
+        }
+      }
+      return { counts, partial: hasMore || truncated, quota };
     },
   };
 }
