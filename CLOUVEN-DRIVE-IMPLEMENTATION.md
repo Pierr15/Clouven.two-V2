@@ -1,6 +1,6 @@
 # Clouven Drive implementation notes
 
-## Current slice: UI foundation, authorization, and read-only API
+## Current slice: complete Drive feature set (release candidate)
 
 This branch adds a separate authenticated Clouven Drive page and a shortcut from the existing `/penyimpanan/` page. It does not replace or modify the legacy Storage experience.
 
@@ -8,22 +8,22 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - New `/clouven-drive/` page with responsive layout.
 - Dedicated CSS and page module using the existing Supabase session gate and sidebar shell.
 - Compact shortcut from Storage; upload-capable roles see it beside `Unggah file`, while other signed-in roles retain it in the page header.
-- Explicit foundation notice, unavailable quota/count states, and disabled file-operation controls.
-- Local preview route registration.
+- Real upload, download, rename, move, Trash/restore, permanent delete, internal sharing, folder-manager assignment, and confirmed external sharing.
 - No sample files, mock quota, or fake-success actions.
 
-### Implemented in this branch
-- Review-only metadata migration defining Drive item ownership, folder managers, explicit grants, and an operation journal.
-- Pure authorization policy with tests for ownership, grants, staff access, and inherited folder ownership.
-- Read-only server-side list/search and overview endpoints with bounded scans and server-side ACL filtering.
-- Overview quota reading from Google Drive `about.get` (`storageQuota`) via the existing refresh-token, cached for 5 minutes and falling back to `null` when Google is unreachable.
+### Implemented end-to-end in code
+- Raw-byte file upload (3 MiB server cap) and authenticated download; Google credentials stay server-side.
+- Rename/move with folder-cycle checks plus Trash, restore, and owner/Owner-role permanent delete.
+- Internal viewer/editor grants and folder managers; grants on a folder inherit to descendants.
+- Explicit external Google Drive sharing (reader/writer) with confirmation, listing, and revocation.
+- Operation journal (`drive_operations`) with UUID idempotency keys, Drive `appProperties` lookup, and reconciliation for interrupted uploads.
+- Owner, Teacher, Class Officer, and Developer have staff-level access to every member's items.
 
-### Not implemented yet
-- Database-backed integration tests against the actual Supabase schema.
-- Upload/download, rename/move, Trash/restore, and explicit external sharing.
-- Google Drive external sharing confirmation and permission reconciliation.
-- Trash synchronization and partial-operation recovery.
-- Automated tests for cross-service failure handling and database-backed integration paths.
+### Still pending before production
+- Live validation of the metadata migration against a disposable Supabase project.
+- Live Google Drive credential/identity validation and cross-service recovery exercises.
+- A completed CI run for the current commit.
+- Browser regression automation; Playwright is not installed in this environment, so the new UI has not been browser-executed here.
 
 ## Agreed product rules
 - Keep `/penyimpanan/` intact.
@@ -36,35 +36,30 @@ This branch adds a separate authenticated Clouven Drive page and a shortcut from
 - When deleting a shared folder, preserve descendants the requester is not allowed to delete, moving them to a safe authorized location.
 - Do not apply a database migration or deploy as part of this UI slice.
 
-## Next implementation phase
-1. Review the read-only API contract and correct any issues found during local integration testing.
-2. Review the metadata migration against the current Supabase schema and deployment conventions. Do not apply it automatically.
-3. Add integration tests for IDOR, inherited folder access, inaccessible parent folders, folder cycles, and partial database failures.
-4. Integration-test the new folder endpoint against a disposable Supabase project and Google Drive test folder before applying the migration or enabling the UI.
-5. Implement upload/download, rename/move, Trash/restore, quota, and explicit external sharing only after the shared authorization layer is integration-tested.
+## Remaining validation before release
+1. Apply the migration only to the dedicated Supabase development project and inspect the resulting schema/constraints.
+2. Point preview credentials at the service-owned Google Drive identity and test folder; exercise upload, download, move, Trash, restore, permanent delete, and permission grant/revoke.
+3. Observe the full Drive CI workflow succeed for this commit.
+4. Run browser regression coverage for the new upload, move, Trash, and share dialogs once Playwright is available.
+5. Only then apply the migration to production and deploy.
 
 
-## API budget: maximum 12 endpoints
+## API routing on the Vercel Hobby function budget
 
-The initial Drive feature is designed around **11 endpoint routes**. Each route may support multiple validated HTTP methods/actions where that keeps authorization and resource handling coherent. This count is for Clouven Drive-specific routes; it does not create duplicate aliases or change the existing `/api/drive/*` routes until compatibility is audited.
+All Clouven Drive actions are served by one nested catch-all function, `api/clouven-drive/[...action].js`; the former per-action stubs were folded into it to stay well below the 12-function Hobby limit. Vercel supplies one action segment, and the router parses JSON bodies itself except for the raw `/files` upload.
 
-| # | Proposed route | Responsibility |
-|---:|---|---|
-| 1 | `GET /api/clouven-drive/items` | List/search visible items; folder contents, filters, pagination |
-| 2 | `POST /api/clouven-drive/folders` | Create a folder in an authorized destination |
-| 3 | `POST /api/clouven-drive/upload-sessions` | Start a resumable upload and bind it to an authorized parent |
-| 4 | `POST /api/clouven-drive/upload-sessions/:id/complete` | Verify uploaded Drive object and commit metadata |
-| 5 | `GET /api/clouven-drive/items/:id/content` | Authorized preview/download stream |
-| 6 | `PATCH /api/clouven-drive/items/:id` | Rename or move an item; validate destination and prevent folder cycles |
-| 7 | `DELETE /api/clouven-drive/items/:id` | Move an item to Google Drive Trash after authorization |
-| 8 | `GET /api/clouven-drive/trash` | List only Trash items the requester is allowed to see/manage |
-| 9 | `POST /api/clouven-drive/trash/:id/restore` | Restore an item and reconcile its metadata/permissions |
-| 10 | `DELETE /api/clouven-drive/trash/:id` | Permanently delete an item after an explicit confirmation |
-| 11 | `GET /api/clouven-drive/overview` | Return verified Drive quota and authorized class item counts |
+| Route | Methods | Responsibility |
+|---|---|---|
+| `/api/clouven-drive/items` | `GET`, `PATCH` | List/search visible items (`view=trash` for Trash) and rename/move with destination ACL and cycle checks |
+| `/api/clouven-drive/folders` | `POST` | Create a folder in an authorized destination |
+| `/api/clouven-drive/files` | `POST` | Raw-byte upload, 3 MiB cap, journaled and reconciled |
+| `/api/clouven-drive/download` | `GET` | Authorized file-byte download; token never reaches the browser |
+| `/api/clouven-drive/trash` | `POST` | `trash`, `restore`, or confirmed `delete` |
+| `/api/clouven-drive/permissions` | `GET`, `POST`, `DELETE` | List/add/remove internal grants and folder managers |
+| `/api/clouven-drive/share` | `GET`, `POST`, `DELETE` | List/grant/revoke confirmed external Google Drive permissions |
+| `/api/clouven-drive/overview` | `GET` | Authorized item counts and Google Drive quota |
 
-### Sharing and folder managers without extra routes
-
-Explicit sharing and folder-manager assignment can be represented as validated sub-actions of `PATCH /api/clouven-drive/items/:id` (for example, `action: "set-manager"` or `action: "share-external"`). These actions must be separately authorized, require explicit confirmation for external sharing, validate target identities and scopes, and reconcile Google Drive permissions with Clouven metadata. They must never be inferred from a client-supplied role or a file ID alone.
+Every mutation requires a UUID `Idempotency-Key`. The journal state machine is `pending → running → succeeded`, with `failed` or `needs_reconciliation` for partial cross-service operations. Replays validate actor, operation type, and a deterministic payload comparison before returning stored metadata or re-running an idempotent Drive mutation.
 
 ### Mandatory implementation guardrails
 
@@ -124,3 +119,37 @@ Explicit sharing and folder-manager assignment can be represented as validated s
 - Added `api/_lib/clouvenDriveGoogle.js` and `tests/clouven-drive-folder-google.mjs` to isolate and test the Google Drive idempotency helper.
 - Run `npm run test:clouven-drive-folder` locally for the helper test. It does not call Google services because it stubs `fetch`.
 - This endpoint depends on the review-only metadata migration and Google Drive environment variables. It has not been tested against a live Supabase database or Google Drive account. Do not enable the UI or apply the migration until that validation is complete.
+
+## Full feature implementation (2026-10-19)
+
+- Added `api/_lib/clouvenDriveJournal.js` with UUID idempotency parsing, deterministic payload comparison, and `pending/running/succeeded/failed/needs_reconciliation` transitions.
+- Added `POST /api/clouven-drive/files`: authenticates the member, verifies destination edit access, validates name/MIME/1 byte–3 MiB, reserves the journal and metadata row, uploads raw bytes through multipart Drive, verifies the returned ID/name/MIME/size, then activates the row. Interrupted uploads stay `needs_reconciliation` and retries look up the Drive `appProperties` operation key.
+- Added `GET /api/clouven-drive/download`: resolves item visibility server-side, downloads with the server token, and streams the bytes with `private, no-store` and an attachment filename. The Google token is never serialized into a response.
+- Extended `PATCH /api/clouven-drive/items` for rename and move. Moves validate destination edit access, reject self/descendant moves, and use explicit old/new Google parent IDs.
+- Added `POST /api/clouven-drive/trash` for Trash, restore, and permanent delete. Permanent delete requires explicit `confirm: true`, owner or Owner role, and an empty folder. Non-empty folders must be emptied first so no unauthorized descendant is recursively destroyed.
+- Added `GET/POST/DELETE /api/clouven-drive/permissions` for viewer/editor grants and folder managers. Grants on a folder now inherit to descendants through the resolved folder chain.
+- Added `GET/POST/DELETE /api/clouven-drive/share` for external reader/writer Google permissions. Every grant requires `confirm: true`; retries detect an existing email/role permission before creating another one; revocation is idempotent when Google already reports the permission missing.
+- Wired the Drive page with upload, download, rename, move (folder browser), Trash/restore/permanent delete, internal sharing, external sharing, and Trash view controls. Item names and responses are written with DOM text nodes.
+- Hosted all Drive routes in `api/clouven-drive/[...action].js`; the local preview server maps each action directly. Legacy `/penyimpanan/` and `/api/drive/*` remain untouched.
+
+### Locally observed verification
+
+All commands below were run in this workspace and exited successfully on 2026-10-19:
+
+- `test:clouven-drive-access` — 10 assertions
+- `test:clouven-drive-api` — 18 assertions
+- `test:clouven-drive-folder` — 7 assertions
+- `test:clouven-drive-folder-handler` — 5 scenarios
+- `test:clouven-drive-upload` — 9 assertions
+- `test:clouven-drive-mutations` — 7 assertions
+- `test:clouven-drive-google-upload` — 6 assertions
+- `test:clouven-drive-google-sharing` — 12 assertions
+- `test:clouven-drive-files-handler` - 11 scenarios
+- `test:clouven-drive-download-handler` — 6 scenarios
+- `test:clouven-drive-items-handler` — 7 scenarios
+- `test:clouven-drive-trash-handler` — 8 scenarios
+- `test:clouven-drive-permissions-handler` — 7 scenarios
+- `test:clouven-drive-share-handler` — 6 scenarios
+- `test:supabase-migration-layout` — 12 canonical migrations
+
+`node --check` also passed for the new handlers, router, page module, and preview server. These are deterministic mocked/isolated tests: they do not prove live Supabase or Google Drive compatibility, and the browser UI was not executed because Playwright is unavailable in this environment.

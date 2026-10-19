@@ -130,3 +130,54 @@ No Supabase development credentials or Google Drive test identity were available
 - Current environment prerequisites confirmed by the project owner: a Supabase account exists but a separate development project has not been created; Google Drive exists but server authentication is not configured; migration status is unknown. No credentials were requested or committed.
 - Next safe sequence: create a separate Supabase development project; inspect and apply the migration only there after reviewing its SQL; create a dedicated server-owned Google Drive identity and test root folder; store credentials only in the development/preview environment secret store; then implement and test the HTTP handler against those isolated services. Production migration/deployment and PR merge remain prohibited for this continuation.
 - The new CI run is pending verification until GitHub Actions reports a completed result. This addition alone does not complete Stage 7.
+
+## Implementation completion candidate (2026-10-19)
+
+The feature set from Stages 7-10 is now implemented in code on `feat/clouven-drive-foundation`. This section supersedes the earlier "not implemented" status lines; the production disposition remains **NOT READY** until the live checks below are completed.
+
+| Stage | Current status | Evidence / limitation |
+|---|---|---|
+| 7. Upload and download | **Implemented; deterministic tests pass locally** | Raw `POST /files` with a 3 MiB server cap, journal reservation, Drive `appProperties` reconciliation, and metadata activation. Authenticated `GET /download` streams bytes server-side. |
+| 8. File/folder operations | **Implemented; deterministic tests pass locally** | Rename, move with cycle rejection, Trash, restore, and confirmed permanent delete. Non-empty folders must be emptied before permanent deletion. |
+| 9. Sharing and ACL management | **Implemented; deterministic tests pass locally** | Internal viewer/editor grants, folder managers, folder-grant inheritance to descendants, and confirmed external reader/writer permissions with idempotent grant/revoke. |
+| 10. UI integration | **Implemented; syntax-checked only** | Upload, download, rename, move picker, Trash view/restore/purge, and share dialogs are wired. No browser run was possible because Playwright is not installed here. |
+| 11. Integration/regression tests | **Partial** | All 14 Drive suites plus the migration-layout suite passed locally on 2026-10-19. Live Supabase/Google Drive and browser tests remain outstanding; the current CI run has not been observed. |
+| 12. Readiness review | **Review complete; release blocked** | Production migration, deployment, and PR merge still require explicit approval and live validation. |
+
+### Locally observed test results (2026-10-19)
+
+The following commands were executed in this workspace and exited successfully:
+
+- `npm run test:clouven-drive-access` — 10 assertions
+- `npm run test:clouven-drive-api` — 18 assertions, including folder-grant inheritance
+- `npm run test:clouven-drive-folder` — 7 assertions
+- `npm run test:clouven-drive-folder-handler` — 5 scenarios
+- `npm run test:clouven-drive-upload` — 9 assertions
+- `npm run test:clouven-drive-mutations` — 7 assertions
+- `npm run test:clouven-drive-google-upload` — 6 assertions
+- `npm run test:clouven-drive-google-sharing` — 12 assertions
+- `npm run test:clouven-drive-files-handler` — 11 scenarios
+- `npm run test:clouven-drive-download-handler` — 6 scenarios
+- `npm run test:clouven-drive-items-handler` — 7 scenarios
+- `npm run test:clouven-drive-trash-handler` — 8 scenarios
+- `npm run test:clouven-drive-permissions-handler` — 7 scenarios
+- `npm run test:clouven-drive-share-handler` — 6 scenarios
+- `npm run test:supabase-migration-layout` — 12 canonical migrations
+
+`node --check` passed for the router, all new handlers, the page module, and the preview server. These results are deterministic mocked/isolated tests, not live-service proof.
+
+### Remaining production blockers
+
+1. Apply `202610160001_clouven_drive_metadata.sql` to the dedicated Supabase development project, inspect constraints/policies, then exercise the endpoints against it.
+2. Confirm the server-side Google credential belongs to the intended service-owned Drive identity and run upload/download/move/Trash/share flows against a disposable test folder.
+3. Observe the expanded Drive CI workflow succeed for the commit containing these changes.
+4. Run browser regression coverage for the new controls once Playwright is available.
+5. Obtain explicit approval before applying the migration to production or deploying.
+
+### Guardrails still honored
+
+- No migration was applied to any database.
+- No production secrets or environment configuration were changed.
+- No deployment or merge was performed.
+- Legacy `/penyimpanan/` and `/api/drive/*` were not edited.
+- Google tokens remain server-side; browser code only receives file bytes through the authenticated download endpoint.

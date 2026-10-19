@@ -13,10 +13,10 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/app.css?v=file-action-hover-2" />
     <link rel="stylesheet" href="/assets/css/theme.css?v=avatar-source-5" />
-    <link rel="stylesheet" href="/assets/css/clouven-drive.css?v=dark-tuning-2" />
+    <link rel="stylesheet" href="/assets/css/clouven-drive.css?v=full-drive-1" />
     <link rel="icon" href="/assets/images/favicon.svg?v=c2-1" type="image/svg+xml" />
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script type="module" src="/assets/js/pages/clouven-drive.js?v=metadata-ui-1"></script>
+    <script type="module" src="/assets/js/pages/clouven-drive.js?v=full-drive-1"></script>
     <script type="module" src="/assets/js/form-controls.js?v=forms-12"></script>
     <link rel="stylesheet" href="/assets/css/loading.css?v=startup-transition-3" />
   </head>
@@ -40,10 +40,10 @@
         <section class="drive-foundation-notice" role="status" aria-live="polite">
           <span class="drive-notice-icon"><i class="ti ti-shield-lock" aria-hidden="true"></i></span>
           <div>
-            <strong>Fondasi metadata terhubung sebagian</strong>
-            <p>Daftar dan pencarian menggunakan metadata dengan pemeriksaan akses server. Upload, unduh, operasi file, Sampah, dan berbagi tetap nonaktif sampai alur amannya tersedia.</p>
+            <strong>Clouven Drive aktif</strong>
+            <p>Unggah, unduh, ubah, Sampah, dan berbagi berjalan melalui pemeriksaan akses server. File disimpan pada Drive kelas; token Google tidak pernah dikirim ke browser.</p>
           </div>
-          <span class="drive-stage-pill">Metadata · bertahap</span>
+          <span class="drive-stage-pill">Drive · aktif</span>
         </section>
 
         <section class="drive-overview" aria-label="Ringkasan penyimpanan">
@@ -69,8 +69,9 @@
               <p class="drive-muted">Telusuri file pribadi dan folder yang dibagikan kepadamu.</p>
             </div>
             <div class="drive-primary-actions">
-              <button class="button button-light drive-action-button" type="button" disabled title="Belum tersedia sampai API aman siap"><i class="ti ti-folder-plus" aria-hidden="true"></i> Folder baru</button>
-              <button class="button button-dark drive-action-button" type="button" disabled title="Belum tersedia sampai API aman siap"><i class="ti ti-upload" aria-hidden="true"></i> Upload</button>
+              <button class="button button-light drive-action-button" type="button" id="driveNewFolder" title="Buat folder pada lokasi saat ini"><i class="ti ti-folder-plus" aria-hidden="true"></i> Folder baru</button>
+              <button class="button button-dark drive-action-button" type="button" id="driveUpload" title="Unggah file maksimal 3 MiB ke lokasi saat ini"><i class="ti ti-upload" aria-hidden="true"></i> Upload</button>
+              <button class="button button-light drive-action-button" type="button" id="driveTrashToggle" aria-pressed="false" title="Lihat Sampah"><i class="ti ti-trash" aria-hidden="true"></i> Sampah</button>
             </div>
           </div>
 
@@ -106,7 +107,7 @@
 
         <footer class="drive-security-note">
           <i class="ti ti-shield-check" aria-hidden="true"></i>
-          <p><strong>Privasi sejak awal.</strong> File hanya akan ditampilkan jika izin pemilik, pengelola folder, atau izin eksplisit mengizinkannya. Akses eksternal akan memerlukan konfirmasi terpisah.</p>
+          <p><strong>Privasi sejak awal.</strong> File hanya ditampilkan jika izin pemilik, pengelola folder, atau izin eksplisit mengizinkannya. Owner, Teacher, Class Officer, dan Developer dapat mengelola file anggota; berbagi eksternal selalu memerlukan konfirmasi.</p>
         </footer>
       </section>
     </main>
