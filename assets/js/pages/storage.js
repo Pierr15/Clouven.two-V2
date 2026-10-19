@@ -11,7 +11,12 @@ import { escapeHTML, showToast } from "../utils.js";
 const session=await requireAuth();if(!session)throw new Error("redirect");
 await bootShell("storage");
 const canUpload=can(session.role,"upload");
-document.querySelector("#uploadCard").hidden=!canUpload;
+const uploadCard = document.querySelector("#uploadCard");
+uploadCard.hidden=!canUpload;
+const driveShortcut = document.querySelector(".drive-shortcut-button");
+// Keep the shortcut available to every signed-in member. For upload-capable roles,
+// place it beside the existing upload action; for other roles, leave it in the header.
+if (canUpload) document.querySelector("#uploadForm .form-actions").append(driveShortcut);
 let resources=[];
 const listState = createLoadState("resources", "Daftar file", render);
 function sizeText(bytes=0){const n=Number(bytes)||0;if(n<1024)return `${n} B`;if(n<1024**2)return `${(n/1024).toFixed(1)} KB`;return `${(n/1024**2).toFixed(1)} MB`;}

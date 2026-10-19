@@ -3928,3 +3928,32 @@ input[type="number"] {
   .resource-row .row-actions { gap: 5px; }
   .resource-row .file-action-button { width: 36px; height: 36px; flex-basis: 36px; }
 }
+
+
+/* Clouven Drive shortcut on the legacy Storage page. */
+.drive-shortcut-button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, color .18s ease;
+}
+.drive-shortcut-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(40, 75, 61, .12);
+}
+.page-header > .drive-shortcut-button {
+  align-self: center;
+}
+@media (max-width: 760px) {
+  .page-header > .drive-shortcut-button {
+    margin-left: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drive-shortcut-button { transition: none; }
+  .drive-shortcut-button:hover { transform: none; }
+}

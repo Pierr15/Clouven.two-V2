@@ -57,7 +57,6 @@ begin
 
   end loop;
 
-  -- FIX: safeupdate membutuhkan WHERE
   delete from public.subject_teachers
   where subject is not null;
 
