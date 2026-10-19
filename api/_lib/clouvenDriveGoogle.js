@@ -93,3 +93,90 @@ export async function uploadDriveFileForOperation({ token, operationKey, name, m
   }
   return data;
 }
+
+const DRIVE_ID = /^[A-Za-z0-9_-]{5,200}$/;
+
+function validateDriveId(value) {
+  if (typeof value !== "string" || !DRIVE_ID.test(value)) {
+    throw Object.assign(new Error("ID Google Drive tidak valid."), { status: 400, code: "INVALID_DRIVE_FILE_ID" });
+  }
+  return value;
+}
+
+/** Reads file bytes server-side; callers must never forward the access token. */
+export async function downloadDriveFileBytes({ token, driveFileId }) {
+  validateDriveId(driveFileId);
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}?alt=media&supportsAllDrives=true`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!response.ok) {
+    let data = {};
+    try { data = await response.json(); } catch {}
+    if (response.status === 404) {
+      throw Object.assign(new Error("File tidak ditemukan di Google Drive."), { status: 404, code: "GOOGLE_FILE_NOT_FOUND" });
+    }
+    throw driveError(response, data, "Gagal mengunduh file dari Google Drive.");
+  }
+  return Buffer.from(await response.arrayBuffer());
+}
+
+/** Permanent deletion is only safe after the caller verified owner/role and empty folders. */
+export async function deleteDriveFile({ token, driveFileId }) {
+  validateDriveId(driveFileId);
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}?supportsAllDrives=true`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (response.status === 404) return { id: driveFileId, alreadyDeleted: true };
+  if (!response.ok) {
+    let data = {};
+    try { data = await response.json(); } catch {}
+    throw driveError(response, data, "Gagal menghapus file dari Google Drive.");
+  }
+  return { id: driveFileId, alreadyDeleted: false };
+}
+
+export async function createDrivePermission({ token, driveFileId, email, role }) {
+  validateDriveId(driveFileId);
+  if (typeof email !== "string" || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw Object.assign(new Error("Alamat email tujuan tidak valid."), { status: 400, code: "INVALID_EMAIL" });
+  }
+  if (!["reader", "writer"].includes(role)) {
+    throw Object.assign(new Error("Peran berbagi tidak valid."), { status: 400, code: "INVALID_SHARE_ROLE" });
+  }
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}/permissions?supportsAllDrives=true&sendNotificationEmail=false&fields=id,type,role,emailAddress,displayName`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "user", role, emailAddress: email }),
+  });
+  const data = await readDriveJson(response, "Gagal membagikan item ke Google Drive.");
+  if (!data.id || data.emailAddress !== email || data.role !== role) {
+    throw Object.assign(new Error("Google Drive mengembalikan permission yang tidak sesuai."), { status: 502, code: "GOOGLE_DRIVE_INVALID_RESPONSE" });
+  }
+  return data;
+}
+
+export async function listDrivePermissions({ token, driveFileId }) {
+  validateDriveId(driveFileId);
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}/permissions?supportsAllDrives=true&fields=permissions(id,type,role,emailAddress,domain,displayName,deleted,expirationTime)`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await readDriveJson(response, "Gagal membaca permission Google Drive.");
+  return Array.isArray(data.permissions) ? data.permissions : [];
+}
+
+export async function deleteDrivePermission({ token, driveFileId, permissionId }) {
+  validateDriveId(driveFileId);
+  validateDriveId(permissionId);
+  const response = await fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(driveFileId)}/permissions/${encodeURIComponent(permissionId)}?supportsAllDrives=true`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (response.status === 404) return { id: permissionId, alreadyDeleted: true };
+  if (!response.ok) {
+    let data = {};
+    try { data = await response.json(); } catch {}
+    throw driveError(response, data, "Gagal mencabut permission Google Drive.");
+  }
+  return { id: permissionId, alreadyDeleted: false };
+}

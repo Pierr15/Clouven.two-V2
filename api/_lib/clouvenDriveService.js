@@ -1,4 +1,4 @@
-import { evaluateDriveItemAccess } from "./clouvenDrivePolicy.js";
+import { evaluateDriveItemAccess, isDriveStaff } from "./clouvenDrivePolicy.js";
 
 const MAX_PARENT_DEPTH = 32;
 const MAX_CANDIDATES = 500;
@@ -33,7 +33,7 @@ async function resolveDriveItemAccessWith(db, actor, itemId, { require: required
     }
     seen.add(parentId);
     const { data: parent, error } = await db.from("drive_items")
-      .select("id,parent_id,item_type,owner_id,status").eq("id", parentId).maybeSingle();
+      .select("id,parent_id,item_type,owner_id,status,drive_file_id").eq("id", parentId).maybeSingle();
     failIfError(error);
     if (!parent || parent.item_type !== "folder" || parent.status !== "active") throw notFound();
     ancestors.push(parent);
@@ -45,7 +45,7 @@ async function resolveDriveItemAccessWith(db, actor, itemId, { require: required
     db.from("drive_folder_managers").select("folder_id,user_id")
       .in("folder_id", folderIds).eq("user_id", actor.uid),
     db.from("drive_item_grants").select("item_id,user_id,access_level")
-      .eq("item_id", item.id).eq("user_id", actor.uid),
+      .in("item_id", folderIds).eq("user_id", actor.uid),
   ]);
   failIfError(managerResult.error);
   failIfError(grantResult.error);
@@ -127,12 +127,64 @@ async function listVisibleDriveItemsWith(db, resolveAccess, actor, { parentId = 
 
 
 
+async function listTrashedDriveItemsWith(db, resolveAccess, actor, { page = 1, pageSize = 25 } = {}) {
+  if (!actor?.uid || !actor?.role) throw apiError(401, "Unauthorized");
+  if (!Number.isInteger(page) || page < 1 || page > 10 || !Number.isInteger(pageSize) || pageSize < 1 || pageSize > 50) {
+    throw apiError(400, "Parameter pagination tidak valid.");
+  }
+
+  const { data, error } = await db.from("drive_items")
+    .select(ITEM_FIELDS)
+    .eq("status", "trashed")
+    .order("trashed_at", { ascending: false })
+    .order("id", { ascending: false })
+    .range(0, MAX_CANDIDATES);
+  failIfError(error);
+  const rows = data || [];
+  const truncated = rows.length > MAX_CANDIDATES;
+  const candidates = rows.slice(0, MAX_CANDIDATES);
+  const staff = isDriveStaff(actor.role);
+  const visible = [];
+  for (const item of candidates) {
+    let access = null;
+    try {
+      ({ access } = await resolveAccess(actor, item.id, { required: "trash" }));
+    } catch (error) {
+      if (error.status !== 404 && error.status !== 403) throw error;
+      // A trashed item whose parent chain is also trashed can no longer resolve
+      // ancestors. Owners and staff still see it in their Trash listing.
+      if (!staff && item.owner_id !== actor.uid) continue;
+      access = {
+        visible: true,
+        canEdit: false,
+        canDelete: staff || item.owner_id === actor.uid,
+        canManage: staff,
+      };
+    }
+    if (!access.visible) continue;
+    visible.push({
+      ...item,
+      permissions: { canEdit: access.canEdit, canDelete: access.canDelete, canManage: access.canManage },
+    });
+  }
+
+  const offset = (page - 1) * pageSize;
+  return {
+    items: visible.slice(offset, offset + pageSize),
+    page,
+    pageSize,
+    hasMore: offset + pageSize < visible.length,
+    truncated,
+  };
+}
+
 /** Factory enables deterministic integration-style tests with a fake PostgREST client. */
 export function createDriveAccessService(db, { getQuota } = {}) {
   const resolveAccess = (actor, itemId, options) => resolveDriveItemAccessWith(db, actor, itemId, options);
   return {
     resolveDriveItemAccess: resolveAccess,
     listVisibleDriveItems: (actor, options) => listVisibleDriveItemsWith(db, resolveAccess, actor, options),
+    listTrashedDriveItems: (actor, options) => listTrashedDriveItemsWith(db, resolveAccess, actor, options),
     getVisibleDriveOverview: async (actor) => {
       const { items, hasMore, truncated } = await listVisibleDriveItemsWith(db, resolveAccess, actor, { page: 1, pageSize: 50 });
       const counts = { files: 0, folders: 0 };

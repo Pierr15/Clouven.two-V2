@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "api/_lib/clouvenDrive*.js"
+      - "api/clouven-drive/**"
       - "api/_lib/clouvenDriveUpload.js"
       - "server/api-handlers/clouven-drive/**"
       - "assets/js/pages/clouven-drive.js"
@@ -21,6 +22,7 @@ on:
       - feat/clouven-drive-foundation
     paths:
       - "api/_lib/clouvenDrive*.js"
+      - "api/clouven-drive/**"
       - "server/api-handlers/clouven-drive/**"
       - "assets/js/pages/clouven-drive.js"
       - "assets/css/clouven-drive.css"
@@ -72,3 +74,17 @@ jobs:
         run: npm run test:clouven-drive-mutations
       - name: Test Google Drive multipart upload helper
         run: npm run test:clouven-drive-google-upload
+      - name: Test upload handler
+        run: npm run test:clouven-drive-files-handler
+      - name: Test download handler
+        run: npm run test:clouven-drive-download-handler
+      - name: Test item mutation handler
+        run: npm run test:clouven-drive-items-handler
+      - name: Test trash handler
+        run: npm run test:clouven-drive-trash-handler
+      - name: Test permissions handler
+        run: npm run test:clouven-drive-permissions-handler
+      - name: Test external share handler
+        run: npm run test:clouven-drive-share-handler
+      - name: Test Google Drive sharing helpers
+        run: npm run test:clouven-drive-google-sharing

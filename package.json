@@ -17,7 +17,14 @@
     "test:clouven-drive-folder-handler": "node tests/clouven-drive-folder-handler.mjs",
     "test:clouven-drive-upload": "node tests/clouven-drive-upload.mjs",
     "test:clouven-drive-mutations": "node tests/clouven-drive-mutations.mjs",
-    "test:clouven-drive-google-upload": "node tests/clouven-drive-google-upload.mjs"
+    "test:clouven-drive-google-upload": "node tests/clouven-drive-google-upload.mjs",
+    "test:clouven-drive-files-handler": "node tests/clouven-drive-files-handler.mjs",
+    "test:clouven-drive-download-handler": "node tests/clouven-drive-download-handler.mjs",
+    "test:clouven-drive-items-handler": "node tests/clouven-drive-items-handler.mjs",
+    "test:clouven-drive-trash-handler": "node tests/clouven-drive-trash-handler.mjs",
+    "test:clouven-drive-permissions-handler": "node tests/clouven-drive-permissions-handler.mjs",
+    "test:clouven-drive-share-handler": "node tests/clouven-drive-share-handler.mjs",
+    "test:clouven-drive-google-sharing": "node tests/clouven-drive-google-sharing.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

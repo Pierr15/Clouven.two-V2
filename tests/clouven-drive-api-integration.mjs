@@ -36,12 +36,14 @@ const otherId = "33333333-3333-4333-8333-333333333333";
 const nestedId = "44444444-4444-4444-8444-444444444444";
 const cycleA = "55555555-5555-4555-8555-555555555555";
 const cycleB = "66666666-6666-4666-8666-666666666666";
+const sharedChildId = "77777777-7777-4777-8777-777777777777";
 const data = {
   drive_items: [
     { id: folderId, parent_id: null, item_type: "folder", name: "Folder A", owner_id: "alice", status: "active" },
     { id: fileId, parent_id: null, item_type: "file", name: "Notes", owner_id: "alice", status: "active" },
     { id: otherId, parent_id: null, item_type: "folder", name: "Private folder", owner_id: "bob", status: "active" },
     { id: nestedId, parent_id: otherId, item_type: "file", name: "Nested private notes", owner_id: "bob", status: "active" },
+    { id: sharedChildId, parent_id: folderId, item_type: "file", name: "Shared child", owner_id: "alice", status: "active" },
     { id: cycleA, parent_id: cycleB, item_type: "folder", name: "Cycle A", owner_id: "alice", status: "active" },
     { id: cycleB, parent_id: cycleA, item_type: "folder", name: "Cycle B", owner_id: "alice", status: "active" }
   ],
@@ -56,7 +58,7 @@ assert.deepEqual(list.items.map(x => x.id), [folderId, fileId]);
 assert.equal(JSON.stringify(list).includes("Private notes"), false);
 assert.equal((await service.listVisibleDriveItems(actor, { query: "Private" })).items.length, 0);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { parentId: otherId }), e => e.status === 404);
-assert.equal((await service.listVisibleDriveItems(actor, { parentId: folderId })).items.length, 0);
+assert.deepEqual((await service.listVisibleDriveItems(actor, { parentId: folderId })).items.map(x => x.id), [sharedChildId]);
 await assert.rejects(() => service.resolveDriveItemAccess(actor, cycleA), e => e.status === 409);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { page: 11 }), e => e.status === 400);
 await assert.rejects(() => service.listVisibleDriveItems(actor, { query: "Notes", page: 2 }), e => e.status === 400);
@@ -65,6 +67,18 @@ const overview = await service.getVisibleDriveOverview(actor);
 assert.equal(overview.counts.files, 1);
 assert.equal(overview.counts.folders, 1);
 assert.equal(overview.quota, null);
+
+// A folder grant must inherit to descendants; otherwise sharing a folder would
+// only expose an empty shell.
+data.drive_item_grants.push({ item_id: folderId, user_id: "carol", access_level: "viewer" });
+const carol = { uid: "carol", role: "student" };
+assert.deepEqual((await service.listVisibleDriveItems(carol)).items.map(x => x.id), [folderId]);
+assert.deepEqual((await service.listVisibleDriveItems(carol, { parentId: folderId })).items.map(x => x.id), [sharedChildId]);
+const viewerAccess = await service.resolveDriveItemAccess(carol, sharedChildId);
+assert.equal(viewerAccess.access.visible, true);
+assert.equal(viewerAccess.access.canEdit, false);
+data.drive_item_grants[0].access_level = "editor";
+assert.equal((await service.resolveDriveItemAccess(carol, sharedChildId)).access.canEdit, true);
 
 let quotaCalls = 0;
 const quotaService = createDriveAccessService(client(data), {
@@ -81,4 +95,4 @@ const failingQuotaService = createDriveAccessService(client(data), {
   getQuota: () => { throw new Error("Google down"); },
 });
 assert.equal((await failingQuotaService.getVisibleDriveOverview(actor)).quota, null);
-console.log("Clouven Drive API isolation tests passed (14 assertions).");
+console.log("Clouven Drive API isolation tests passed (18 assertions).");

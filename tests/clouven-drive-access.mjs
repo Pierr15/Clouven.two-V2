@@ -7,7 +7,7 @@ const ownFolder = { id: "folder-own", item_type: "folder", owner_id: "student-a"
 const anotherFile = { id: "item-2", item_type: "file", owner_id: "student-b" };
 
 assert.deepEqual(evaluateDriveItemAccess({ actor: student, item: ownFile }), {
-  visible: true, canEdit: true, canDelete: true, canManage: false, reason: "authorized",
+  visible: true, canEdit: true, canDelete: true, canManage: true, reason: "authorized",
 });
 assert.deepEqual(evaluateDriveItemAccess({ actor: student, item: anotherFile }), {
   visible: false, canEdit: false, canDelete: false, canManage: false, reason: "not_authorized",
