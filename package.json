@@ -11,6 +11,7 @@
     "start:4173": "set PORT=4173&& node scripts/serve.mjs",
     "test:profile-photo": "node tests/profile-photo-access.mjs",
     "test:supabase-migration-layout": "node tests/supabase-migration-layout.mjs",
+    "test:env-pairing": "node scripts/verify-env.mjs",
     "test:clouven-drive-access": "node tests/clouven-drive-access.mjs",
     "test:clouven-drive-api": "node tests/clouven-drive-api-integration.mjs",
     "test:clouven-drive-folder": "node tests/clouven-drive-folder-google.mjs",
