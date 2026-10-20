@@ -178,6 +178,16 @@ Browser regression was executed locally on the same date with Playwright driving
 2. Confirm the server-side Google credential belongs to the intended service-owned Drive identity and run upload/download/move/Trash/share flows against a disposable test folder.
 3. Obtain explicit approval before applying the migration to production or deploying.
 
+### Development bring-up progress (2026-10-20)
+
+Read-only preflight against the dedicated development project passed without mutating anything:
+
+- Development Supabase URL and service key pair `qpfmnfnfryiouwebdkav` (service-only probe HTTP 200); the project is still empty, so the migration has not been applied there.
+- Google service identity is `clouventwo@gmail.com` with root test folder `ClouvenTwo Storage`, owned by the service identity and not trashed (Drive `about`/`files.get` probes only).
+- `.env.local` was reduced to the development-only Supabase pair; the production pair remains in `.env`. New `test:env-pairing` preflight (commit `284aaa2`) now detects duplicate keys and cross-project keys automatically.
+- Open credential item: `SUPABASE_PUBLISHABLE_KEY` in `.env.local` still belongs to the production project; replace it with the development project's publishable key before any browser-authenticated testing against development.
+- Supabase CLI 2.121.0 is installed locally; applying migrations still requires an accessible token (`SUPABASE_ACCESS_TOKEN`) or database URL from the project owner.
+
 ### Guardrails still honored
 
 - No migration was applied to any database.
