@@ -44,7 +44,7 @@ export function createTrashHandler({
       const operationKey = readOperationKey(req);
       const isDeleted = action === "delete";
 
-      const { item, access } = await resolveAccess(actor, id, isDeleted || action === "restore" ? { required: "trash" } : {});
+      const { item, access } = await resolveAccess(actor, id, isDeleted || action === "restore" ? { require: "trash" } : {});
       if (action === "trash" && item.status !== "active") throw apiError(404, "Item tidak ditemukan.", "DRIVE_ITEM_NOT_FOUND");
       if (action !== "trash" && item.status !== "trashed") {
         throw apiError(409, "Item tidak berada di Sampah.", "ITEM_NOT_TRASHED");

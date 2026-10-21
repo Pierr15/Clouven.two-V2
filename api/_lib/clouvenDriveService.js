@@ -148,7 +148,7 @@ async function listTrashedDriveItemsWith(db, resolveAccess, actor, { page = 1, p
   for (const item of candidates) {
     let access = null;
     try {
-      ({ access } = await resolveAccess(actor, item.id, { required: "trash" }));
+      ({ access } = await resolveAccess(actor, item.id, { require: "trash" }));
     } catch (error) {
       if (error.status !== 404 && error.status !== 403) throw error;
       // A trashed item whose parent chain is also trashed can no longer resolve
