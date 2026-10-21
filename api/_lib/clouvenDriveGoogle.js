@@ -2,11 +2,20 @@ import { randomUUID } from "node:crypto";
 
 const FOLDER_MIME = "application/vnd.google-apps.folder";
 
+const FRIENDLY_REASONS = {
+  // Verified live: sharing to an address without a Google account yields
+  // reason=cannotInviteNonGoogleUser (HTTP 403).
+  cannotInviteNonGoogleUser: "Penerima belum memiliki akun Google, sehingga tidak dapat dibagikan.",
+};
+
 function driveError(response, data, fallback) {
-  return Object.assign(new Error(fallback), {
-    status: response.status >= 500 ? 502 : 400,
-    code: data?.error?.status || "GOOGLE_DRIVE_REQUEST_FAILED",
-  });
+  const reason = data?.error?.errors?.[0]?.reason || null;
+  const status = response.status >= 500 ? 502 : 400;
+  const message = status === 400
+    ? (FRIENDLY_REASONS[reason] || (typeof data?.error?.message === "string" && data.error.message) || fallback)
+    : fallback;
+  const code = reason ? "GOOGLE_DRIVE_" + reason.toUpperCase() : (data?.error?.status || "GOOGLE_DRIVE_REQUEST_FAILED");
+  return Object.assign(new Error(message), { status, code });
 }
 
 async function readDriveJson(response, fallback) {
