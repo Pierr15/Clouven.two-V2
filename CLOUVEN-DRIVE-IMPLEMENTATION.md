@@ -154,6 +154,8 @@ All commands below were run in this workspace and exited successfully on 2026-10
 
 `scripts/verify-env.mjs` also caught a real mismatch during dev bring-up on 2026-10-20: the `SUPABASE_PUBLISHABLE_KEY` in `.env.local` belonged to the production project while `SUPABASE_URL` pointed at the development project. The service key pairing passed after the duplicated production lines were removed from `.env.local`.
 
+On 2026-10-21 the database migrations were applied to the development project (`supabase db push` after a reviewed dry-run) and the live integration phase started; see `CLOUVEN-DRIVE-RELEASE-READINESS.md` § "Development bring-up progress" for the evidence trail and the Google-side HTTP 500 incident that paused the Google-backed flows.
+
 `node --check` also passed for the new handlers, router, page module, and preview server. These are deterministic mocked/isolated tests: they do not prove live Supabase or Google Drive compatibility, and the browser UI was not executed because Playwright is unavailable in this environment.
 
 Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and the `items`, `overview`, `download`, `files`, `trash`, `permissions`, and `share` routes each returned HTTP 401 without a session. This proves route registration and fail-closed authentication only; no authenticated/live data request was made.

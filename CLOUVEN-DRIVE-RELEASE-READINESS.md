@@ -178,15 +178,13 @@ Browser regression was executed locally on the same date with Playwright driving
 2. Confirm the server-side Google credential belongs to the intended service-owned Drive identity and run upload/download/move/Trash/share flows against a disposable test folder.
 3. Obtain explicit approval before applying the migration to production or deploying.
 
-### Development bring-up progress (2026-10-20)
+### Development bring-up progress (2026-10-21)
 
-Read-only preflight against the dedicated development project passed without mutating anything:
-
-- Development Supabase URL and service key pair `qpfmnfnfryiouwebdkav` (service-only probe HTTP 200); the project is still empty, so the migration has not been applied there.
-- Google service identity is `clouventwo@gmail.com` with root test folder `ClouvenTwo Storage`, owned by the service identity and not trashed (Drive `about`/`files.get` probes only).
-- `.env.local` was reduced to the development-only Supabase pair; the production pair remains in `.env`. New `test:env-pairing` preflight (commit `284aaa2`) now detects duplicate keys and cross-project keys automatically.
-- Open credential item: `SUPABASE_PUBLISHABLE_KEY` in `.env.local` still belongs to the production project; replace it with the development project's publishable key before any browser-authenticated testing against development.
-- Supabase CLI 2.121.0 is installed locally; applying migrations still requires an accessible token (`SUPABASE_ACCESS_TOKEN`) or database URL from the project owner.
+- Migration `202610160001_clouven_drive_metadata.sql` and the 11 prerequisite migrations were applied to the dedicated development project with `supabase db push` after a reviewed `--dry-run` listing (`migration list` reports 12/12 local↔remote matching versions). Evidence: all probe data was removed afterwards via the service key plus per-`appProperties` Google folder scans; only empty tables remain.
+- Live structure verification: `members`, `drive_items`, `drive_folder_managers`, `drive_item_grants`, `drive_operations` all readable through the service key; `anon`/publishable requests receive HTTP 401 on `drive_items` and `members` (fail-closed without a session).
+- Dev accounts seeded: owner (via the trusted SQL session expected by the owner-transfer trigger), teacher, and two students; password sign-in succeeds with the development publishable key.
+- Live integration harness (phase 1: folder create/replay, inherited grants, staff visibility, rename/move, external share grant/replay/revoke, trash/restore/purge rules) is prepared and partially executed: fail-closed auth and sign-in passed; the first Google folder create returned Google API HTTP 500 `internalError` and the request journal correctly retained the row for reconciliation, which the operator reset afterwards (test-only artifacts, no user data).
+- Open production blocker: Google Drive API intermittently returns HTTP 500 `internalError` for this service identity (observed ~30 minutes across reads and writes, including operations that previously succeeded). This is outside the application's control; the in-app journal keeps operations recoverable while this lasts. Re-run the stability canary before resuming phase 1/2.
 
 ### Guardrails still honored
 
