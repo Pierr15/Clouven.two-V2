@@ -193,3 +193,23 @@ Browser regression was executed locally on the same date with Playwright driving
 - No deployment or merge was performed.
 - Legacy `/penyimpanan/` and `/api/drive/*` were not edited.
 - Google tokens remain server-side; browser code only receives file bytes through the authenticated download endpoint.
+
+### Live integration completion (2026-10-22)
+
+Google Drive recovered from the 2026-10-21 `internalError` incident (a 15-minute stability canary with orphan sweeping confirmed two consecutive create+delete cycles succeeded). The full live harness then ran against the dedicated development project through the local preview server.
+
+Results of the live runs:
+
+- **Phase 1 — 55/55 passed.** Fail-closed auth (401 without a session), folder create + idempotent replay, nested folders with inherited grants, editor grant lifecycle, staff visibility across every member's Drive, rename, move semantics (including `MOVE_INTO_DESCENDANT` and unchanged no-op PATCH), external share confirmation gating, failed-share journal replay (`IDEMPOTENCY_KEY_FAILED`), permission listing, unused-permission revoke mapping to `already_deleted`, the full trash/restore/permanent-delete matrix (`FOLDER_NOT_EMPTY`, `ITEM_NOT_DELETABLE`, `PERMANENT_DELETE_FORBIDDEN`, `PERMANENT_DELETE_CONFIRMATION_REQUIRED`), and end-state verification that `drive_items` is emptied and every journal row is `succeeded` except one intentionally `failed` shared operation.
+- **Phase 2 — 29/29 passed.** Raw-byte upload with metadata that matches the byte count exactly, replay of the same `Idempotency-Key` returning `replayed: true` with exactly one row, byte-exact download with `Content-Disposition: attachment` and the stored content type, invisible-item download returning 404, folder-download rejection (`ITEM_NOT_DOWNLOADABLE`), upload under an editor grant, staff (Owner) direct upload into another member's folder, exact-3 MiB acceptance, 3 MiB + 1 byte rejection (`FILE_TOO_LARGE` on 413), two-step purge of every test file plus the emptied uploaded folder, and final empty-state checks.
+
+Findings from live testing, fixed during verification:
+
+- Real application bug: `trash.js` and the trash-listing path passed `{ required: "trash" }` while `resolveDriveItemAccessWith` reads the option as `{ require: ... }`, so the option was silently ignored — every restore and permanent delete of a trashed item failed with 404 before reaching the operation logic. Unit suites missed it because they inject a `resolveAccess` fake. Fixed in `000d625`; the entire phase-1 scenario G now passes.
+- Google rejects sharing to an address without a Google account (`403 cannotInviteNonGoogleUser`, verified directly against the API). The app previously surfaced a generic 400. Google 4xx errors now carry a reason-derived code and, for the verified reason, an Indonesian user-facing message (`3d4c15e`, snake-case codes in `fdbbae8`); the live harness asserts the friendly message end-to-end.
+
+Verification notes:
+
+- A full positive external share (invite to a second real Google account + permission revoke) was not exercised because no second live Google account was available; the confirmation gate, journal behavior, listing, and no-op revoke paths are covered live, and the grant/revoke Google paths remain covered by the mocked sharing suite (12 assertions).
+- Permission listing on test folders shows an inherited `anyoneWithLink` reader permission originating from the root folder's link-sharing state in the service account's own Drive. This is Drive-side state, not something the application creates; consider disabling link sharing on the root folder before production use.
+- Harness-only fixes (outside the repo, temp directory): FK-safe leaf-first deletion order when clearing test rows, and parsing the download error response. Test artifacts were cleaned after each run; dev tables end empty.

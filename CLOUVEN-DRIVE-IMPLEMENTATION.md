@@ -156,6 +156,15 @@ All commands below were run in this workspace and exited successfully on 2026-10
 
 On 2026-10-21 the database migrations were applied to the development project (`supabase db push` after a reviewed dry-run) and the live integration phase started; see `CLOUVEN-DRIVE-RELEASE-READINESS.md` § "Development bring-up progress" for the evidence trail and the Google-side HTTP 500 incident that paused the Google-backed flows.
 
+### Live integration results (2026-10-22)
+
+After Google Drive recovered, the complete live harness ran against the development project through the local preview server and finished fully green:
+
+- Phase 1: **55/55** — create/replay folders, nested inheritance, editor/viewer grant lifecycle, staff access to every member's Drive, rename, move (including descendant guard), external-share confirmation gate + failed-share `IDEMPOTENCY_KEY_FAILED` replay + permission listing + no-op revoke mapping, and the complete trash/restore/permanent-delete matrix with end-state empty-table and journal checks.
+- Phase 2: **29/29** — raw-byte upload with byte-count-accurate metadata, same-key upload replay (`replayed`, exactly one row), byte-exact download with attachment headers, 404 for invisible items, `ITEM_NOT_DOWNLOADABLE` for folders, upload under an editor grant, staff direct upload into another member's folder, exact-3 MiB accepted, 3 MiB + 1 byte → 413 `FILE_TOO_LARGE`, two-step purge of all files plus the emptied folder, and final empty state.
+
+Two real fixes were found and verified by this run (detailed in `CLOUVEN-DRIVE-RELEASE-READINESS.md` § "Live integration completion"): the trashed-item access option-key mismatch (`000d625`, broke restore/permanent delete with 404) and the friendly mapping for Google share denials such as `cannotInviteNonGoogleUser` (`3d4c15e`, `fdbbae8`). The one live flow still unexercised is a positive external invite to a second real Google account (no second live account available); its Google grant/revoke paths stay covered by the mocked sharing suite.
+
 `node --check` also passed for the new handlers, router, page module, and preview server. These are deterministic mocked/isolated tests: they do not prove live Supabase or Google Drive compatibility, and the browser UI was not executed because Playwright is unavailable in this environment.
 
 Local preview smoke test on 2026-10-19: `/clouven-drive/` returned HTTP 200, and the `items`, `overview`, `download`, `files`, `trash`, `permissions`, and `share` routes each returned HTTP 401 without a session. This proves route registration and fail-closed authentication only; no authenticated/live data request was made.
