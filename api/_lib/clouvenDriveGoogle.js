@@ -14,7 +14,7 @@ function driveError(response, data, fallback) {
   const message = status === 400
     ? (FRIENDLY_REASONS[reason] || (typeof data?.error?.message === "string" && data.error.message) || fallback)
     : fallback;
-  const code = reason ? "GOOGLE_DRIVE_" + reason.toUpperCase() : (data?.error?.status || "GOOGLE_DRIVE_REQUEST_FAILED");
+  const code = reason ? "GOOGLE_DRIVE_" + reason.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase() : (data?.error?.status || "GOOGLE_DRIVE_REQUEST_FAILED");
   return Object.assign(new Error(message), { status, code });
 }
 
